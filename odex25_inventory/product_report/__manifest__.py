@@ -10,6 +10,7 @@
     "data": [
         "security/ir.model.access.csv",
         "views/account_move_line2_views.xml",
+        "views/sales_plan_views.xml",
         "wizard/profitability_wizard_views.xml",
         "reports/action_reports.xml",
     ],

@@ -10,9 +10,17 @@ class AccountMoveLine2(models.Model):
     default_code = fields.Char(string="Default Code")
     total_quantity = fields.Float(string="Total Quantity")
     total_price = fields.Float(string="Total Price")
-    nsap = fields.Float(string="Nsap")
+    nsap = fields.Float(string="Nasp")
+    sales_person = fields.Many2one(comodel_name='res.users', string="Sales Person")
 
     last_total_quantity = fields.Float(string="Last Total Quantity")
     last_total_price = fields.Float(string="Last Total Price")
-    last_nsap = fields.Float(string="Last Nsap")
+    last_nsap = fields.Float(string="Last Nasp")
+
+    total_plan_quantity = fields.Float(string="Total Plan Quantity")
+    total_plan_price = fields.Float(string="Total Plan Price")
+    plan_nsap = fields.Float(string="Plan Nasp")
+
+    qty_percentage = fields.Float(string="QTY %")
+    value_percentage = fields.Float(string="Value %")
 

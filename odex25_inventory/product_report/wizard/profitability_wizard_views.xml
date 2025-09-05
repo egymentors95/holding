@@ -16,6 +16,7 @@
                             </group>
                             <group>
                                 <field name="product_ids" widget="many2many_tags"/>
+                                <field name="sales_person_ids" widget="many2many_tags"/>
                             </group>
                         </group>
                     </sheet>

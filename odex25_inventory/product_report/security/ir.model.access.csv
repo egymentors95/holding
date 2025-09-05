@@ -1,3 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_profitability_wizard,access.profitability.wizard,model_profitability_wizard,,1,1,1,1
 access_account_move_line2,access.account.move.line2,model_account_move_line2,,1,1,1,1
+access_sales_plan,access.sales.plan,model_sales_plan,,1,1,1,1
+access_sales_plan_lines,access.sales.plan.lines,model_sales_plan_lines,,1,1,1,1

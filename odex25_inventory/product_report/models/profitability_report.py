@@ -12,7 +12,6 @@ class ProfitabilityReport(models.AbstractModel):
         date_from = data.get('date_from')
         date_to = data.get('date_to')
 
-        # نحسب السنة اللي فاتت من ال data اللي جاي من ال wizard
         if date_from:
             date_from_last_year = datetime.strptime(date_from, "%Y-%m-%d").replace(year=datetime.strptime(date_from, "%Y-%m-%d").year - 1)
         else:
@@ -34,7 +33,12 @@ class ProfitabilityReport(models.AbstractModel):
         worksheet.set_column('F:F', 25)
         worksheet.set_column('G:G', 25)
         worksheet.set_column('H:H', 25)
-        worksheet.set_column('I:I', 25)
+        worksheet.set_column('J:J', 25)
+        worksheet.set_column('K:K', 25)
+        worksheet.set_column('L:L', 25)
+        worksheet.set_column('M:M', 25)
+        worksheet.set_column('N:N', 25)
+        worksheet.set_column('O:O', 25)
 
 
         # Formats
@@ -45,6 +49,8 @@ class ProfitabilityReport(models.AbstractModel):
                                           'valign': 'vcenter', 'border': 1})
         header_format2 = workbook.add_format({'bold': True, 'bg_color': '#2EC70A',
                                              'align': 'center', 'valign': 'vcenter', 'border': 1})
+        header_format3 = workbook.add_format({'bold': True, 'bg_color': '#27BEF5',
+                                              'align': 'center', 'valign': 'vcenter', 'border': 1})
 
 
         # ---------------- Header with dates ----------------
@@ -73,7 +79,7 @@ class ProfitabilityReport(models.AbstractModel):
         # الهيدر الفرعي للسنة اللي فاتت
         worksheet.write(row + 1, col + 3, "Quantity", header_format)
         worksheet.write(row + 1, col + 4, "Price", header_format)
-        worksheet.write(row + 1, col + 5, "Nsap", header_format)
+        worksheet.write(row + 1, col + 5, "Nasp", header_format)
 
         # هيدر الفترة الحالية
         worksheet.merge_range(
@@ -85,7 +91,20 @@ class ProfitabilityReport(models.AbstractModel):
         # الهيدر الفرعي للفترة الحالية
         worksheet.write(row + 1, col + 6, "Total Quantity", header_format2)
         worksheet.write(row + 1, col + 7, "Total Price", header_format2)
-        worksheet.write(row + 1, col + 8, "Nsap", header_format2)
+        worksheet.write(row + 1, col + 8, "Nasp", header_format2)
+        worksheet.write(row + 1, col + 9, "Sales Person", header_format2)
+
+        worksheet.merge_range(
+            row, col + 10, row, col + 12,
+            f"YTD Plan ({date_from} → {date_to})",
+            header_format3
+        )
+        worksheet.write(row + 1, col + 10, "Plan Quantity", header_format3)
+        worksheet.write(row + 1, col + 11, "Value", header_format3)
+        worksheet.write(row + 1, col + 12, "Nasp", header_format3)
+        worksheet.write(row + 1, col + 13, "Qty %", header_format3)
+        worksheet.write(row + 1, col + 14, "Value %", header_format3)
+
 
         row += 2
 
@@ -110,6 +129,13 @@ class ProfitabilityReport(models.AbstractModel):
             worksheet.write_number(row, col + 6, record['Total Quantity'], num_format)
             worksheet.write_number(row, col + 7, record['Total Price'], num_format)
             worksheet.write_number(row, col + 8, record['Nsap'], num_format)
+            worksheet.write(row, col + 9, record['Sales Person'], num_format)
+
+            worksheet.write_number(row, col + 10, record['Total Plan Quantity'], num_format)
+            worksheet.write_number(row, col + 11, record['Total Plan Price'], num_format)
+            worksheet.write_number(row, col + 12, record['Plan Nsap'], num_format)
+            worksheet.write_number(row, col + 13, record['QTY'], num_format)
+            worksheet.write_number(row, col + 14, record['Value'], num_format)
 
 
             row += 1
