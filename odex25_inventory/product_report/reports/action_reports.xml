@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="report_action_profitability" model="ir.actions.report">
+        <field name="name">Profitability XLS Report</field>
+        <field name="model">profitability.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">product_report.profitability_report</field>
+        <field name="report_file">product_report.profitability_report</field>
+        <field name="binding_type">report</field>
+    </record>
+
+
+</odoo>
