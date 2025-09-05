@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="final_evaluation_wizard_view" model="ir.ui.view">
+        <field name="name">final.evaluation.wizard.view</field>
+        <field name="model">final.evaluation.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Purchase Report">
+                <group>
+                    <group>
+                        <field name="purchase_requisition" widget="many2many_tags"
+                               options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>
+                        <field name="committee_member"
+                               options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>
+                        <field name="hr_department_id"
+                               options="{'no_edit': True, 'no_create': True, 'no_open': True}"/>
+                    </group>
+                    <group>
+                        <field name="start_date"/>
+                        <field name="end_date"/>
+                        <field name="user_id" invisible="1"/>
+                        <field name="role_type" invisible="1"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_create_search_html" string="View" target="_blank" type="object"
+                            class="btn-primary"/>
+                    <button name="action_create_search_pdf" string="Pdf" type="object"
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="final_evaluation_wizard_action" model="ir.actions.act_window">
+        <field name="name">final Evaluation Report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">final.evaluation.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="final_evaluation_wizard_view"/>
+        <field name="target">new</field>
+    </record>
+
+    <!-- This Menu Item must have a parent and an action -->
+    <menuitem id="final_evaluation_wizard_menu"
+              name="final Evaluation Report"
+              parent="purchase_requisition_custom.reports"
+              action="final_evaluation_wizard_action"
+              sequence="3"/>
+</odoo>

@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="project_detail_qweb_report" name="project_detail_qweb_report">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="e">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <form>
+                            <div class="container">
+                                <tr class="text-center">
+                                    <th>
+                                        <t t-if="e.name">
+                                            <h2 class="text-center">
+                                                <b>
+                                                    <span t-field="e.project_no"/>
+                                                </b>
+                                                -
+                                                <b>
+                                                    <span t-field="e.name"/>
+                                                </b>
+                                            </h2>
+                                        </t>
+                                    </th>
+                                </tr>
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td colspan="4" class="text-muted">
+                                            <h4>Project Info</h4>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <b>Sale Order</b>
+                                        </td>
+                                        <td>
+                                            <span t-field="e.sale_order_id.name"/>
+                                        </td>
+                                        <td>
+                                            <b>Project Manager</b>
+                                        </td>
+                                        <td>
+                                            <span t-field="e.user_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <b>Customer</b>
+                                        </td>
+                                        <td>
+                                            <div t-field="e.partner_id"
+                                                 t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: True}"/>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <h2>
+                                            <b>
+                                                <td colspan="4" class="text-muted">
+                                                    <h4>Project Location Info</h4>
+                                                </td>
+                                            </b>
+                                        </h2>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <b>Country</b>
+                                        </td>
+                                        <td>
+                                            <span t-field="e.country_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <b>Project Category</b>
+                                        </td>
+                                        <td>
+                                            <t t-if="e.category_id">
+                                                <span t-field="e.category_id.name"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <h2>
+                                            <b>
+                                                <td colspan="4" class="text-muted">
+                                                    <h4>Project Schedule Duration</h4>
+                                                </td>
+                                            </b>
+                                        </h2>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <b>Start Date</b>
+                                        </td>
+                                        <td>
+                                            <span t-field="e.start"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <b>Finish Date</b>
+                                        </td>
+                                        <td>
+                                            <span t-field="e.date"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <b>Kick-Off Date</b>
+                                        </td>
+                                        <td>
+                                            <span t-field="e.launch_date"/>
+                                        </td>
+                                        <td>
+
+                                        </td>
+                                        <td>
+
+                                        </td>
+                                    </tr>
+                                </table>
+                                <p style="page-break-before:always;"></p>
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <h2>
+                                            <b>
+                                                <td colspan="4" class="text-muted">
+                                                    <h4>Project Stages</h4>
+                                                </td>
+                                            </b>
+                                        </h2>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            <b>#</b>
+                                        </td>
+                                        <td colspan="2">
+                                            <b>stage</b>
+                                        </td>
+                                    </tr>
+                                    <t t-set="counter" t-value="0"/>
+                                    <t t-foreach="e.project_phase_ids" t-as="p">
+                                        <t t-set="counter" t-value="counter + 1"/>
+                                        <tr>
+                                            <td colspan="2">
+                                                <span t-esc="counter"/>
+                                            </td>
+                                            <td colspan="2">
+                                                <span t-esc="p.name"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </table>
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <h2>
+                                            <b>
+                                                <td colspan="4" class="text-muted">
+                                                    <h4>Description</h4>
+                                                </td>
+                                            </b>
+                                        </h2>
+                                    </tr>
+                                    <tr rowspan="4">
+                                        <td colspan="4">
+                                            <span t-field="e.description"/>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                            </div>
+                        </form>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="project_status_qweb_report" name="project_status_qweb_report">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="e">
+                <t t-call="web.external_layout">
+                    <t t-set="e" t-value="e.with_context(lang= e.env.lang)"/>
+                    <style type="text/css">
+                        .report-section {
+                        width: 100%;
+                        padding-right: 15px;
+                        margin-top: 20px;
+                        page-break-inside: avoid;
+                        }
+                    </style>
+                    <div class="page">
+                        <h5>
+                            Project Status Report:
+                            <span t-field="e.project_no"/>
+                        </h5>
+                        <div class="row" style="display: flex; margin-top: 20px;">
+                            <div style="width: 55%; padding-right: 15px;">
+                                <table class="table table-condensed table-bordered"
+                                       style="width: 100%; margin-top: 20px;page-break-inside: avoid;border: 2px solid black; border-collapse: collapse;">
+                                    <tr>
+                                        <td style="border: 1px solid black;">
+                                            <span style="font-weight: bold;">Project Name</span>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-field="e.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black;">
+                                            <span style="font-weight: bold;">Project Category</span>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-field="e.category_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black;">
+                                            <span style="font-weight: bold;">Department</span>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-field="e.department_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black;">
+                                            <span style="font-weight: bold;">Project Manager</span>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-field="e.user_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black;">
+                                            <span style="font-weight: bold;">Executive Department</span>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-field="e.department_execute_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black;">
+                                            <span style="font-weight: bold;">Project Start Date</span>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-field="e.start"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black;">
+                                            <span style="font-weight: bold;">Project End Date</span>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-field="e.date"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid black;">
+                                            <span style="font-weight: bold;">Completion Percentage</span>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <t t-esc="e.progress"/>%
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div style="width: 45%; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                                <t t-if="not chart_map.get(e.id)">
+                                    <p style="color: red;">No chart image available</p>
+                                </t>
+                                <img t-if="chart_map.get(e.id)"
+                                     t-att-src="'data:image/png;base64,%s' % to_text(chart_map.get(e.id))"
+                                     style="max-width: 400px;"/>
+                            </div>
+                        </div>
+
+                        <t t-if="e.project_phase_ids">
+                            <div class="report-section">
+
+                                <h5>
+                                    Project Stages
+                                </h5>
+                                <table class="table table-condensed table-bordered"
+                                       style="width: 100%; margin-top: 20px;page-break-inside: avoid;border: 2px solid black; border-collapse: collapse;">
+                                    <thead>
+                                        <tr>
+                                            <th style="border: 1px solid black;">
+                                                <span style="font-weight: bold;">Stage</span>
+                                            </th>
+                                            <th style="border: 1px solid black;">
+                                                <span style="font-weight: bold;">Start Date</span>
+                                            </th>
+                                            <th style="border: 1px solid black;">
+                                                <span style="font-weight: bold;">End Date</span>
+                                            </th>
+                                            <th style="border: 1px solid black;">
+                                                <span style="font-weight: bold;">Weight</span>
+                                            </th>
+                                            <th style="border: 1px solid black;">
+                                                <span style="font-weight: bold;">Completion</span>
+                                            </th>
+                                            <th style="border: 1px solid black;">
+                                                <span style="font-weight: bold;">Task</span>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="e.project_phase_ids" t-as="phase">
+                                            <tr>
+                                                <td style="border: 1px solid black;">
+                                                    <span t-esc="phase.phase_id.name"/>
+                                                </td>
+                                                <td style="border: 1px solid black;">
+                                                    <span t-esc="phase.start_date"/>
+                                                </td>
+                                                <td style="border: 1px solid black;">
+                                                    <span t-esc="phase.end_date"/>
+                                                </td>
+                                                <td style="border: 1px solid black;">
+                                                    <span t-esc="phase.weight"/>
+                                                </td>
+                                                <td style="border: 1px solid black;">
+                                                    <span><t t-esc="phase.progress"/>%
+                                                    </span>
+                                                </td>
+                                                <td style="border: 1px solid black;">
+                                                    <span t-esc="phase.task_count"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
+
+                        <div class="report-section">
+                            <h5>
+                                Project Payments
+                            </h5>
+                            <table class="table table-condensed table-bordered"
+                                   style="width: 100%; margin-top: 20px;page-break-inside: avoid;border: 2px solid black; border-collapse: collapse;"
+                            >
+                                <tr>
+                                    <td style="border: 1px solid black;">
+                                        <span>Contract Amount</span>
+                                    </td>
+                                    <td style="border: 1px solid black;">
+                                        <span t-esc="'%.2f' % e.contract_value_untaxed"/>
+                                    </td>
+                                    <td style="border: 1px solid black;">
+                                        <span>Consultant Fees</span>
+                                    </td>
+                                    <td style="border: 1px solid black;">
+                                        <span t-esc="'%.2f' % e.consultant_cost"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black;">
+                                        <span>Tax amount</span>
+                                    </td>
+                                    <td style="border: 1px solid black;">
+                                        <span t-esc="'%.2f' % e.tax_amount"/>
+                                    </td>
+                                    <td style="border: 1px solid black;">
+                                        <span>Total</span>
+                                    </td>
+                                    <td style="border: 1px solid black;">
+                                        <span t-esc="'%.2f' % e.contract_value"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black;">
+                                        <span>Additional Work Amount</span>
+                                    </td>
+                                    <td style="border: 1px solid black;">
+                                        <!--                                        <span t-esc="(e.total_invoiced_amount or 0) - (e.contract_value or 0) + (e.contract_value or 0)"/>-->
+                                        <t t-if="e.total_invoiced_amount &gt; (e.contract_value + e.consultant_cost)">
+                                            <t t-set="additional_work"
+                                               t-value="e.total_invoiced_amount - e.contract_value - e.consultant_cost"/>
+                                        </t>
+                                        <t t-else="">
+                                            <t t-set="additional_work" t-value="0"/>
+                                        </t>
+                                        <span t-esc="'%.2f' % additional_work"/>
+                                    </td>
+                                    <td style="border: 1px solid black;"/>
+                                    <td style="border: 1px solid black;"/>
+                                </tr>
+                                <tr/>
+                            </table>
+                            <t t-if="e.invoice_ids">
+                                <table class="table table-condensed table-bordered"
+                                       style="width: 100%; margin-top: 20px;page-break-inside: avoid;border: 2px solid black; border-collapse: collapse;">
+                                    <thead>
+                                        <tr>
+                                            <th style="border: 1px solid black;">
+                                                <span style="font-weight: bold;">Payment</span>
+                                            </th>
+                                            <th style="border: 1px solid black;">
+                                                <span style="font-weight: bold;">Due Date</span>
+                                            </th>
+                                            <th style="border: 1px solid black;">
+                                                <span style="font-weight: bold;">Amount</span>
+                                            </th>
+                                            <th style="border: 1px solid black;">
+                                                <span style="font-weight: bold;">Tax</span>
+                                            </th>
+                                            <th style="border: 1px solid black;">
+                                                <span style="font-weight: bold;">Total</span>
+                                            </th>
+                                            <th style="border: 1px solid black;">
+                                                <span style="font-weight: bold;">Payment Status</span>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="e.invoice_ids" t-as="invoice">
+                                            <tr>
+                                                <td style="border: 1px solid black;">
+                                                    <span t-esc="invoice.name"/>
+                                                </td>
+                                                <td style="border: 1px solid black;">
+                                                    <span t-esc="invoice.plan_date"/>
+                                                </td>
+                                                <td style="border: 1px solid black;">
+                                                    <t t-set="subtotal" t-value="0"/>
+                                                    <t t-foreach="invoice.project_invline_ids" t-as="line">
+                                                        <t t-set="subtotal" t-value="subtotal + line.price_subtotal"/>
+                                                    </t>
+                                                    <span t-esc="'%.2f' % subtotal"/>
+                                                </td>
+                                                <td style="border: 1px solid black;">
+                                                    <t t-set="tax_total" t-value="0"/>
+                                                    <t t-foreach="invoice.project_invline_ids" t-as="line">
+                                                        <t t-set="tax_total" t-value="tax_total + line.price_tax"/>
+                                                    </t>
+                                                    <span t-esc="'%.2f' % tax_total"/>
+                                                </td>
+                                                <td style="border: 1px solid black;">
+                                                    <span t-esc="'%.2f' % invoice.amount"/>
+                                                </td>
+                                                <!--                                                <td style="border: 1px solid black;">-->
+                                                <!--                                                    <span t-esc="dict(invoice._fields['payment_state'].selection).get(invoice.payment_state or 'not_paid')"/>-->
+                                                <!--                                                    &lt;!&ndash;                                                    <span t-field="invoice.payment_state"/>&ndash;&gt;-->
+                                                <!--                                                </td>-->
+                                                <td style="border: 1px solid black;">
+                                                    <t t-set="label_dict"
+                                                       t-value="dict(invoice._fields['payment_state']._description_selection(invoice.env))"/>
+                                                    <span t-esc="label_dict.get(invoice.payment_state or 'not_paid')"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </t>
+                        </div>
+                        <t t-if="not is_html_empty(e.description)">
+                            <div style="page-break-inside: avoid;">
+                                <h5>Project Details</h5>
+                                <!--                                <span t-field="e.description"/>-->
+                                <t t-raw="e.description"/>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

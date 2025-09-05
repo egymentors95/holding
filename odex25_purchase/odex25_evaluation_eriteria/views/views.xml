@@ -1,0 +1,141 @@
+<odoo>
+    <record id="purchase_committe_type_form_view_inherit" model="ir.ui.view">
+        <field name="name">purchase.committe.type.inherit</field>
+        <field name="model">purchase.committee.type</field>
+        <field name="inherit_id" ref="purchase_requisition_custom.purchase_committe_type_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='type_cat']" position="after">
+                <field name="available_types"/>
+            </xpath>
+
+            <xpath expr="//notebook//page[1]" position="after">
+                <page string="Evaluation criteria">
+                    <field name="purchase_committee_type_line" widget="one2many_list">
+                        <tree editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="evaluation_criteria"/>
+                            <field name="degree"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="inherit_purchase_order_form" model="ir.ui.view">
+        <field name="name">inherit_purchase_order_form</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook//page[1]" position="after">
+                <page string="Initial Evaluation criteria">
+                    <field name="select" readonly="0"/>
+                    <field name="initial_evaluation_lines" widget="one2many_list">
+                        <tree editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="user_id"/>
+                            <field name="evaluation_criteria"/>
+                            <field name="evaluation"/>
+                            <field name="degree"/>
+                        </tree>
+                    </field>
+                    <group class="oe_subtotal_footer oe_right">
+                        <!--                        <field name="committee_members"/>-->
+                        <field name="avg_evaluation"/>
+                        <field name="total_evaluation"/>
+                    </group>
+                </page>
+            </xpath>
+
+
+<!--            <xpath expr="//button[@name='button_confirm']" position="attributes">-->
+<!--                <attribute name="attrs">-->
+<!--                    {'invisible':[('state', 'in', ('wait', 'sent')),-->
+<!--                    ('is_purchase_budget', '=', True)]}-->
+<!--                </attribute>-->
+<!--            </xpath>-->
+
+<!--            <xpath expr="//button[@name='button_confirm'][1]" position="attributes">-->
+<!--                <attribute name="attrs">-->
+<!--                    {'invisible':[('state', 'in', ('wait', 'sent')),-->
+<!--                    ('is_purchase_budget', '=', True)]}-->
+<!--                </attribute>-->
+<!--            </xpath>-->
+        </field>
+    </record>
+
+    <!-- Inherit Form View to Modify it -->
+    <record id="select_reason_wizard_view_inherit" model="ir.ui.view">
+        <field name="name">select_reason_wizard_view_inherit</field>
+        <field name="model">select.reason</field>
+        <field name="inherit_id" ref="purchase_requisition_custom.select_wizard_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='select_reason']" position="after">
+                <!-- Add your fields or attributes here -->
+                <field name="purchase_committee_type" invisible="1"/>
+                <notebook>
+                    <page string="Evaluation criteria">
+                        <field name="purchase_committee_type_line" create="0" widget="one2many_list">
+                            <tree editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="evaluation_criteria" readonly="1"/>
+                                <field name="evaluation"/>
+                                <field name="degree" readonly="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Inherit Form View to Modify it -->
+    <record id="view_budget_confirmation_form_inherit" model="ir.ui.view">
+        <field name="name">view_budget_confirmation_form_extend</field>
+        <field name="model">budget.confirmation</field>
+        <field name="inherit_id" ref="account_budget_custom.view_budget_confirmation_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='date']" position="after">
+                <field name="approved_by_id" invisible="0"/>
+                <field name="approved_date" invisible="0"/>
+            </xpath>
+
+        </field>
+    </record>
+
+
+
+
+    <!--    <record id="purchase_order_governmental_form_viewe" model="ir.ui.view">-->
+    <!--        <field name="name">purchase.order.governmental.form.customm</field>-->
+    <!--        <field name="model">purchase.order</field>-->
+    <!--        <field name="inherit_id" ref="purchase.purchase_order_form"/>-->
+    <!--        <field name="priority" eval="200"/>-->
+    <!--        <field name="arch" type="xml">-->
+
+
+    <!--&lt;!&ndash;            states="wait,sign,sent"&ndash;&gt;-->
+    <!--            <xpath expr="//button[@name='button_confirm']" position="replace">-->
+    <!--                <button name="button_confirm" type="object"-->
+    <!--                         string="Confirm Order"-->
+    <!--                attrs="{'invisible': [('state', 'in', ('wait', 'sent')),-->
+    <!--                        ('is_purchase_budget', '=', True)]}"-->
+    <!--                        class="oe_highlight" id="bid_confirm"/>-->
+    <!--            </xpath>-->
+
+    <!--            <xpath expr="//button[@name='button_confirm']" position="attributes">-->
+    <!--                    <attribute name="attrs">-->
+    <!--                        {'invisible':[('state', 'in', ('wait', 'sent')),-->
+    <!--                        ('is_purchase_budget', '=', True)]}-->
+    <!--                    </attribute>-->
+    <!--                </xpath>-->
+
+
+
+
+
+    <!--        </field>-->
+    <!--    </record>-->
+</odoo>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <template id="membership_external_layout">
+            <t t-if="not o" t-set="o" t-value="doc"/>
+
+            <t t-if="not company">
+                <!-- Multicompany -->
+                <t t-if="company_id">
+                    <t t-set="company" t-value="company_id"/>
+                </t>
+                <t t-elif="o and 'company_id' in o and o.company_id.sudo()">
+                    <t t-set="company" t-value="o.company_id.sudo()"/>
+                </t>
+                <t t-else="else">
+                    <t t-set="company" t-value="res_company"/>
+                </t>
+            </t>
+
+
+            <t t-call="dev_membership.membership_external_layout_standard">
+                <t t-raw="0"/>
+            </t>
+
+        </template>
+
+        <template id="membership_external_layout_standard">
+
+            <div class="header" style="width: 100%; padding: 10px 0;color: #2F5423;">
+                <div class="row" style="display: flex; align-items: center; justify-content: space-between;">
+
+
+                    <!-- Right Side: Company Name in H1 -->
+                    <div style="width: 40%; text-align: right;color: #2F5423;">
+                        <br></br>
+                        <p t-esc="company.name" style="font-size: 18px; font-weight: bold; color: #2F5423"/>
+                        <p style="margin: 0; font-size: 16px; font-weight: bold;text-align: center">بمنطقة الرياض</p>
+                        <br></br>
+                        <p style="margin: 0; font-size: 12px; font-weight: bold;">مسجلة بوزارة الموارد البشرية و التنمية
+                            الإجتماعية برقم 166
+                        </p>
+
+
+                    </div>
+
+                    <!-- Center: Company Logo -->
+                    <div style="width: 20%; text-align: center;">
+                        <img style="border-radius: 8px; width: 100%;height:190px"
+                             src="/dev_membership/static/description/company-logo.png"/>
+
+                    </div>
+
+                    <!-- Left Side: Three-line text -->
+                    <div style="width: 40%; text-align: right; padding-right: 20px;font-size: 14px; font-weight: bold;;color: #2F5423;">
+                        <br></br>
+
+                        <p>الرقم: ...........................................</p>
+                        <br></br>
+                        <p>التاريخ:... ......................................</p>
+                        <br></br>
+                        <p>المشفوعات: .................................</p>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div t-attf-class="article o_report_layout_standard o_company_#{company.id}_layout"
+                 t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id"
+                 t-att-data-oe-lang="o and o.env.context.get('lang')">
+                <div class="pt-5">
+                    <!-- This div ensures that the address is not cropped by the header. -->
+                    <t t-call="web.address_layout"/>
+                </div>
+                <t t-raw="0"/>
+            </div>
+
+
+            <div t-attf-class="footer o_standard_footer o_company_#{company.id}_layout"
+                 style="padding-top: 10px; text-align: center;">
+                <div class="text-center"
+                     style="background-color: #2F5423; color: white; padding: 5px; font-size: 12px; border-radius:10px;">
+                    <ul class="list-inline mb4">
+                        <!-- using the list-inline-item class from bootstrap causes weird behaviours in pdf report
+                             adding d-inline class fixes the problem-->
+
+                        <li t-if="company.country_id" class="list-inline-item d-inline">
+                            <span t-field="company.country_id.name"/>
+                            <span>-</span>
+                        </li>
+                        <li t-if="company.city" class="list-inline-item d-inline">
+                            <span t-field="company.city"/>
+                        </li>
+
+                        <li t-if="company.po_no" class="list-inline-item d-inline">
+                            <span>ص ب</span>
+                            <span t-field="company.po_no"/>
+                            <span t-field="company.city"/>
+                            <span t-field="company.zip"/>
+                        </li>
+                        <!--                        <li t-if="company.website" class="list-inline-item d-inline">-->
+                        <!--                            <span t-field="company.website"/>-->
+                        <!--                        </li>-->
+                        <li t-if="company.phone" class="list-inline-item d-inline">
+                            <span class="o_force_ltr" t-field="company.phone"/>
+                        </li>
+                        <li t-if="company.vat" class="list-inline-item d-inline"><t
+                                t-esc="company.country_id.vat_label or 'Tax ID'"/>:
+                            <span t-field="company.vat"/>
+                        </li>
+                    </ul>
+
+
+                </div>
+
+
+                <!-- Social Media Icons -->
+
+                <div style="display: inline-block; padding: 10px; width: auto; color:#2F5423; vertical-align: middle;">
+                    <a href="/website/social/facebook" class="s_social_media_facebook" target="_blank">
+                        <i class="fa fa-facebook" style="color:#2F5423"/>
+                    </a>
+                    <a href="https://x.com/ensanorg" class="s_social_media_twitter" target="_blank">
+                        <i class="fa fa-twitter" style="color:#2F5423"/>
+                    </a>
+
+                    <a href="/website/social/linkedin" class="s_social_media_linkedin" target="_blank">
+                        <i class="fa fa-linkedin" style="color:#2F5423"/>
+                    </a>
+                    <a href="/website/social/instagram" class="s_social_media_instagram" target="_blank">
+                        <i class="fa fa-instagram" style="color:#2F5423"/>
+                    </a>
+                    <a href="/website/social/youtube" class="s_social_media_youtube" target="_blank">
+                        <i class="fa fa-youtube" style="color:#2F5423"/>
+                    </a>
+
+                </div>
+
+                <div style="display: inline-block; background-color: #2F5423; color: white; padding: 5px 10px; border-radius: 5px; font-size: 14px; vertical-align: middle;">
+                    الرقم الموحد 800 124 1777
+                </div>
+
+
+                <!-- QR Code for Website -->
+                <!--                                <div style="margin-top: 5px;">-->
+                <!--                                    <t t-if="company.website">-->
+                <!--                                        <t t-call="web.8">-->
+                <!--                                            <t t-set="barcode_type">QR</t>-->
+                <!--                                            <t t-set="barcode_value" t-value="company.website"/>-->
+                <!--                                        </t>-->
+                <!--                                    </t>-->
+                <!--                                </div>-->
+
+                <div style="font-size: 12px; color: #2F5423; margin-top: 5px;">
+                    <a t-att-href="company.website" style="color: #2F5423; text-decoration: none;">
+                        <t t-esc="company.website"/>
+                    </a>
+                </div>
+            </div>
+
+
+        </template>
+
+    </data>
+</odoo>

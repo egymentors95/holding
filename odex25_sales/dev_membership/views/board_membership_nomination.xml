@@ -1,0 +1,154 @@
+<odoo>
+
+    <record id="view_tree_board_membership_nomination" model="ir.ui.view">
+        <field name="name">board.membership.nomination.tree</field>
+        <field name="model">board.membership.nomination</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="nominations_committee" widget="many2many_tags"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_form_board_membership_nomination" model="ir.ui.view">
+        <field name="name">board.membership.nomination.form</field>
+        <field name="model">board.membership.nomination</field>
+        <field name="arch" type="xml">
+            <form string="Board Membership Nomination">
+                <header>
+                     <button name="action_nominating" string="Nominate" type="object" class="btn-primary" attrs="{'invisible': [('state', '!=', 'new')]}"/>
+                    <button name="action_approve" string="Approve" type="object" class="btn-primary" attrs="{'invisible': [('state', '!=', 'nominated')]}"/>
+                    <button name="action_reject" string="Reject" type="object" class="btn-danger" attrs="{'invisible': [('state', '!=', 'nominated')]}"/>
+                    <button name="action_back_to_initial" string="Back to Initial" type="object" attrs="{'invisible': [('state', '!=', 'rejected')]}"/>
+                    <button name="action_send_invitation_email" string="Send Invitation Email" type="object" attrs="{'invisible': [('state', '!=', 'approved')]}"/>
+                    <button name="action_send_message" string="Send Message" type="object" attrs="{'invisible': [('state', '!=', 'approved')]}"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="nominations_committee" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                        </group>
+
+                    </group>
+                    <notebook>
+                        <page string="Candidates">
+                            <field name="board_nominee_ids">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="mobile" widget="phone"/>
+                                    <field name="email"/>
+                                    <field name="membership_type_id"/>
+                                    <field name="membership_level_id"/>
+                                    <field name="join_date"/>
+                                    <field name="subscription_years"/>
+                                    <field name="status" readonly="1"/>
+                                    <field name="vote_count"/>
+                                    <field name="notes"/>
+                                    <field name="membership_number" invisible="1"/>
+                                    <button name="action_accept" string="Accept" type="object" class="btn-primary" attrs="{'invisible': [('status', 'not in', ['nominated', 'rejected'])]}"/>
+                                    <button name="action_reject" string="Reject" type="object" class="btn-danger" attrs="{'invisible': [('status', '!=', 'nominated')]}"/>
+                                    <button name="action_board_member" string="Board Member" type="object" class="btn-primary" attrs="{'invisible': [('status', '!=', 'accepted')]}"/>
+                                    <button name="action_back_to_nominated" string="Withdrawal" type="object" class="btn-primary" attrs="{'invisible': [('status', 'not in', ['accepted', 'board_member'])]}"/>
+
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                 <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids" />
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_tree_board_nominee" model="ir.ui.view">
+        <field name="name">board.nominee.tree</field>
+        <field name="model">board.nominee</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="mobile" widget="phone"/>
+                <field name="email"/>
+                <field name="membership_type_id"/>
+                <field name="membership_level_id"/>
+                <field name="join_date"/>
+                <field name="subscription_years"/>
+                <field name="status" readonly="1"/>
+                <field name="vote_count"/>
+                <field name="notes"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_form_board_nominee" model="ir.ui.view">
+        <field name="name">board.nominee.form</field>
+        <field name="model">board.nominee</field>
+        <field name="arch" type="xml">
+            <form string="Board Nominee">
+                <header>
+                    <button name="action_accept" string="Accept" type="object" class="btn-primary"
+                            attrs="{'invisible': [('status', 'not in', ['nominated', 'rejected'])]}"/>
+                    <button name="action_reject" string="Reject" type="object" class="btn-danger"
+                            attrs="{'invisible': [('status', '!=', 'nominated')]}"/>
+                    <button name="action_board_member" string="Board Member" type="object" class="btn-primary"
+                            attrs="{'invisible': [('status', '!=', 'accepted')]}"/>
+
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="mobile"/>
+                            <field name="email"/>
+                            <field name="membership_type_id"/>
+                            <field name="membership_level_id"/>
+                            <field name="nomination_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="join_date"/>
+                            <field name="subscription_years"/>
+                            <field name="status"/>
+                            <field name="vote_count"/>
+                            <field name="notes"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_board_membership_nomination" model="ir.actions.act_window">
+        <field name="name">Board Membership Nominations</field>
+        <field name="res_model">board.membership.nomination</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+     <record id="action_board_nominee" model="ir.actions.act_window">
+        <field name="name">Board Nominees</field>
+        <field name="res_model">board.nominee</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="membership_menu" name="Board Membership Nomination" parent="menu_membership_main" sequence="7"/>
+
+    <menuitem id="board_nominee_menu" name="Board Nominees" parent="membership_menu" action="action_board_nominee" sequence="2"/>
+
+    <menuitem id="board_nomination_menu" name="Board Membership Nominations" parent="membership_menu" action="action_board_membership_nomination" sequence="1"/>
+
+</odoo>

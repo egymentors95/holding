@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="event_event_view_form" model="ir.ui.view">
+        <field name="name">event.event.view.form.inherit.enterprise</field>
+        <field name="model">event.event</field>
+        <field name="inherit_id" ref="event.view_event_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='track_count']/.." position='replace'>
+                <field name="track_gantt_initial_date" invisible="1"/>
+                <field name="track_gantt_scale" invisible="1"/>
+                <button
+                        name="%(website_event_track.action_event_track_from_event)d"
+                        type="action"
+                        class="oe_stat_button"
+                        icon="fa-microphone"
+                        context="{'default_date': date_begin, 'initialDate': track_gantt_initial_date, 'default_scale': track_gantt_scale}">
+                    <field name="track_count" string="Tracks" widget="statinfo"/>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='date_tz']" position="before">
+                <field name="remaining_days"/>
+                <field name="remaining_hours"/>
+            </xpath>
+
+             <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="Description_event"/>
+            </xpath>
+             <xpath expr="//field[@name='user_id']" position="after">
+                <field name="job_title"/>
+                <field name="department_id"/>
+                <field name="branch_name"/>
+            </xpath>
+             <xpath expr="//field[@name='event_type_id']" position="before">
+                <field name="departments_id"/>
+                <field name="branchs_name"/>
+
+            </xpath>
+
+            <xpath expr="//field[@name='address_id']" position="attributes">
+                <attribute name="context">{'show_address': 1, 'default_is_event_address': True,'default_is_company':
+                    True}
+                </attribute>
+                <attribute name="options">{'no_create': True, 'no_create_edit': True}</attribute>
+                <attribute name="domain">[('is_event_address','=',True)]</attribute>
+            </xpath>
+            <xpath expr="//field[@name='organizer_id']" position="attributes">
+                <attribute name="context">{'default_is_company': True,'default_is_organizer': True,}</attribute>
+                <attribute name="options">{'no_create': True, 'no_create_edit': True}</attribute>
+                <attribute name="domain">[('is_organizer','=',True)]</attribute>
+            </xpath>
+            <xpath expr="//field[@name='address_id']" position="after">
+                <label for="street" string="Address"/>
+                <div class="o_address_format">
+                    <field name="street" placeholder="Street..." class="o_address_street"/>
+                    <field name="street2" placeholder="Street 2..." class="o_address_street"/>
+                    <field name="city" placeholder="City" class="o_address_city"/>
+                    <field name="state_id" class="o_address_state" placeholder="State"
+                           options="{'no_open': True, 'no_quick_create': True}"/>
+                    <field name="country_id" placeholder="Country" class="o_address_country"
+                           options='{"no_open": True, "no_create": True}'/>
+                </div>
+                <field name="link" widget="url"/>
+            </xpath>
+        </field>
+    </record>
+    <!-- Allow "Create and Edit" only for a specific group -->
+    <record id="event_event_form_view_group" model="ir.ui.view">
+        <field name="name">event.event.form.view.group</field>
+        <field name="model">event.event</field>
+        <field name="inherit_id" ref="event_event_view_form"/>
+        <field name="groups_id" eval="[(4, ref('event.group_event_manager'))]"/>
+        <field name="arch" type="xml">
+            <field name="address_id" position="attributes">
+                <attribute name="options">{'no_create': False, 'no_create_edit': False}</attribute>
+            </field>
+            <field name="organizer_id" position="attributes">
+                <attribute name="options">{'no_create': False, 'no_create_edit': False}</attribute>
+            </field>
+        </field>
+    </record>
+</odoo>

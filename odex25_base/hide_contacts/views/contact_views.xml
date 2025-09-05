@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="contacts.menu_contacts" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('hide_contacts.group_show_contact_module')])]"/>
+    </record>
+
+</odoo>

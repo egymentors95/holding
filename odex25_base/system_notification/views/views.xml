@@ -1,0 +1,64 @@
+<odoo>
+    <data>
+        <!-- base.automation inherit form view -->
+        <record id="view_base_automation_form" model="ir.ui.view">
+            <field name="name">base.automation.inherit.view.form</field>
+            <field name="model">base.automation</field>
+            <field name="inherit_id" ref="base_automation.view_base_automation_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='template_id']" position="after">
+                    <field name="send_notify"/>
+                    <field name="hr_notifys"/>
+                    <field name="notify_to_groups_ids" widget="many2many_tags"
+                           attrs="{'invisible': [('state', '!=', 'email')],'required': [('state', '=', 'email')]}"/>
+                    <field name="notify_cc_groups_ids" widget="many2many_tags"
+                           attrs="{'invisible': [('state', '!=', 'email')]}"/>
+                </xpath>
+                <xpath expr="//notebook" position="inside">
+                    <page string="HR Notification Data" attrs="{'invisible': [('hr_notifys', '!=', True)]}">
+                        <group>
+                            <group>
+                                <field name="department_manager_notify" />
+                                <field name="direct_manager_notify" />
+                                <field name="employee_notify" />
+                            </group>
+                            <group>
+                                <field name="ceo_notify"/>
+                                <field name="services_manager_id" />
+                                <field name="hr_manager_notify"/>
+                                <field name="hr_email_notify"/>
+                            </group>
+
+                            <group>
+                                <field name="financial_manager_id"/>
+                                <field name="it_manager_id"/>
+                                <field name="cyber_security_id"/>
+                                <field name="admin_manager_id"/>
+                            </group>
+                        </group>
+
+                    </page>
+
+                    <page string="Notification Data" attrs="{'invisible': [('send_notify', '!=', True)]}">
+                        <group>
+                            <group>
+                                <field name="notify_title" attrs="{'required': [('send_notify', '=', True)]}"/>
+                            </group>
+                            <group>
+                                <field name="notify_summary" attrs="{'required': [('send_notify', '=', True)]}"/>
+                                <field name="notify_note" attrs="{'required': [('send_notify', '=', True)]}"/>
+                            </group>
+                        </group>
+
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <menuitem name="System Notification" id="system_notification.menu_root"/>
+
+        <record id="base_automation.menu_base_automation_form" model="ir.ui.menu">
+            <field name="name">System Notifications</field>
+            <field name="parent_id" ref="system_notification.menu_root"/>
+        </record>
+    </data>
+</odoo>

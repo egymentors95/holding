@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_inherited" model="ir.ui.view">
+        <field name="name">view.partner.form.inherited</field>
+        <field name="model">res.partner</field>
+        <field name="priority">10</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[5]" position="after">
+    <page name="event_info" string="بيانات الفعالية"  groups="event.group_event_manager">
+        <group>
+            <field name="is_event_address" readonly="1"/>
+            <field name="is_organizer" readonly="1"/>
+            <field name="is_sponsor" readonly="1"/>
+        </group>
+    </page>
+</xpath>
+
+            <xpath expr="//field[@name='website']" position="attributes">
+                <attribute name="attrs">{'required': [('is_sponsor', '=',
+                    True)],'invisible':[('company_type','!=','company')]}
+                </attribute>
+            </xpath>
+            <xpath expr="//field[@name='phone']" position="attributes">
+                <attribute name="attrs">{'required': [('is_sponsor', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='mobile']" position="attributes">
+                <attribute name="attrs">{'required': [('is_sponsor', '=', True)]}</attribute>
+            </xpath>
+            <field name="title" position="after">
+                <field name="contact_person" attrs="{'invisible': [('is_sponsor', '=', False)]}"/>
+            </field>
+        </field>
+    </record>
+    <record id="res_partner_view_form_inherit_sponsor" model="ir.ui.view">
+        <field name="name">res.partner.sponsor.form.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="mail.res_partner_view_form_inherit_mail"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='email']" position="attributes">
+                <attribute name="attrs">{'required': [('is_sponsor', '=', True)]}</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="contacts.action_contacts" model="ir.actions.act_window">
+        <field name="domain">[('is_organizer','=',False),('is_event_address','=',False),('is_sponsor','=',False)]
+        </field>
+    </record>
+    <record id="base.action_partner_form" model="ir.actions.act_window">
+        <field name="domain">[('is_organizer','=',False),('is_event_address','=',False),('is_sponsor','=',False)]
+        </field>
+    </record>
+    <record id="base.action_partner_customer_form" model="ir.actions.act_window">
+        <field name="domain">[('is_organizer','=',False),('is_event_address','=',False),('is_sponsor','=',False)]
+        </field>
+    </record>
+<!--    <record id="base.action_partner_supplier_form" model="ir.actions.act_window">-->
+<!--        <field name="domain">[('is_organizer','=',False),('is_event_address','=',False),('is_sponsor','=',False),('supplier_rank','>', 0)]-->
+<!--        </field>-->
+<!--        <field name="search_view_id" ref="base.view_res_partner_filter"/>-->
+<!--    </record>-->
+    <record id="account.res_partner_action_customer" model="ir.actions.act_window">
+        <field name="domain">[('is_organizer','=',False),('is_event_address','=',False),('is_sponsor','=',False)]
+        </field>
+    </record>
+    <record id="account.res_partner_action_supplier" model="ir.actions.act_window">
+        <field name="domain">[('is_organizer','=',False),('is_event_address','=',False),('is_sponsor','=',False),('supplier_rank','>', 0)]
+        </field>
+        <field name="search_view_id" ref="base.view_res_partner_filter"/>
+    </record>
+    <record id="action_organizer_form" model="ir.actions.act_window">
+        <field name="name">Event organizers</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="context">{'default_is_company': True,'default_is_organizer': True,}</field>
+        <field name="domain">[('is_organizer','=',True)]</field>
+        <field name="search_view_id" ref="base.view_res_partner_filter"/>
+    </record>
+    <record id="event_sponsors_action" model="ir.actions.act_window">
+        <field name="name">Event Sponsors</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="context">{'default_is_sponsor': True,}</field>
+        <field name="domain">[('is_sponsor','=',True)]</field>
+        <field name="search_view_id" ref="base.view_res_partner_filter"/>
+    </record>
+    <menuitem name="Event Organizers"
+              id="menu_event_organizer"
+              sequence="3"
+              parent="event.menu_event_configuration"
+              action="action_organizer_form"
+              groups="event.group_event_manager"/>
+    <menuitem name="Event Sponsors"
+              id="menu_event_sponsors"
+              sequence="4"
+              parent="event.menu_event_configuration"
+              action="event_sponsors_action"
+              groups="event.group_event_manager"/>
+</odoo>

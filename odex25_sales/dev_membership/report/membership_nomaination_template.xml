@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <odoo>
+        <template id="main_membership_nomination">
+            <t t-call="dev_membership.membership_external_layout">
+                <div class="page">
+                    <br></br>
+                    <!-- Report Title -->
+                    <div style="font-size: 18px; font-weight: bold; margin-top: 10px;color: #2F5423;text-align: center">
+                        قائمة المرشحين لعضوية مجلس الإدارة
+                    </div>
+                    <br></br>
+
+                    <!-- Date -->
+                    <div style="font-size: 14px; margin-top: 5px;color: #2F5423;text-align: center">
+                        <strong>التاريخ:</strong>
+                        <t t-esc="time.strftime('%Y-%m-%d')"/>
+                    </div>
+
+
+                    <!-- Table -->
+                    <table class="table table-bordered"
+                           style="border-color:#2F5423;width: 100%; text-align: center; border-collapse: collapse; margin-top: 10px; border: 1px solid #2F5423;">
+                        <thead>
+                            <tr style="color: #2F5423;">
+                                <th style="padding: 5px;">م</th>
+                                <th style="padding: 5px;">رقم العضوية</th>
+                                <th style="padding: 5px;">اللقب</th>
+                                <th style="padding: 5px;">الاسم</th>
+                                <th style="padding: 5px;">تاريخ الانضمام</th>
+                                <th style="padding: 5px;">عدد سنوات الاشتراك</th>
+                                <th style="padding: 5px;">ملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="sequence" t-value="0"/>
+
+                            <t t-foreach="o.board_nominee_ids" t-as="line">
+                                <t t-set="sequence" t-value="sequence +1"/>
+                                <tr>
+                                    <td>
+                                        <t t-esc="sequence"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="line.membership_number"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="line.name.title.name"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="line.name.name"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="line.join_date"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="line.subscription_years"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="line.notes or ''"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+
+            </t>
+        </template>
+
+        <template id="membership_nomination_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="dev_membership.main_membership_nomination"/>
+                </t>
+            </t>
+        </template>
+    </odoo>
+
+</odoo>

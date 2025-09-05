@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="event_sponsor_view_form_inherit" model="ir.ui.view">
+        <field name="name">event.sponsor.view.form.inherit</field>
+        <field name="model">event.sponsor</field>
+        <field name="inherit_id" ref="website_event_track.event_sponsor_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="context">{'default_is_company': True, 'default_is_sponsor': True}</attribute>
+                <attribute name="options">{'no_create': True, 'no_create_edit': True}</attribute>
+                <attribute name="domain">[('is_sponsor','=',True)]</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="contact_person" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='email']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='url']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='phone']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='mobile']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="event_sponsor_view_form_group" model="ir.ui.view">
+        <field name="name">event.sponsor.view.form.group</field>
+        <field name="model">event.sponsor</field>
+        <field name="inherit_id" ref="website_event_track.event_sponsor_view_form"/>
+        <field name="groups_id" eval="[(4, ref('event.group_event_manager'))]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="options">{'no_create': False, 'no_create_edit': False}</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>
