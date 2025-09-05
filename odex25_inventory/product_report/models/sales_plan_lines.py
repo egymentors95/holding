@@ -11,10 +11,10 @@ class SalesPlanLines(models.Model):
     price = fields.Float(string='Price')
     price_total = fields.Float(string='Total Price', compute='_compute_price_total', store=True)
     quantity_per_month = fields.Float(string='Quantity per Month', compute='_compute_quantity_per_month', store=True)
-    price_total_per_month = fields.Float(string='Price Total per Month', compute='_compute_price_total', store=True)
+    price_total_per_month = fields.Float(string='Price Total per Month', compute='_compute_price_total_per_month', store=True)
 
     @api.depends('price_total', 'sales_plan_id.number_of_months')
-    def _compute_price_total(self):
+    def _compute_price_total_per_month(self):
         for record in self:
             if record.sales_plan_id.number_of_months:
                 record.price_total_per_month = record.price_total / record.sales_plan_id.number_of_months
