@@ -60,7 +60,7 @@ class ProfitabilityWizard(models.TransientModel):
             total_quantity = quantity_out_invoice - quantity_out_refund
 
             price_out_invoice = sum(
-                account_line.price_subototal
+                account_line.price_subtotal
                 for account_line in self.env['account.move.line'].search([
                     ('product_id', '=', product.id),
                     ('company_id', '=', self.env.companies.ids),
@@ -71,7 +71,7 @@ class ProfitabilityWizard(models.TransientModel):
                 ])
             )
             price_out_refund = sum(
-                account_line.price_subototal
+                account_line.price_subtotal
                 for account_line in self.env['account.move.line'].search([
                     ('product_id', '=', product.id),
                     ('company_id', '=', self.env.companies.ids),
