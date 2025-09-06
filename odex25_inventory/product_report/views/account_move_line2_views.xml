@@ -18,6 +18,8 @@
                 <field name="total_plan_quantity"/>
                 <field name="total_plan_price"/>
                 <field name="plan_nsap"/>
+                <field name="qty_percentage"/>
+                <field name="value_percentage"/>
             </tree>
         </field>
     </record>

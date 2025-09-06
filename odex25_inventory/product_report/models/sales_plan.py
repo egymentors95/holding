@@ -17,6 +17,7 @@ class SalesPlan(models.Model):
         ('confirmed', 'Confirmed'),
     ], string='Status', default='draft')
     sales_plan_line_ids = fields.One2many(comodel_name='sales.plan.lines', inverse_name='sales_plan_id', string='Sales Plan Lines')
+    company_id = fields.Many2one(comodel_name='res.company', string='Company', default=lambda self: self.env.company)
 
 
     @api.depends('sales_person_id')
