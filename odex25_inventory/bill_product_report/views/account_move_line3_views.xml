@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_account_move_line3_tree" model="ir.ui.view">
+        <field name="name">account.move.line3.tree</field>
+        <field name="model">account.move.line3</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false">
+                <field name="product_category"/>
+                <field name="product_name"/>
+                <field name="default_code"/>
+                <field name="vendor_id"/>
+                <field name="total_quantity"/>
+                <field name="total_price"/>
+                <field name="nsap"/>
+                <field name="plan_quantity"/>
+                <field name="plan_value"/>
+                <field name="achive"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_account_move_line3" model="ir.actions.act_window">
+        <field name="name">Purchase Report Views</field>
+        <field name="res_model">account.move.line3</field>
+        <field name="view_mode">tree</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Create and manage Sales Reports Views.
+            </p>
+        </field>
+    </record>
+
+    <menuitem name="Purchase Report Views"
+              id="menu_action_account_move_line3"
+              action="action_account_move_line3"
+              parent="purchase.menu_procurement_management"
+              sequence="150"/>
+
+</odoo>

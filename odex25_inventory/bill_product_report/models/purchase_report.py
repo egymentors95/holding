@@ -3,8 +3,8 @@ from datetime import datetime
 import xlsxwriter
 
 
-class ProfitabilityReport(models.AbstractModel):
-    _name = 'report.product_report.profitability_report'
+class InvoiceBillReport(models.AbstractModel):
+    _name = 'report.bill_product_report.purchase_bill_report'
     _inherit = 'report.report_xlsx.abstract'
 
     def generate_xlsx_report(self, workbook, data, records):
@@ -21,7 +21,7 @@ class ProfitabilityReport(models.AbstractModel):
         else:
             date_to_last_year = None
 
-        worksheet = workbook.add_worksheet('Sales Report')
+        worksheet = workbook.add_worksheet('Purchase Report')
         row = 0
         col = 0
 
@@ -34,11 +34,6 @@ class ProfitabilityReport(models.AbstractModel):
         worksheet.set_column('G:G', 25)
         worksheet.set_column('H:H', 25)
         worksheet.set_column('J:J', 25)
-        worksheet.set_column('K:K', 25)
-        worksheet.set_column('L:L', 25)
-        worksheet.set_column('M:M', 25)
-        worksheet.set_column('N:N', 25)
-        worksheet.set_column('O:O', 25)
 
 
         # Formats
@@ -71,71 +66,61 @@ class ProfitabilityReport(models.AbstractModel):
 
         # هيدر السنة اللي فاتت
         worksheet.merge_range(
-            row, col + 3, row, col + 6,
-            f"Last Year ({date_from_last_year.date()} → {date_to_last_year.date()})",
+            row, col + 3, row, col + 4,
+            f"QTY",
             header_format
         )
 
         # الهيدر الفرعي للسنة اللي فاتت
-        worksheet.write(row + 1, col + 3, "Quantity", header_format)
-        worksheet.write(row + 1, col + 4, "Price", header_format)
-        worksheet.write(row + 1, col + 5, "Nasp", header_format)
+        worksheet.write(row + 1, col + 3, "Main Qty", header_format)
+        worksheet.write(row + 1, col + 4, "Foc", header_format)
 
-        # هيدر الفترة الحالية
-        worksheet.merge_range(
-            row, col + 6, row, col + 8,
-            f"Current Period ({date_from} → {date_to})",
-            header_format2
-        )
 
         # الهيدر الفرعي للفترة الحالية
-        worksheet.write(row + 1, col + 6, "Total Quantity", header_format2)
-        worksheet.write(row + 1, col + 7, "Total Price", header_format2)
-        worksheet.write(row + 1, col + 8, "Nasp", header_format2)
-        worksheet.write(row + 1, col + 9, "Sales Person", header_format2)
+        worksheet.write(row + 1, col + 5, "Value", header_format2)
+        worksheet.write(row + 1, col + 6, "NASP", header_format2)
+        worksheet.write(row + 1, col + 7, "Vendor", header_format2)
 
         worksheet.merge_range(
-            row, col + 10, row, col + 12,
-            f"YTD Plan ({date_from} → {date_to})",
+            row, col + 6, row, col + 8,
+            f"Full Year Plan",
             header_format3
         )
-        worksheet.write(row + 1, col + 10, "Plan Quantity", header_format3)
-        worksheet.write(row + 1, col + 11, "Value", header_format3)
-        worksheet.write(row + 1, col + 12, "Nasp", header_format3)
-        worksheet.write(row + 1, col + 13, "Qty %", header_format3)
-        worksheet.write(row + 1, col + 14, "Value %", header_format3)
+        worksheet.write(row + 1, col + 8, "QTY", header_format3)
+        worksheet.write(row + 1, col + 9, "Value", header_format3)
+        worksheet.write(row + 1, col + 10, "Ach.%", header_format3)
 
 
         row += 2
 
         # ---------------- Data Rows ----------------
-        last_category = None
+        # last_category = None
         for record in lots_data:
             # Product Category (merge if same)
-            if record['Product Category'] == last_category:
-                worksheet.write(row, col, "", cell_format)
-            else:
-                worksheet.write(row, col, record['Product Category'], cell_format)
-                last_category = record['Product Category']
+            # if record['Product Category'] == last_category:
+            #     worksheet.write(row, col, "", cell_format)
+            # else:
+            worksheet.write(row, col, record['Product Category'], cell_format)
+                # last_category = record['Product Category']
 
             worksheet.write(row, col + 1, record['Default Code'] or '', cell_format)
             worksheet.write(row, col + 2, record['Product'] or '', cell_format)
 
-            worksheet.write_number(row, col + 3, record['Last Year Total Quantity'], num_format)
-            worksheet.write_number(row, col + 4, record['Last Year Total Price'], num_format)
-            worksheet.write_number(row, col + 5, record['Last Year Nsap'], num_format)
+            # worksheet.write_number(row, col + 3, record['Last Year Total Quantity'], num_format)
+            # worksheet.write_number(row, col + 4, record['Last Year Total Price'], num_format)
+            # worksheet.write_number(row, col + 5, record['Last Year Nsap'], num_format)
 
 
-            worksheet.write_number(row, col + 6, record['Total Quantity'], num_format)
-            worksheet.write_number(row, col + 7, record['Total Price'], num_format)
-            worksheet.write_number(row, col + 8, record['Nsap'], num_format)
-            worksheet.write(row, col + 9, record['Sales Person'], num_format)
+            worksheet.write_number(row, col + 3, record['Total Quantity'], num_format)
+            worksheet.write_number(row, col + 4, '', num_format)
 
-            worksheet.write_number(row, col + 10, record['Total Plan Quantity'], num_format)
-            worksheet.write_number(row, col + 11, record['Total Plan Price'], num_format)
-            worksheet.write_number(row, col + 12, record['Plan Nsap'], num_format)
-            worksheet.write_number(row, col + 13, record['QTY'], num_format)
-            worksheet.write_number(row, col + 14, record['Value'], num_format)
+            worksheet.write_number(row, col + 5, record['Total Price'], num_format)
+            worksheet.write_number(row, col + 6, record['Nsap'], num_format)
+            worksheet.write_number(row, col + 7, record['Vendor'], num_format)
+
+            worksheet.write_number(row, col + 8, record['Plan Quantity'], num_format)
+            worksheet.write_number(row, col + 9, record['Plan Value'], num_format)
+            worksheet.write_number(row, col + 10, record['Achive'], num_format)
 
 
             row += 1

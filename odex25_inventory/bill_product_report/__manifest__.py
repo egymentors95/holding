@@ -1,0 +1,19 @@
+{
+    "name": "Product Profitability Report",
+    "version": "14.0.0.1.0",
+    "category": "Product",
+    "summary": "Product Profitability Report",
+    "author": "IBS",
+    "website": "https://www.ibs-na.com",
+    "license": "AGPL-3",
+    "depends": ['base','stock', 'report_xlsx','account', 'purchase_requisition_custom'],
+    "data": [
+        "security/ir.model.access.csv",
+        "views/account_move_line3_views.xml",
+        "wizard/purchase_wizard_views.xml",
+        "reports/action_reports.xml",
+    ],
+    "installable": True,
+    "application": False,
+    "auto_install": False,
+}

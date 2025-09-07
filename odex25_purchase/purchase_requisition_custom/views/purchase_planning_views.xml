@@ -123,18 +123,18 @@
                                                 context="{'partner_id':parent.partner_id, 'quantity':product_qty,'uom':product_uom, 'company_id': parent.company_id}"
                                                 force_save="1"
                                                 domain="[('purchase_ok', '=', True), '|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]"/>
-                                        <field name="january"/>
-                                        <field name="february"/>
-                                        <field name="march"/>
-                                        <field name="april"/>
-                                        <field name="may"/>
-                                        <field name="june"/>
-                                        <field name="july"/>
-                                        <field name="august"/>
-                                        <field name="september"/>
-                                        <field name="october"/>
-                                        <field name="november"/>
-                                        <field name="december"/>
+                                        <field name="january" optional="show"/>
+                                        <field name="february" optional="show"/>
+                                        <field name="march" optional="show"/>
+                                        <field name="april" optional="show"/>
+                                        <field name="may" optional="hide"/>
+                                        <field name="june" optional="hide"/>
+                                        <field name="july" optional="hide"/>
+                                        <field name="august" optional="hide"/>
+                                        <field name="september" optional="hide"/>
+                                        <field name="october" optional="hide"/>
+                                        <field name="november" optional="hide"/>
+                                        <field name="december" optional="hide"/>
                                         <!--                                        <field name="date_planned" optional="hide"-->
                                         <!--                                               attrs="{'required': [('display_type', '=', False)]}" force_save="1"/>-->
                                         <field name="account_analytic_id" optional="hide"

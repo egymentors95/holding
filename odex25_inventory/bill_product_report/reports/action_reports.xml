@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="report_action_invoice_bill" model="ir.actions.report">
+        <field name="name">Purchase XLS Report</field>
+        <field name="model">purchase.bill.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">bill_product_report.purchase_bill_report</field>
+        <field name="report_file">bill_product_report.purchase_bill_report</field>
+        <field name="binding_type">report</field>
+    </record>
+
+
+</odoo>

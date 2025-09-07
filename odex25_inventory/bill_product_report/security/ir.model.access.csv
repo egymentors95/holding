@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_purchase_bill_wizard,access.purchase.bill.wizard,model_purchase_bill_wizard,,1,1,1,1
+access_account_move_line3,access.account.move.line3,model_account_move_line3,,1,1,1,1
