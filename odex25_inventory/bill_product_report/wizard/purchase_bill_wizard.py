@@ -75,7 +75,7 @@ class PurchaseBillWizard(models.TransientModel):
                     ('order_line.plan_start_date', '<=', self.date_to),
                     ('order_line.plan_end_date', '>=', self.date_from),
                     ('order_line.state', '=', 'draft'),
-                    ('order_line.company_id', 'in', self.env.companies.ids),
+                    # ('order_line.company_id', 'in', self.env.companies.ids),
                 ])
                 plan_qty = 0.0
                 if self.date_from and self.date_to:
