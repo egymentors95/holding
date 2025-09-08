@@ -112,11 +112,11 @@ class InvoiceBillReport(models.AbstractModel):
 
 
             worksheet.write_number(row, col + 3, record['Total Quantity'], num_format)
-            worksheet.write_number(row, col + 4, '', num_format)
+            # worksheet.write_number(row, col + 4, f' ')
 
             worksheet.write_number(row, col + 5, record['Total Price'], num_format)
             worksheet.write_number(row, col + 6, record['Nsap'], num_format)
-            worksheet.write_number(row, col + 7, record['Vendor'], num_format)
+            worksheet.write(row, col + 7, record['Vendor'], num_format)
 
             worksheet.write_number(row, col + 8, record['Plan Quantity'], num_format)
             worksheet.write_number(row, col + 9, record['Plan Value'], num_format)

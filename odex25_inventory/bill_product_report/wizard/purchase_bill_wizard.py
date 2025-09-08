@@ -70,13 +70,18 @@ class PurchaseBillWizard(models.TransientModel):
                 #------Plan Lines -------
 
                 plan_lines = self.env['purchase.order.line'].search([
-                    ('product_id', '=', product.id),
-                    ('purchase_plan_id.partner_id', '=', vendor.id),
                     ('purchase_plan_id.plan_start_date', '<=', self.date_to),
                     ('purchase_plan_id.plan_end_date', '>=', self.date_from),
                     ('purchase_plan_id.state', '=', 'draft'),
                     ('purchase_plan_id.company_id', 'in', self.env.companies.ids),
                 ])
+                if self.product_ids:
+                    plan_lines = plan_lines.filtered(lambda l: l.product_id == product)
+                if self.vendor_ids:
+                    plan_lines = plan_lines.filtered(lambda l: l.partner_id == vendor)
+                if self.product_category_ids:
+                    plan_lines = plan_lines.filtered(lambda l: l.product_id.categ_id in self.product_category_ids)
+                print('plan_lines', plan_lines)
                 plan_qty = 0.0
                 if self.date_from and self.date_to:
                     current = self.date_from.replace(day=1)
@@ -86,12 +91,13 @@ class PurchaseBillWizard(models.TransientModel):
                     while current <= end:
                         months.append(current.strftime("%B").lower())
                         current += relativedelta(months=1)
+                        print('current', current)
 
                     for plan in plan_lines:
                         for month in months:
                             if hasattr(plan, month):
                                 plan_qty += getattr(plan, month) or 0.0
-                value = plan_qty * plan_lines.price_unit if plan_lines else 0.0
+                value = plan_qty * plan_lines[0].price_unit if plan_lines else 0.0
 
 
 
