@@ -86,7 +86,7 @@ class InvoiceBillReport(models.AbstractModel):
             f"Full Year Plan",
             header_format3
         )
-        worksheet.write(row + 1, col + 8, "QTY", header_format3)
+        worksheet.write(row + 1, col + 8, "QTY", header_format2)
         worksheet.write(row + 1, col + 9, "Value", header_format3)
         worksheet.write(row + 1, col + 10, "Ach.%", header_format3)
 

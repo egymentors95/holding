@@ -67,38 +67,44 @@ class PurchaseBillWizard(models.TransientModel):
             for vendor in product_lines.mapped('move_id.partner_id'):
                 vendor_lines = product_lines.filtered(lambda l: l.move_id.partner_id == vendor)
 
-                #------Plan Lines -------
-
-                plan_lines = self.env['purchase.order.line'].search([
-                    ('purchase_plan_id.plan_start_date', '<=', self.date_to),
-                    ('purchase_plan_id.plan_end_date', '>=', self.date_from),
-                    ('purchase_plan_id.state', '=', 'draft'),
-                    ('purchase_plan_id.company_id', 'in', self.env.companies.ids),
+                # ------Plan Lines -------
+                plan_form = self.env['purchase.planning'].search([
+                    ('plan_start_date', '<=', self.date_to),
+                    ('plan_end_date', '>=', self.date_from),
+                    ('company_id', 'in', self.env.companies.ids),
                 ])
-                if self.product_ids:
-                    plan_lines = plan_lines.filtered(lambda l: l.product_id == product)
+
                 if self.vendor_ids:
-                    plan_lines = plan_lines.filtered(lambda l: l.partner_id == vendor)
-                if self.product_category_ids:
-                    plan_lines = plan_lines.filtered(lambda l: l.product_id.categ_id in self.product_category_ids)
-                print('plan_lines', plan_lines)
+                    plan_form.append(('partner_id', 'in', self.vendor_ids.ids))
+
                 plan_qty = 0.0
+                value = 0.0
+
                 if self.date_from and self.date_to:
                     current = self.date_from.replace(day=1)
+
                     end = self.date_to.replace(day=1)
+                    print('End:', end)
 
                     months = []
                     while current <= end:
                         months.append(current.strftime("%B").lower())
                         current += relativedelta(months=1)
-                        print('current', current)
+                        print('Current22:', current)
 
-                    for plan in plan_lines:
-                        for month in months:
-                            if hasattr(plan, month):
-                                plan_qty += getattr(plan, month) or 0.0
-                value = plan_qty * plan_lines[0].price_unit if plan_lines else 0.0
+                    # لوب على order_line
+                    for plan in plan_form:
+                        for line in plan.order_line:
+                            if line.product_id == product and plan.partner_id == vendor:
+                                line_qty = 0.0
+                                for month in months:
+                                    if hasattr(line, month):
+                                        line_qty += getattr(line, month) or 0.0
 
+                                plan_qty += line_qty
+                                value += line_qty * (line.price_unit or 0.0)
+
+                print("Product:", product.name, "Vendor:", vendor.name, "Plan Qty:", plan_qty, "Value:", value)
 
 
                 # -------- المشتريات الحالية --------
