@@ -71,11 +71,11 @@ class PurchaseBillWizard(models.TransientModel):
 
                 plan_lines = self.env['purchase.order.line'].search([
                     ('product_id', '=', product.id),
-                    ('order_line.partner_id', '=', vendor.id),
-                    ('order_line.plan_start_date', '<=', self.date_to),
-                    ('order_line.plan_end_date', '>=', self.date_from),
-                    ('order_line.state', '=', 'draft'),
-                    # ('order_line.company_id', 'in', self.env.companies.ids),
+                    ('purchase_plan_id.partner_id', '=', vendor.id),
+                    ('purchase_plan_id.plan_start_date', '<=', self.date_to),
+                    ('purchase_plan_id.plan_end_date', '>=', self.date_from),
+                    ('purchase_plan_id.state', '=', 'draft'),
+                    ('purchase_plan_id.company_id', 'in', self.env.companies.ids),
                 ])
                 plan_qty = 0.0
                 if self.date_from and self.date_to:
