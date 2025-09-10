@@ -66,7 +66,7 @@ class ProfitReportWizard(models.TransientModel):
             total_quantity = qty_out_invoice - qty_out_refund
 
             price_out_invoice = sum(product_lines.filtered(lambda l: l.move_id.move_type == 'out_invoice').mapped('price_subtotal'))
-            price_out_refund = sum(lines.filtered(lambda l: l.move_id.move_type == 'out_refund').mapped('price_subtotal'))
+            price_out_refund = sum(product_lines.filtered(lambda l: l.move_id.move_type == 'out_refund').mapped('price_subtotal'))
             total_price = price_out_invoice - price_out_refund
 
             nsap = total_price / total_quantity if total_quantity else 0.0
