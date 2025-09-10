@@ -119,9 +119,9 @@ class ProfitReportWizard(models.TransientModel):
 
             #_________________________________________________________________________________________
             margin = nsap - naap
-            profit_value = margin * total_quantity_invoice
+            profit_value = margin * total_quantity
             last_margin = last_year_nsap - last_year_naap
-            last_profit_value = last_margin * last_year_total_quantity_invoice
+            last_profit_value = last_margin * last_year_total_quantity
 
 
             # -------- Append --------
