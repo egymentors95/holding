@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_account_move_line4_tree" model="ir.ui.view">
+        <field name="name">account.move.line4.tree</field>
+        <field name="model">account.move.line4</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false">
+                <field name="product_category"/>
+                <field name="product_name"/>
+                <field name="default_code"/>
+
+                <field name="last_total_quantity"/>
+                <field name="last_total_price"/>
+                <field name="last_nsap"/>
+                <field name="last_year_naap"/>
+                <field name="last_profit_value"/>
+                <field name="last_margin"/>
+
+                <field name="total_quantity"/>
+                <field name="total_price"/>
+                <field name="nsap"/>
+                <field name="naap"/>
+                <field name="profit_value"/>
+                <field name="margin"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_account_move_line4" model="ir.actions.act_window">
+        <field name="name">Profit Report</field>
+        <field name="res_model">account.move.line4</field>
+        <field name="view_mode">tree</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Create and manage Sales Reports Views.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="profit_report_view_menu" name="Profit Report Views"
+              parent="account.menu_finance_reports" action="profit_report.action_account_move_line4"
+              sequence="120"/>
+
+
+</odoo>

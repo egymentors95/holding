@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="profit_report_wizard_view_form" model="ir.ui.view">
+            <field name="name">profit.report.wizard.view</field>
+            <field name="model">profit.report.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="date_from"/>
+                            </group>
+                            <group>
+                                <field name="date_to"/>
+                            </group>
+                            <group>
+                                <field name="product_ids" widget="many2many_tags"/>
+<!--                                <field name="sales_person_ids" widget="many2many_tags"/>-->
+                                <field name="product_category_ids" widget="many2many_tags"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="action_view_report" type="object" string="View" class="btn-primary"/>
+                        <button string="Export Xlsx" name="action_print_report_xlsx" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="profit_report_wizard_view_action" model="ir.actions.act_window">
+            <field name="name">Profit Report</field>
+            <field name="res_model">profit.report.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="profit_report_wizard_view_menu" name="Profit Report"
+                  parent="account.menu_finance_reports" action="profit_report.profit_report_wizard_view_action"
+                  sequence="150"/>
+
+
+    </data>
+</odoo>
