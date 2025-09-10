@@ -42,7 +42,7 @@
         </record>
 
         <menuitem id="profit_report_wizard_view_menu" name="Profit Report"
-                  parent="account.menu_finance_reports" action="profit_report.profit_report_wizard_view_action"
+                  parent="sale.menu_sale_report" action="profit_report.profit_report_wizard_view_action"
                   sequence="150"/>
 
 

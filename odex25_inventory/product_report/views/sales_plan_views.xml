@@ -66,7 +66,7 @@
         <field name="res_model">sales.plan</field>
         <field name="view_mode">tree,form</field>
     </record>
-    <menuitem id="menu_sales_plan_root" name="Sales Plan" sequence="200" parent="account.menu_finance_reports"/>
-    <menuitem id="menu_sales_plan" name="Sales Plan" parent="menu_sales_plan_root" action="action_sales_plan" sequence="10"/>
+<!--    <menuitem id="menu_sales_plan_root" name="Sales Plan" sequence="200" parent="account.menu_finance_reports"/>-->
+    <menuitem id="menu_sales_plan" name="Sales Plan" parent="sale.sale_order_menu" action="action_sales_plan" sequence="100"/>
 
 </odoo>

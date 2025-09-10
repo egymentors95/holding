@@ -181,7 +181,7 @@ class ProfitabilityWizard(models.TransientModel):
 
         return {
             'type': 'ir.actions.act_window',
-            'name': 'Profitability Data',
+            'name': 'Sales Report',
             'res_model': 'account.move.line2',
             'view_mode': 'tree',
             'target': 'current',

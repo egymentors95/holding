@@ -8,7 +8,7 @@ class ProfitReport(models.AbstractModel):
     _inherit = 'report.report_xlsx.abstract'
 
     def generate_xlsx_report(self, workbook, data, records):
-        lots_data = data.get('product_ids', [])
+        lots_data = data.get('report_data', [])
         date_from = data.get('date_from')
         date_to = data.get('date_to')
 

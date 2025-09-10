@@ -36,7 +36,7 @@
     </record>
 
     <menuitem id="product_reports_view_menu" name="ٍSales Report Views"
-              parent="account.menu_finance_reports" action="product_report.action_account_move_line2"
+              parent="sale.menu_sale_report" action="product_report.action_account_move_line2"
               sequence="120"/>
 
 

@@ -62,8 +62,11 @@ class ProfitReportWizard(models.TransientModel):
 
             # -------- المبيعات الحالية --------
             qty_out_invoice = sum(product_lines.filtered(lambda l: l.move_id.move_type == 'out_invoice').mapped('quantity'))
+            print('qty_out_invoice', qty_out_invoice)
             qty_out_refund = sum(product_lines.filtered(lambda l: l.move_id.move_type == 'out_refund').mapped('quantity'))
+            print('qty_out_refund', qty_out_refund)
             total_quantity = qty_out_invoice - qty_out_refund
+            print('total_quantity', total_quantity)
 
             price_out_invoice = sum(product_lines.filtered(lambda l: l.move_id.move_type == 'out_invoice').mapped('price_subtotal'))
             price_out_refund = sum(product_lines.filtered(lambda l: l.move_id.move_type == 'out_refund').mapped('price_subtotal'))
@@ -156,7 +159,7 @@ class ProfitReportWizard(models.TransientModel):
         data = {
             'date_from': self.date_from,
             'date_to': self.date_to,
-            'product_ids': self.get_report_data()['combined_data'],
+            'report_data': self.get_report_data()['combined_data'],
         }
         return self.env.ref('profit_report.report_action_profit_report_wizard').report_action(self, data=data)
 
