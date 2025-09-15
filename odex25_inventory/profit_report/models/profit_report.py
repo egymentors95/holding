@@ -52,7 +52,7 @@ class ProfitReport(models.AbstractModel):
                                                  'border': 0, 'left': 1, 'right': 2, 'top': 1, 'bottom': 1})
 
 
-        logo_path = get_module_resource('product_report', 'static/img', 'logo.png')
+        logo_path = get_module_resource('profit_report', 'static/img', 'logo.png')
         if logo_path:
             worksheet.insert_image(0, 9, logo_path, {
                 'x_scale': .88,
