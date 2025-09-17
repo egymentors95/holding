@@ -10,5 +10,14 @@
         <field name="binding_type">report</field>
     </record>
 
+    <record id="report_action_invoice_bill_html" model="ir.actions.report">
+        <field name="name">Purchase Html Report</field>
+        <field name="model">purchase.bill.wizard</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">bill_product_report.purchase_bill_html_report</field>
+        <field name="report_file">bill_product_report.purchase_bill_html_report</field>
+        <field name="binding_type">report</field>
+    </record>
+
 
 </odoo>

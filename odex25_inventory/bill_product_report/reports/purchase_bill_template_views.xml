@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="custom_header">
+        <div class="header">
+            <table class="table table-borderless" style="border: none; width: 100%;" dir="ltr">
+                <tbody>
+                    <tr>
+                        <td colspan="8">
+                            <div>
+                                <span style="font-weight: bold;">Report:</span>
+                                <span>Purchase Report</span>
+                            </div>
+                            <div>
+                                <span style="font-weight: bold;">Date from:</span>
+                                <span t-esc="report_data and report_data.get('date_from')"/>
+                            </div>
+                            <div>
+                                <span style="font-weight: bold;">Date to:</span>
+                                <span t-esc="report_data and report_data.get('date_to')"/>
+                            </div>
+                            <div>
+                                <span style="font-weight: bold;">Currency:</span>
+                                <span>SR</span>
+                            </div>
+                        </td>
+                        <td colspan="4" style="text-align: right;">
+                            <img src='/bill_product_report/static/img/logo.png' width="120px"/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </template>
+
+    <template id="purchase_bill_html_report">
+        <t t-call="web.html_container">
+            <t t-call="bill_product_report.custom_header"/>
+
+            <div class="page">
+                <table class="table table-sm table-bordered"
+                       style="width:100%; border: 1px solid black; text-align: center;">
+                    <thead style="background-color: #f0f0f0; font-weight: bold;">
+                        <tr style="border: 1px solid black;">
+                            <th style="border: 1px solid black;" rowspan="2">Product Category</th>
+                            <th style="border: 1px solid black;" rowspan="2">Default Code</th>
+                            <th style="border: 1px solid black;" rowspan="2">Product</th>
+
+                            <!-- QTY -->
+                            <th style="border: 1px solid black;" colspan="2">QTY</th>
+
+                            <!-- Full Year Plan -->
+                            <th style="border: 1px solid black;" colspan="4">Full Year Plan</th>
+
+                            <th style="border: 1px solid black;" rowspan="2">Value</th>
+                            <th style="border: 1px solid black;" rowspan="2">Ach.%</th>
+                        </tr>
+                        <tr style="border: 1px solid black;">
+                            <!-- Sub headers -->
+                            <th style="border: 1px solid black;">Main Qty</th>
+                            <th style="border: 1px solid black;">Foc</th>
+
+                            <th style="border: 1px solid black;">Value</th>
+                            <th style="border: 1px solid black;">NAAP</th>
+                            <th style="border: 1px solid black;">QTY</th>
+                            <th style="border: 1px solid black;">Vendor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-set="last_category" t-value="None"/>
+                        <t t-foreach="(report_data or {}).get('product_ids', [])" t-as="line">
+                            <tr style="border: 1px solid black;">
+                                <!-- Product Category -->
+                                <td style="border: 1px solid black;">
+                                    <t t-if="line['Product Category'] != last_category">
+                                        <t t-esc="line['Product Category']"/>
+                                        <t t-set="last_category" t-value="line['Product Category']"/>
+                                    </t>
+                                </td>
+                                <!-- Default Code -->
+                                <td style="border: 1px solid black;">
+                                    <t t-esc="line['Default Code']"/>
+                                </td>
+
+                                <!-- Product -->
+                                <td style="border: 1px solid black;">
+                                    <t t-esc="line['Product']"/>
+                                </td>
+
+                                <!-- Vendor -->
+                                <td style="border: 1px solid black;">
+                                    <t t-esc="line['Vendor']"/>
+                                </td>
+
+                                <!-- Total Quantity -->
+                                <td style="border: 1px solid black; text-align: right;">
+                                    <t t-esc="line['Total Quantity']"/>
+                                </td>
+
+                                <!-- Total Price -->
+                                <td style="border: 1px solid black; text-align: right;">
+                                    <t t-esc="line['Total Price']"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+</odoo>

@@ -106,28 +106,37 @@ class PurchaseBillWizard(models.TransientModel):
 
                 print("Product:", product.name, "Vendor:", vendor.name, "Plan Qty:", plan_qty, "Value:", value)
 
-
                 # -------- المشتريات الحالية --------
-                qty_in_invoice = sum(vendor_lines.filtered(lambda l: l.move_id.move_type == 'in_invoice').mapped('quantity'))
-                qty_in_refund = sum(vendor_lines.filtered(lambda l: l.move_id.move_type == 'in_refund').mapped('quantity'))
+                qty_in_invoice = sum(
+                    vendor_lines.filtered(lambda l: l.move_id.move_type == 'in_invoice').mapped('quantity'))
+                qty_in_refund = sum(
+                    vendor_lines.filtered(lambda l: l.move_id.move_type == 'in_refund').mapped('quantity'))
                 total_quantity = qty_in_invoice - qty_in_refund
                 achive = total_quantity / plan_qty * 100 if plan_qty else 0.0
 
-                price_in_invoice = sum(vendor_lines.filtered(lambda l: l.move_id.move_type == 'in_invoice').mapped('price_subtotal'))
-                price_in_refund = sum(vendor_lines.filtered(lambda l: l.move_id.move_type == 'in_refund').mapped('price_subtotal'))
+                price_in_invoice = sum(
+                    vendor_lines.filtered(lambda l: l.move_id.move_type == 'in_invoice').mapped('price_subtotal'))
+                price_in_refund = sum(
+                    vendor_lines.filtered(lambda l: l.move_id.move_type == 'in_refund').mapped('price_subtotal'))
                 total_price = price_in_invoice - price_in_refund
 
                 nsap = total_price / total_quantity if total_quantity else 0.0
 
                 # -------- السنة اللي فاتت --------
-                last_year_purchases = last_year_lines.filtered(lambda l: l.product_id == product and l.move_id.partner_id == vendor)
+                last_year_purchases = last_year_lines.filtered(
+                    lambda l: l.product_id == product and l.move_id.partner_id == vendor)
 
-                last_qty_in_invoice = sum(last_year_purchases.filtered(lambda l: l.move_id.move_type == 'in_invoice').mapped('quantity'))
-                last_qty_in_refund = sum(last_year_purchases.filtered(lambda l: l.move_id.move_type == 'in_refund').mapped('quantity'))
+                last_qty_in_invoice = sum(
+                    last_year_purchases.filtered(lambda l: l.move_id.move_type == 'in_invoice').mapped('quantity'))
+                last_qty_in_refund = sum(
+                    last_year_purchases.filtered(lambda l: l.move_id.move_type == 'in_refund').mapped('quantity'))
                 last_year_total_quantity = last_qty_in_invoice - last_qty_in_refund
 
-                last_price_in_invoice = sum(last_year_purchases.filtered(lambda l: l.move_id.move_type == 'in_invoice').mapped('price_subtotal'))
-                last_price_in_refund = sum(last_year_purchases.filtered(lambda l: l.move_id.move_type == 'in_refund').mapped('price_subtotal'))
+                last_price_in_invoice = sum(
+                    last_year_purchases.filtered(lambda l: l.move_id.move_type == 'in_invoice').mapped(
+                        'price_subtotal'))
+                last_price_in_refund = sum(
+                    last_year_purchases.filtered(lambda l: l.move_id.move_type == 'in_refund').mapped('price_subtotal'))
                 last_year_total_price = last_price_in_invoice - last_price_in_refund
 
                 last_year_nsap = last_year_total_price / last_year_total_quantity if last_year_total_quantity else 0.0
@@ -140,13 +149,12 @@ class PurchaseBillWizard(models.TransientModel):
                     'Vendor': vendor.name,
                     'Vendor id': vendor.id,
 
+                    'date_from_last_year': date_from_last_year,
+                    'date_to_last_year': date_to_last_year,
+
                     'Total Quantity': total_quantity,
                     'Total Price': total_price,
                     'Nsap': nsap,
-
-                    # 'Last Year Total Quantity': last_year_total_quantity,
-                    # 'Last Year Total Price': last_year_total_price,
-                    # 'Last Year Nsap': last_year_nsap,
 
                     'Plan Quantity': plan_qty,
                     'Plan Value': value,
@@ -154,7 +162,6 @@ class PurchaseBillWizard(models.TransientModel):
                 })
 
         return {'combined_data': combined_data}
-
 
     def action_print_report_xlsx(self):
         self.ensure_one()
@@ -165,6 +172,14 @@ class PurchaseBillWizard(models.TransientModel):
         }
         return self.env.ref('bill_product_report.report_action_invoice_bill').report_action(self, data=data)
 
+    def action_print_report_html(self):
+        self.ensure_one()
+        data = {
+            'date_from': self.date_from,
+            'date_to': self.date_to,
+            'product_ids': self.get_report_data()['combined_data'],
+        }
+        return self.env.ref('bill_product_report.report_action_invoice_bill_html').report_action(self, data=data)
 
     def action_view_report(self):
         self.ensure_one()
@@ -178,10 +193,6 @@ class PurchaseBillWizard(models.TransientModel):
                 'product_name': rec['Product'],
                 'default_code': rec['Default Code'],
                 'vendor_id': rec['Vendor id'],
-
-                # 'last_total_quantity': rec['Last Year Total Quantity'],
-                # 'last_total_price': rec['Last Year Total Price'],
-                # 'last_nsap': rec['Last Year Nsap'],
 
                 'total_quantity': rec['Total Quantity'],
                 'total_price': rec['Total Price'],

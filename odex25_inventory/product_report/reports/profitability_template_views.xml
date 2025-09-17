@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="custom_header">
+        <div class="header">
+            <table class="table table-borderless" style="border: none; width: 100%;" dir="ltr">
+                <tbody>
+                    <tr>
+                        <td colspan="8">
+                            <div>
+                                <span style="font-weight: bold;">Report:</span>
+                                <span>Sales Report</span>
+                            </div>
+                            <div>
+                                <span style="font-weight: bold;">Date from:</span>
+                                <span t-esc="report_data and report_data.get('date_from')"/>
+                            </div>
+                            <div>
+                                <span style="font-weight: bold;">Date to:</span>
+                                <span t-esc="report_data and report_data.get('date_to')"/>
+                            </div>
+                            <div>
+                                <span style="font-weight: bold;">Currency:</span>
+                                <span>SR</span>
+                            </div>
+                        </td>
+                        <td colspan="4" style="text-align: right;">
+                            <img src='/bill_product_report/static/img/logo.png' width="120px"/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </template>
+
+    <template id="profitability_report_html">
+        <t t-call="web.html_container">
+            <t t-call="product_report.custom_header"/>
+
+            <div class="page">
+                <table class="table table-sm table-bordered"
+                       style="width:100%; border: 1px solid black; text-align: center;">
+                    <thead style="background-color: #f0f0f0; font-weight: bold; text-align: center;">
+                        <tr style="border: 1px solid black;">
+                            <th style="border: 1px solid black;" rowspan="2">Product Category</th>
+                            <th style="border: 1px solid black;" rowspan="2">Default Code</th>
+                            <th style="border: 1px solid black;" rowspan="2">Product</th>
+
+                            <!-- Last Year -->
+                            <th style="border: 1px solid black;" colspan="3">
+                                Last (
+                                <t t-esc="date_from_last_year"/>
+                                →<t t-esc="date_to_last_year"/>)
+                            </th>
+
+                            <!-- Current -->
+                            <th style="border: 1px solid black;" colspan="4">
+                                Current (
+                                <t t-esc="report_data and report_data.get('date_from')"/>
+                                →<t t-esc="report_data and report_data.get('date_to')"/>)
+                            </th>
+
+                            <!-- YTD Plan -->
+                            <th style="border: 1px solid black;" colspan="3">
+                                YTD Plan (
+                                <t t-esc="report_data and report_data.get('date_from')"/>
+                                →<t t-esc="report_data and report_data.get('date_to')"/>)
+                            </th>
+
+                            <th style="border: 1px solid black;" rowspan="2">Qty %</th>
+                            <th style="border: 1px solid black;" rowspan="2">Value %</th>
+                        </tr>
+                        <tr style="border: 1px solid black;">
+                            <!-- Sub headers Last -->
+                            <th style="border: 1px solid black;">Quantity</th>
+                            <th style="border: 1px solid black;">Price</th>
+                            <th style="border: 1px solid black;">Nasp</th>
+
+                            <!-- Sub headers Current -->
+                            <th style="border: 1px solid black;">Total Quantity</th>
+                            <th style="border: 1px solid black;">Total Price</th>
+                            <th style="border: 1px solid black;">Nasp</th>
+                            <th style="border: 1px solid black;">Sales Person</th>
+
+                            <!-- Sub headers YTD Plan -->
+                            <th style="border: 1px solid black;">Plan Quantity</th>
+                            <th style="border: 1px solid black;">Value</th>
+                            <th style="border: 1px solid black;">Nasp</th>
+                        </tr>
+                    </thead>
+
+                     <tbody>
+                        <t t-set="last_category" t-value="None"/>
+                        <t t-foreach="(report_data or {}).get('product_ids', [])" t-as="line">
+                            <tr style="border: 1px solid black;">
+                                <!-- Product Category -->
+                                <td style="border: 1px solid black;">
+                                    <t t-if="line['Product Category'] != last_category">
+                                        <t t-esc="line['Product Category']"/>
+                                        <t t-set="last_category" t-value="line['Product Category']"/>
+                                    </t>
+                                </td>
+                                <!-- Default Code -->
+                                <td style="border: 1px solid black;">
+                                    <t t-esc="line['Default Code']"/>
+                                </td>
+
+                                <!-- Product -->
+                                <td style="border: 1px solid black;">
+                                    <t t-esc="line['Product']"/>
+                                </td>
+
+                                <!-- Last Quantity -->
+                                <td style="border: 1px solid black;">
+                                    <t t-esc="line['Last Year Total Quantity']"/>
+                                </td>
+
+                                <!-- Last Price -->
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['Last Year Total Price']"/>
+                                </td>
+
+                                <!-- Last NSAP -->
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['Last Year Nsap']"/>
+                                </td>
+
+                                 <!-- Total Quantity -->
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['Total Quantity']"/>
+                                </td>
+
+                                <!-- current Price -->
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['Total Price']"/>
+                                </td>
+
+                                <!-- current NSAP -->
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['Nsap']"/>
+                                </td>
+                                <!-- Sales Person -->
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['Sales Person']"/>
+                                </td>
+                                <!-- Plan Quantity -->
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['Total Plan Quantity']"/>
+                                </td>
+                                <!-- Value -->
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['Total Plan Price']"/>
+                                </td>
+                                <!-- Nsap -->
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['Plan Nsap']"/>
+                                </td>
+                                <!-- Qty % -->
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['QTY']"/>
+                                </td>
+                                <!-- Value % -->
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['Value']"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+</odoo>

@@ -154,6 +154,16 @@ class ProfitReportWizard(models.TransientModel):
 
         return {'combined_data': combined_data}
 
+    def action_print_report_html(self):
+        self.ensure_one()
+        data = {
+            'date_from': self.date_from,
+            'date_to': self.date_to,
+            'product_ids': self.get_report_data()['combined_data'],
+        }
+        return self.env.ref('profit_report.report_action_profit_report_html').report_action(self, data=data)
+
+
     def action_print_report_xlsx(self):
         self.ensure_one()
         data = {

@@ -10,5 +10,14 @@
         <field name="binding_type">report</field>
     </record>
 
+        <record id="report_action_sales_html" model="ir.actions.report">
+        <field name="name">Sales Html Report</field>
+        <field name="model">profitability.wizard</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">product_report.profitability_report_html</field>
+        <field name="report_file">product_report.profitability_report_html</field>
+        <field name="binding_type">report</field>
+    </record>
+
 
 </odoo>

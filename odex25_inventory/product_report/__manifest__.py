@@ -1,5 +1,5 @@
 {
-    "name": "Product Profitability Report",
+    "name": "Product Report",
     "version": "14.0.0.1.0",
     "category": "Product",
     "summary": "Product Profitability Report",
@@ -12,6 +12,7 @@
         "views/account_move_line2_views.xml",
         "views/sales_plan_views.xml",
         "wizard/profitability_wizard_views.xml",
+        "reports/profitability_template_views.xml",
         "reports/action_reports.xml",
     ],
     "installable": True,

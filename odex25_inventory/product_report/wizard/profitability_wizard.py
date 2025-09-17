@@ -151,6 +151,16 @@ class ProfitabilityWizard(models.TransientModel):
         }
         return self.env.ref('product_report.report_action_profitability').report_action(self, data=data)
 
+    def action_print_report_html(self):
+        self.ensure_one()
+        data = {
+            'date_from': self.date_from,
+            'date_to': self.date_to,
+            'product_ids': self.get_report_data()['combined_data'],
+        }
+        return self.env.ref('product_report.report_action_sales_html').report_action(self, data=data)
+
+
     def action_view_report(self):
         self.ensure_one()
         report_data = self.get_report_data()['combined_data']

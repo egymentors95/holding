@@ -23,6 +23,7 @@
                     </sheet>
                     <footer>
                         <button name="action_view_report" type="object" string="View" class="btn-primary"/>
+                        <button string="View(Report)" name="action_print_report_html" type="object" class="btn-primary"/>
                         <button string="Export Xlsx" name="action_print_report_xlsx" type="object" class="btn-primary"/>
                         <button string="Cancel" class="btn-secondary" special="cancel"/>
                     </footer>

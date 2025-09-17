@@ -1,5 +1,5 @@
 {
-    "name": "Product Profitability Report",
+    "name": "Bill Product Report",
     "version": "14.0.0.1.0",
     "category": "Product",
     "summary": "Product Profitability Report",
@@ -11,6 +11,7 @@
         "security/ir.model.access.csv",
         "views/account_move_line3_views.xml",
         "wizard/purchase_wizard_views.xml",
+        "reports/purchase_bill_template_views.xml",
         "reports/action_reports.xml",
     ],
     "installable": True,

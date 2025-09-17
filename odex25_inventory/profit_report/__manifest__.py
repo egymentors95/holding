@@ -11,6 +11,7 @@
         "security/ir.model.access.csv",
         "views/account_move_line4_views.xml",
         "wizard/profit_report_wizard_views.xml",
+        "reports/profit_template_views.xml",
         "reports/action_reports.xml",
     ],
     "installable": True,
