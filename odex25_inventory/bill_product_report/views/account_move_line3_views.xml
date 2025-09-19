@@ -10,6 +10,7 @@
                 <field name="default_code"/>
                 <field name="vendor_id"/>
                 <field name="total_quantity"/>
+                <field name="foc"/>
                 <field name="total_price"/>
                 <field name="nsap"/>
                 <field name="plan_quantity"/>

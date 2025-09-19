@@ -42,12 +42,17 @@ class InvoiceBillReport(models.AbstractModel):
         # Formats
         header_format0 = workbook.add_format({'bold': True,
                                              'align': 'center', 'valign': 'vcenter', 'border': 1})
-        header_format = workbook.add_format({'bold': True,
+        header_format = workbook.add_format({'bold': True, 'bg_color': '#f0f0f0',
                                              'align': 'center', 'valign': 'vcenter', 'border': 2})
+        header_format2 = workbook.add_format({'bold': True, 'bg_color': '#27C2F5',
+                                              'align': 'center', 'valign': 'vcenter', 'border': 2})
+        header_format3 = workbook.add_format({'bold': True, 'bg_color': '#27F5C1',
+                                              'align': 'center', 'valign': 'vcenter', 'border': 2})
+        header_format4 = workbook.add_format({'bold': True, 'bg_color': '#E6376F',
+                                             'align': 'center', 'valign': 'vcenter', 'border': 2})
+
         cell_format = workbook.add_format({'align': 'center', 'valign': 'vcenter',
                                            'border': 0, 'left': 2, 'right': 2, 'top': 1,  'bottom': 1})
-        num_format = workbook.add_format({'num_format': '0.00', 'align': 'center',
-                                          'valign': 'vcenter', 'border': 1})
 
         logo_path = get_module_resource('bill_product_report', 'static/img', 'logo.png')
         if logo_path:
@@ -82,34 +87,34 @@ class InvoiceBillReport(models.AbstractModel):
         worksheet.merge_range(
             row, col + 3, row, col + 4,
             f"QTY",
-            header_format
+            header_format2
         )
 
         # الهيدر الفرعي للسنة اللي فاتت
-        worksheet.write(row + 1, col + 3, "Main Qty", header_format)
-        worksheet.write(row + 1, col + 4, "Foc", header_format)
+        worksheet.write(row + 1, col + 3, "Main Qty", header_format2)
+        worksheet.write(row + 1, col + 4, "Foc", header_format2)
 
         # الهيدر الفرعي للفترة الحالية
         worksheet.merge_range(
             row, col + 5, row, col + 8,
             f"Full Year Plan",
-            header_format
+            header_format3
         )
 
-        worksheet.write(row + 1, col + 5, "Value", header_format)
-        worksheet.write(row + 1, col + 6, "NAAP", header_format)
-        worksheet.write(row + 1, col + 7, "QTY", header_format)
-        worksheet.write(row + 1, col + 8, "Vendor", header_format)
+        worksheet.write(row + 1, col + 5, "Value", header_format3)
+        worksheet.write(row + 1, col + 6, "NAAP", header_format3)
+        worksheet.write(row + 1, col + 7, "QTY", header_format3)
+        worksheet.write(row + 1, col + 8, "Vendor", header_format3)
 
         worksheet.merge_range(
             row, col + 9, row+1, col + 9,
             f"Value",
-            header_format
+            header_format4
         )
         worksheet.merge_range(
             row, col + 10, row + 1, col + 10,
             f"Ach.%",
-            header_format
+            header_format4
         )
         row += 2
 
@@ -127,6 +132,7 @@ class InvoiceBillReport(models.AbstractModel):
             worksheet.write(row, col + 2, record['Product'] or '', cell_format)
 
             worksheet.write_number(row, col + 3, record['Total Quantity'], cell_format)
+            worksheet.write_number(row, col + 4, record['Foc'], cell_format)
 
             worksheet.write_number(row, col + 5, record['Total Price'], cell_format)
             worksheet.write_number(row, col + 6, record['Nsap'], cell_format)

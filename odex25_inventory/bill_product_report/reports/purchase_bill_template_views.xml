@@ -46,23 +46,23 @@
                             <th style="border: 1px solid black;" rowspan="2">Product</th>
 
                             <!-- QTY -->
-                            <th style="border: 1px solid black;" colspan="2">QTY</th>
+                            <th style="border: 1px solid black;  background-color:#27C2F5;" colspan="2">QTY</th>
 
                             <!-- Full Year Plan -->
-                            <th style="border: 1px solid black;" colspan="4">Full Year Plan</th>
+                            <th style="border: 1px solid black; background-color:#27F5C1;" colspan="4">Full Year Plan</th>
 
-                            <th style="border: 1px solid black;" rowspan="2">Value</th>
-                            <th style="border: 1px solid black;" rowspan="2">Ach.%</th>
+                            <th style="border: 1px solid black;  background-color:#E6376F;" rowspan="2">Value</th>
+                            <th style="border: 1px solid black;  background-color:#E6376F;" rowspan="2">Ach.%</th>
                         </tr>
                         <tr style="border: 1px solid black;">
                             <!-- Sub headers -->
-                            <th style="border: 1px solid black;">Main Qty</th>
-                            <th style="border: 1px solid black;">Foc</th>
+                            <th style="border: 1px solid black; background-color:#27C2F5;">Main Qty</th>
+                            <th style="border: 1px solid black; background-color:#27C2F5;">Foc</th>
 
-                            <th style="border: 1px solid black;">Value</th>
-                            <th style="border: 1px solid black;">NAAP</th>
-                            <th style="border: 1px solid black;">QTY</th>
-                            <th style="border: 1px solid black;">Vendor</th>
+                            <th style="border: 1px solid black; background-color:#27F5C1;">Value</th>
+                            <th style="border: 1px solid black; background-color:#27F5C1;">NAAP</th>
+                            <th style="border: 1px solid black; background-color:#27F5C1;">QTY</th>
+                            <th style="border: 1px solid black; background-color:#27F5C1;">Vendor</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -77,28 +77,40 @@
                                     </t>
                                 </td>
                                 <!-- Default Code -->
-                                <td style="border: 1px solid black;">
+                                <td style="border: 1px solid black; text-align: center;">
                                     <t t-esc="line['Default Code']"/>
                                 </td>
 
                                 <!-- Product -->
-                                <td style="border: 1px solid black;">
+                                <td style="border: 1px solid black; text-align: center;">
                                     <t t-esc="line['Product']"/>
                                 </td>
-
-                                <!-- Vendor -->
-                                <td style="border: 1px solid black;">
-                                    <t t-esc="line['Vendor']"/>
-                                </td>
-
-                                <!-- Total Quantity -->
-                                <td style="border: 1px solid black; text-align: right;">
+                                <td style="border: 1px solid black; text-align: center;">
                                     <t t-esc="line['Total Quantity']"/>
                                 </td>
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['Foc']"/>
+                                </td>
 
-                                <!-- Total Price -->
-                                <td style="border: 1px solid black; text-align: right;">
+                                <td style="border: 1px solid black; text-align: center;">
                                     <t t-esc="line['Total Price']"/>
+                                </td>
+
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['Nsap']"/>
+                                </td>
+
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['Plan Quantity']"/>
+                                </td>
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['Vendor']"/>
+                                </td>
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['Plan Value']"/>
+                                </td>
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['Achive']"/>
                                 </td>
                             </tr>
                         </t>

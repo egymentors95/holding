@@ -41,8 +41,16 @@ class ProfitabilityReport(models.AbstractModel):
         # Formats
         header_format0 = workbook.add_format({'bold': True,
                                               'align': 'center', 'valign': 'vcenter', 'border': 1})
-        header_format = workbook.add_format({'bold': True,
+        header_format = workbook.add_format({'bold': True, 'bg_color': '#f0f0f0',
                                              'align': 'center', 'valign': 'vcenter', 'border': 2})
+        header_format2 = workbook.add_format({'bold': True, 'bg_color': '#27C2F5',
+                                              'align': 'center', 'valign': 'vcenter', 'border': 2})
+        header_format3 = workbook.add_format({'bold': True, 'bg_color': '#27F5C1',
+                                              'align': 'center', 'valign': 'vcenter', 'border': 2})
+        header_format4 = workbook.add_format({'bold': True, 'bg_color': '#C8DA44',
+                                              'align': 'center', 'valign': 'vcenter', 'border': 2})
+        header_format5 = workbook.add_format({'bold': True, 'bg_color': '#E6376F',
+                                              'align': 'center', 'valign': 'vcenter', 'border': 2})
         cell_format = workbook.add_format({'align': 'center', 'valign': 'vcenter',
                                            'border': 0, 'left': 2, 'right': 2, 'top': 1, 'bottom': 1})
 
@@ -79,37 +87,37 @@ class ProfitabilityReport(models.AbstractModel):
         worksheet.merge_range(
             row, col + 3, row, col + 5,
             f"Last ({date_from_last_year.date()} → {date_to_last_year.date()})",
-            header_format
+            header_format2
         )
 
         # الهيدر الفرعي للسنة اللي فاتت
-        worksheet.write(row + 1, col + 3, "Quantity", header_format)
-        worksheet.write(row + 1, col + 4, "Price", header_format)
-        worksheet.write(row + 1, col + 5, "Nasp", header_format)
+        worksheet.write(row + 1, col + 3, "Quantity", header_format2)
+        worksheet.write(row + 1, col + 4, "Price", header_format2)
+        worksheet.write(row + 1, col + 5, "Nasp", header_format2)
 
         # هيدر الفترة الحالية
         worksheet.merge_range(
             row, col + 6, row, col + 9,
             f"Current ({date_from} → {date_to})",
-            header_format
+            header_format3
         )
 
         # الهيدر الفرعي للفترة الحالية
-        worksheet.write(row + 1, col + 6, "Total Quantity", header_format)
-        worksheet.write(row + 1, col + 7, "Total Price", header_format)
-        worksheet.write(row + 1, col + 8, "Nasp", header_format)
-        worksheet.write(row + 1, col + 9, "Sales Person", header_format)
+        worksheet.write(row + 1, col + 6, "Total Quantity", header_format3)
+        worksheet.write(row + 1, col + 7, "Total Price", header_format3)
+        worksheet.write(row + 1, col + 8, "Nasp", header_format3)
+        worksheet.write(row + 1, col + 9, "Sales Person", header_format3)
 
         worksheet.merge_range(
             row, col + 10, row, col + 12,
             f"YTD Plan ({date_from} → {date_to})",
-            header_format
+            header_format4
         )
-        worksheet.write(row + 1, col + 10, "Plan Quantity", header_format)
-        worksheet.write(row + 1, col + 11, "Value", header_format)
-        worksheet.write(row + 1, col + 12, "Nasp", header_format)
-        worksheet.merge_range(row, col + 13, row+1, col + 13, "Qty %", header_format)
-        worksheet.merge_range(row, col + 14, row+1, col + 14, "Value %", header_format)
+        worksheet.write(row + 1, col + 10, "Plan Quantity", header_format4)
+        worksheet.write(row + 1, col + 11, "Value", header_format4)
+        worksheet.write(row + 1, col + 12, "Nasp", header_format4)
+        worksheet.merge_range(row, col + 13, row+1, col + 13, "Qty %", header_format5)
+        worksheet.merge_range(row, col + 14, row+1, col + 14, "Value %", header_format5)
 
         row += 2
 

@@ -108,9 +108,29 @@ class PurchaseBillWizard(models.TransientModel):
 
                 # -------- المشتريات الحالية --------
                 qty_in_invoice = sum(
-                    vendor_lines.filtered(lambda l: l.move_id.move_type == 'in_invoice').mapped('quantity'))
+                    vendor_lines.filtered(
+                        lambda l: l.move_id.move_type == 'in_invoice' and l.price_unit > 0
+                    ).mapped('quantity')
+                )
+
                 qty_in_refund = sum(
-                    vendor_lines.filtered(lambda l: l.move_id.move_type == 'in_refund').mapped('quantity'))
+                    vendor_lines.filtered(
+                        lambda l: l.move_id.move_type == 'in_refund' and l.price_unit > 0
+                    ).mapped('quantity')
+                )
+                foc_in_invoice = sum(
+                    vendor_lines.filtered(
+                        lambda l: l.move_id.move_type == 'in_invoice' and l.price_unit == 0
+                    ).mapped('quantity')
+                )
+
+                foc_in_refund = sum(
+                    vendor_lines.filtered(
+                        lambda l: l.move_id.move_type == 'in_refund' and l.price_unit == 0
+                    ).mapped('quantity')
+                )
+
+                total_foc = foc_in_invoice - foc_in_refund
                 total_quantity = qty_in_invoice - qty_in_refund
                 achive = total_quantity / plan_qty * 100 if plan_qty else 0.0
 
@@ -148,6 +168,7 @@ class PurchaseBillWizard(models.TransientModel):
                     'Default Code': default_code,
                     'Vendor': vendor.name,
                     'Vendor id': vendor.id,
+                    'Foc': total_foc,
 
                     'date_from_last_year': date_from_last_year,
                     'date_to_last_year': date_to_last_year,
@@ -193,6 +214,7 @@ class PurchaseBillWizard(models.TransientModel):
                 'product_name': rec['Product'],
                 'default_code': rec['Default Code'],
                 'vendor_id': rec['Vendor id'],
+                'foc': rec['Foc'],
 
                 'total_quantity': rec['Total Quantity'],
                 'total_price': rec['Total Price'],

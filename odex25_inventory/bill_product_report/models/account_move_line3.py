@@ -9,6 +9,7 @@ class AccountMoveLine3(models.Model):
     product_name = fields.Char(string="Product")
     default_code = fields.Char(string="Default Code")
     total_quantity = fields.Float(string="Total Quantity")
+    foc = fields.Float(string="FOC")
     total_price = fields.Float(string="Total Price")
     nsap = fields.Float(string="Nasp")
     vendor_id = fields.Many2one(comodel_name='res.partner', string="Vendor")
