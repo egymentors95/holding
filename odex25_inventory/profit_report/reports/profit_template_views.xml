@@ -62,7 +62,7 @@
 
                         <tr style="border: 1px solid black;">
                             <!-- Sub headers for Last Year -->
-                            <th style="border: 1px solid black; background-color: #27C2F5;">Total Quantity</th>
+                            <th style="border: 1px solid black; background-color: #27C2F5;">Total QTY</th>
                             <th style="border: 1px solid black; background-color: #27C2F5;">Total Price</th>
                             <th style="border: 1px solid black; background-color: #27C2F5;">NASP</th>
                             <th style="border: 1px solid black; background-color: #27C2F5;">NAPP</th>
@@ -70,7 +70,7 @@
                             <th style="border: 1px solid black; background-color: #27C2F5;">Profit Margin</th>
 
                             <!-- Sub headers for Current Period -->
-                            <th style="border: 1px solid black; background-color: #27F5C1;">Total Quantity</th>
+                            <th style="border: 1px solid black; background-color: #27F5C1;">Total QTY</th>
                             <th style="border: 1px solid black; background-color: #27F5C1;">Total Price</th>
                             <th style="border: 1px solid black; background-color: #27F5C1;">NASP</th>
                             <th style="border: 1px solid black; background-color: #27F5C1;">NAPP</th>

@@ -93,7 +93,7 @@ class ProfitReport(models.AbstractModel):
         )
 
         # الهيدر الفرعي للسنة اللي فاتت
-        worksheet.write(row + 1, col + 3, "Total Quantity", header_format2)
+        worksheet.write(row + 1, col + 3, "Total QTY", header_format2)
         worksheet.write(row + 1, col + 4, "Total Price", header_format2)
         worksheet.write(row + 1, col + 5, "NASP", header_format2)
         worksheet.write(row + 1, col + 6, "NAPP", header_format2)
@@ -108,7 +108,7 @@ class ProfitReport(models.AbstractModel):
         )
 
         # الهيدر الفرعي للفترة الحالية
-        worksheet.write(row + 1, col + 9, "Total Quantity", header_format3)
+        worksheet.write(row + 1, col + 9, "Total QTY", header_format3)
         worksheet.write(row + 1, col + 10, "Total Price", header_format3)
         worksheet.write(row + 1, col + 11, "NASP", header_format3)
         worksheet.write(row + 1, col + 12, "NAPP", header_format3)
