@@ -8,7 +8,7 @@ class AccountMoveLine3(models.Model):
     product_category = fields.Char(string="Product Category")
     product_name = fields.Char(string="Product")
     default_code = fields.Char(string="Default Code")
-    total_quantity = fields.Float(string="Total Quantity")
+    total_quantity = fields.Float(string="QTY")
     foc = fields.Float(string="FOC")
     total_price = fields.Float(string="Total Price")
     nsap = fields.Float(string="Nasp")

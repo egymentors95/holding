@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <template id="purchase_planning_report">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <t t-foreach="docs" t-as="o">
+                    <!-- <t t-call="report.external_layout"> -->
+                    <div class="page">
+                        <br/>
+                        <div style="text-align: left;">
+                            <h2>
+                                <span t-field="o.name"/>
+                            </h2>
+                        </div>
+                        <div class="row">
+                            <div class="col-4" style="text-align: center;">
+                                <div style="font-weight: bold;">
+                                    <span>Vendor</span>
+                                </div>
+                                <div>
+                                    <span t-esc="o.partner_id.name"/>
+                                </div>
+                            </div>
+                            <div class="col-4" style="text-align: center;">
+                                <div style="font-weight: bold;">
+                                    <span>Start Date</span>
+                                </div>
+                                <div>
+                                    <span t-esc="o.plan_start_date"/>
+                                </div>
+                            </div>
+                            <div class="col-4" style="text-align: center;">
+                                <div style="font-weight: bold;">
+                                    <span>End Date</span>
+                                </div>
+                                <div>
+                                    <span t-esc="o.plan_end_date"/>
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+
+                        <table class="table table-sm table-bordered"
+                               style="width:100%; border: 1px solid black; text-align: center;">
+                            <thead style="background-color: #f0f0f0; font-weight: bold; text-align: center;">
+                                <tr style="border: 1px solid black;">
+                                    <th style="border: 1px solid black;">Product</th>
+                                    <th style="border: 1px solid black;">January</th>
+                                    <th style="border: 1px solid black;">February</th>
+                                    <th style="border: 1px solid black;">March</th>
+                                    <th style="border: 1px solid black;">April</th>
+                                    <th style="border: 1px solid black;">May</th>
+                                    <th style="border: 1px solid black;">June</th>
+                                    <th style="border: 1px solid black;">July</th>
+                                    <th style="border: 1px solid black;">August</th>
+                                    <th style="border: 1px solid black;">September</th>
+                                    <th style="border: 1px solid black;">October</th>
+                                    <th style="border: 1px solid black;">November</th>
+                                    <th style="border: 1px solid black;">December</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <t t-foreach="o.order_line" t-as="line">
+                                    <tr style="border: 1px solid black;">
+
+                                        <td style="border: 1px solid black;">
+                                            <span t-esc="line.product_id.name"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-esc="line.january"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-esc="line.february"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-esc="line.march"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-esc="line.april"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-esc="line.may"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-esc="line.june"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-esc="line.july"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-esc="line.august"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-esc="line.september"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-esc="line.october"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-esc="line.november"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-esc="line.december"/>
+                                        </td>
+
+
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+
+    <record id="report_purchase_planing_paperformat" model="report.paperformat">
+        <field name="name">Purchase Planing</field>
+        <field name="default" eval="True"/>
+        <field name="format">custom</field>
+        <field name="page_height">297</field>
+        <field name="page_width">210</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">12</field>
+        <field name="margin_bottom">8</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">10</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="action_print_purchase_planing" model="ir.actions.report">
+        <field name="name">Purchase Planing</field>
+        <field name="model">purchase.planning</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">purchase_requisition_custom.purchase_planning_report</field>
+        <field name="report_file">purchase_requisition_custom.purchase_planning_report</field>
+        <field name="binding_model_id" ref="purchase_requisition_custom.model_purchase_planning"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="purchase_requisition_custom.report_purchase_planing_paperformat"/>
+    </record>
+
+</odoo>
+

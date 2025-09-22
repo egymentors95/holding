@@ -75,7 +75,7 @@ class InvoiceBillReport(models.AbstractModel):
         worksheet.write(row, col + 1, f"{date_to}", header_format0)
         row += 1
         worksheet.write(row, col, f"Currency", header_format0)
-        worksheet.write(row, col + 1, f"SR", header_format0)
+        worksheet.write(row, col + 1, f"SR or USD", header_format0)
         row += 2
 
         # ---------------- Table Headers ----------------
@@ -85,7 +85,7 @@ class InvoiceBillReport(models.AbstractModel):
 
         # هيدر السنة اللي فاتت
         worksheet.merge_range(
-            row, col + 3, row, col + 4,
+            row, col + 3, row, col + 6,
             f"QTY",
             header_format2
         )
@@ -93,53 +93,94 @@ class InvoiceBillReport(models.AbstractModel):
         # الهيدر الفرعي للسنة اللي فاتت
         worksheet.write(row + 1, col + 3, "Main Qty", header_format2)
         worksheet.write(row + 1, col + 4, "Foc", header_format2)
+        worksheet.write(row + 1, col + 5, "Value", header_format2)
+        worksheet.write(row + 1, col + 6, "NAAP", header_format2)
+
 
         # الهيدر الفرعي للفترة الحالية
         worksheet.merge_range(
-            row, col + 5, row, col + 8,
+            row, col + 7, row, col + 10,
             f"Full Year Plan",
             header_format3
         )
-
-        worksheet.write(row + 1, col + 5, "Value", header_format3)
-        worksheet.write(row + 1, col + 6, "NAAP", header_format3)
-        worksheet.write(row + 1, col + 7, "QTY", header_format3)
-        worksheet.write(row + 1, col + 8, "Vendor", header_format3)
-
-        worksheet.merge_range(
-            row, col + 9, row+1, col + 9,
-            f"Value",
-            header_format4
-        )
-        worksheet.merge_range(
-            row, col + 10, row + 1, col + 10,
-            f"Ach.%",
-            header_format4
-        )
+        worksheet.write(row + 1, col + 7, "Vendor", header_format3)
+        worksheet.write(row + 1, col + 8, "QTY", header_format3)
+        worksheet.write(row + 1, col + 9, "Value", header_format3)
+        worksheet.write(row + 1, col + 10, "Ach.%", header_format3)
         row += 2
 
         # ---------------- Data Rows ----------------
         last_category = None
-        for record in lots_data:
-            # Product Category (merge if same)
-            if record['Product Category'] == last_category:
-                worksheet.write(row, col, "", cell_format)
-            else:
-                worksheet.write(row, col, record['Product Category'], header_format)
-                last_category = record['Product Category']
+        category_totals = {
+            'Total Quantity': 0,
+            'Foc': 0,
+            'Total Price': 0,
+            'Nsap': 0,
+            'Plan Quantity': 0,
+            'Plan Value': 0,
+            'Achive': 0,
+        }
 
+        for record in lots_data:
+            # لو الكاتيجوري اتغيرت -> اطبع Total للأخيرة وابدأ الجديدة
+            if last_category and record['Product Category'] != last_category:
+                # Subtotal Row
+                worksheet.write(row, col + 1, "Total", header_format)
+                worksheet.write(row, col + 2, "", header_format)
+                worksheet.write_number(row, col + 3, category_totals['Total Quantity'], header_format)
+                worksheet.write_number(row, col + 4, category_totals['Foc'], header_format)
+                worksheet.write_number(row, col + 5, category_totals['Total Price'], header_format)
+                worksheet.write_number(row, col + 6, category_totals['Nsap'], header_format)
+                worksheet.write(row, col + 7, "", header_format)
+                worksheet.write_number(row, col + 8, category_totals['Plan Quantity'], header_format)
+                worksheet.write_number(row, col + 9, category_totals['Plan Value'], header_format)
+                worksheet.write_number(row, col + 10, category_totals['Achive'], header_format)
+                row += 2  # نسيب سطر فاصل بعد الـ Subtotal
+
+                # Reset totals
+                category_totals = {k: 0 for k in category_totals}
+
+            # لو كاتيجوري جديدة نطبعها في صف كامل لوحدها
+            if record['Product Category'] != last_category:
+                worksheet.merge_range(row, col, row, col + 10, record['Product Category'], header_format)
+                last_category = record['Product Category']
+                row += 1  # ننزل سطر بعد الكاتيجوري
+
+            # كتابة بيانات المنتج
             worksheet.write(row, col + 1, record['Default Code'] or '', cell_format)
             worksheet.write(row, col + 2, record['Product'] or '', cell_format)
-
             worksheet.write_number(row, col + 3, record['Total Quantity'], cell_format)
             worksheet.write_number(row, col + 4, record['Foc'], cell_format)
-
             worksheet.write_number(row, col + 5, record['Total Price'], cell_format)
             worksheet.write_number(row, col + 6, record['Nsap'], cell_format)
-            worksheet.write_number(row, col + 7, record['Plan Quantity'], cell_format)
-
-            worksheet.write(row, col + 8, record['Vendor'], cell_format)
+            worksheet.write(row, col + 7, record['Vendor'], cell_format)
+            worksheet.write_number(row, col + 8, record['Plan Quantity'], cell_format)
             worksheet.write_number(row, col + 9, record['Plan Value'], cell_format)
             worksheet.write_number(row, col + 10, record['Achive'], cell_format)
 
+            # نجمع القيم عشان subtotal
+            category_totals['Total Quantity'] += record['Total Quantity']
+            category_totals['Foc'] += record['Foc']
+            category_totals['Total Price'] += record['Total Price']
+            category_totals['Nsap'] += record['Nsap']
+            category_totals['Plan Quantity'] += record['Plan Quantity']
+            category_totals['Plan Value'] += record['Plan Value']
+            category_totals['Achive'] += record['Achive']
+
             row += 1
+
+        # بعد آخر كاتيجوري لازم نطبع subtotal
+        if last_category:
+            worksheet.write(row, col + 1, "Total", header_format)
+            worksheet.write(row, col + 2, "", header_format)
+
+            worksheet.write_number(row, col + 3, category_totals['Total Quantity'], header_format)
+            worksheet.write_number(row, col + 4, category_totals['Foc'], header_format)
+            worksheet.write_number(row, col + 5, category_totals['Total Price'], header_format)
+            worksheet.write_number(row, col + 6, category_totals['Nsap'], header_format)
+            worksheet.write(row, col + 7, "", header_format)
+
+            worksheet.write_number(row, col + 8, category_totals['Plan Quantity'], header_format)
+            worksheet.write_number(row, col + 9, category_totals['Plan Value'], header_format)
+            worksheet.write_number(row, col + 10, category_totals['Achive'], header_format)
+

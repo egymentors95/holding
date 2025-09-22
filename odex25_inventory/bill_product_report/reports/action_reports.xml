@@ -11,7 +11,7 @@
     </record>
 
     <record id="report_action_invoice_bill_html" model="ir.actions.report">
-        <field name="name">Purchase Html Report</field>
+        <field name="name">Purchase Report</field>
         <field name="model">purchase.bill.wizard</field>
         <field name="report_type">qweb-html</field>
         <field name="report_name">bill_product_report.purchase_bill_html_report</field>

@@ -10,6 +10,7 @@ class Company(models.Model):
     second_approve = fields.Integer(string='second approve')
     purchase_budget = fields.Boolean(string='Purchase budget')
     purchase_analytic_account = fields.Many2one('account.analytic.account')
+    arabic_name = fields.Char()
     # exceptional_amount = fields.Float(string='Exceptional Amount')
     chief_executive_officer = fields.Float(string='Exceptional Amount')
     direct_purchase = fields.Float(string='Direct Purchase Amount')

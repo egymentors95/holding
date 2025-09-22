@@ -20,7 +20,7 @@
                             </div>
                             <div>
                                 <span style="font-weight: bold;">Currency:</span>
-                                <span>SR</span>
+                                <span>SR or USD</span>
                             </div>
                         </td>
                         <td colspan="4" style="text-align: right;">
@@ -42,79 +42,110 @@
                     <thead style="background-color: #f0f0f0; font-weight: bold;">
                         <tr style="border: 1px solid black;">
                             <th style="border: 1px solid black;" rowspan="2">Product Category</th>
-                            <th style="border: 1px solid black;" rowspan="2">Default Code</th>
+                            <th style="border: 1px solid black;" rowspan="2">Code</th>
                             <th style="border: 1px solid black;" rowspan="2">Product</th>
 
                             <!-- QTY -->
-                            <th style="border: 1px solid black;  background-color:#27C2F5;" colspan="2">QTY</th>
+                            <th style="border: 1px solid black;  background-color:#27C2F5;" colspan="4">QTY</th>
 
                             <!-- Full Year Plan -->
-                            <th style="border: 1px solid black; background-color:#27F5C1;" colspan="4">Full Year Plan</th>
-
-                            <th style="border: 1px solid black;  background-color:#E6376F;" rowspan="2">Value</th>
-                            <th style="border: 1px solid black;  background-color:#E6376F;" rowspan="2">Ach.%</th>
+                            <th style="border: 1px solid black; background-color:#27F5C1;" colspan="4">Full Year Plan
+                            </th>
                         </tr>
                         <tr style="border: 1px solid black;">
                             <!-- Sub headers -->
                             <th style="border: 1px solid black; background-color:#27C2F5;">Main Qty</th>
                             <th style="border: 1px solid black; background-color:#27C2F5;">Foc</th>
+                            <th style="border: 1px solid black; background-color:#27C2F5;">Value</th>
+                            <th style="border: 1px solid black; background-color:#27C2F5;">NAAP</th>
 
-                            <th style="border: 1px solid black; background-color:#27F5C1;">Value</th>
-                            <th style="border: 1px solid black; background-color:#27F5C1;">NAAP</th>
-                            <th style="border: 1px solid black; background-color:#27F5C1;">QTY</th>
                             <th style="border: 1px solid black; background-color:#27F5C1;">Vendor</th>
+                            <th style="border: 1px solid black; background-color:#27F5C1;">QTY</th>
+                            <th style="border: 1px solid black;  background-color:#27F5C1;">Value</th>
+                            <th style="border: 1px solid black;  background-color:#27F5C1;">Ach.%</th>
+
                         </tr>
                     </thead>
                     <tbody>
-                        <t t-set="last_category" t-value="None"/>
-                        <t t-foreach="(report_data or {}).get('product_ids', [])" t-as="line">
-                            <tr style="border: 1px solid black;">
-                                <!-- Product Category -->
-                                <td style="border: 1px solid black;">
-                                    <t t-if="line['Product Category'] != last_category">
-                                        <t t-esc="line['Product Category']"/>
-                                        <t t-set="last_category" t-value="line['Product Category']"/>
-                                    </t>
-                                </td>
-                                <!-- Default Code -->
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Default Code']"/>
-                                </td>
+    <t t-set="last_category" t-value="None"/>
+    <t t-set="totals" t-value="{'Total Quantity': 0, 'Foc': 0, 'Total Price': 0, 'Nsap': 0,
+                                'Plan Quantity': 0, 'Plan Value': 0, 'Achive': 0}"/>
 
-                                <!-- Product -->
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Product']"/>
-                                </td>
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Total Quantity']"/>
-                                </td>
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Foc']"/>
-                                </td>
+    <t t-foreach="(report_data or {}).get('product_ids', [])" t-as="line">
 
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Total Price']"/>
-                                </td>
+        <!-- لو الكاتيجوري اتغيرت -->
+        <t t-if="last_category and line['Product Category'] != last_category">
+            <!-- اطبع subtotal -->
+            <tr style="background-color:#EEE; font-weight:bold; border: 1px solid black;">
+                <td colspan="3" style="text-align:right; border: 1px solid black;">Subtotal</td>
+                <td style="border: 1px solid black;"><t t-esc="totals['Total Quantity']"/></td>
+                <td style="border: 1px solid black;"><t t-esc="totals['Foc']"/></td>
+                <td style="border: 1px solid black;"><t t-esc="totals['Total Price']"/></td>
+                <td style="border: 1px solid black;"><t t-esc="totals['Nsap']"/></td>
+                <td></td>
+                <td style="border: 1px solid black;"><t t-esc="totals['Plan Quantity']"/></td>
+                <td style="border: 1px solid black;"><t t-esc="totals['Plan Value']"/></td>
+                <td style="border: 1px solid black;"><t t-esc="totals['Achive']"/></td>
+            </tr>
 
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Nsap']"/>
-                                </td>
+            <!-- reset totals -->
+            <t t-set="totals" t-value="{'Total Quantity': 0, 'Foc': 0, 'Total Price': 0, 'Nsap': 0,
+                                        'Plan Quantity': 0, 'Plan Value': 0, 'Achive': 0}"/>
+        </t>
 
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Plan Quantity']"/>
-                                </td>
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Vendor']"/>
-                                </td>
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Plan Value']"/>
-                                </td>
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Achive']"/>
-                                </td>
-                            </tr>
-                        </t>
-                    </tbody>
+        <!-- لو كاتيجوري جديدة اطبع اسمها -->
+        <t t-if="line['Product Category'] != last_category">
+            <tr style="background-color:#F0EBEB; font-weight:bold; border: 1px solid black;">
+                <td colspan="11" style="text-align: left; border: 1px solid black;">
+                    <t t-esc="line['Product Category']"/>
+                </td>
+            </tr>
+            <t t-set="last_category" t-value="line['Product Category']"/>
+        </t>
+
+        <!-- بيانات المنتج -->
+        <tr style="border: 1px solid black;">
+            <td></td>
+            <td style="border: 1px solid black; text-align: center;"><t t-esc="line['Default Code']"/></td>
+            <td style="border: 1px solid black; text-align: center;"><t t-esc="line['Product']"/></td>
+            <td style="border: 1px solid black; text-align: center;"><t t-esc="line['Total Quantity']"/></td>
+            <td style="border: 1px solid black; text-align: center;"><t t-esc="line['Foc']"/></td>
+            <td style="border: 1px solid black; text-align: center;"><t t-esc="line['Total Price']"/></td>
+            <td style="border: 1px solid black; text-align: center;"><t t-esc="line['Nsap']"/></td>
+            <td style="border: 1px solid black; text-align: center;"><t t-esc="line['Vendor']"/></td>
+            <td style="border: 1px solid black; text-align: center;"><t t-esc="line['Plan Quantity']"/></td>
+            <td style="border: 1px solid black; text-align: center;"><t t-esc="line['Plan Value']"/></td>
+            <td style="border: 1px solid black; text-align: center;"><t t-esc="round(line['Achive'] or 0, 2)"/></td>
+        </tr>
+
+        <!-- تحديث totals -->
+        <t t-set="totals" t-value="{
+            'Total Quantity': totals['Total Quantity'] + (line['Total Quantity'] or 0),
+            'Foc': totals['Foc'] + (line['Foc'] or 0),
+            'Total Price': totals['Total Price'] + (line['Total Price'] or 0),
+            'Nsap': totals['Nsap'] + (line['Nsap'] or 0),
+            'Plan Quantity': totals['Plan Quantity'] + (line['Plan Quantity'] or 0),
+            'Plan Value': totals['Plan Value'] + (line['Plan Value'] or 0),
+            'Achive': totals['Achive'] + (line['Achive'] or 0),
+        }"/>
+    </t>
+
+    <!-- Subtotal بعد آخر كاتيجوري -->
+    <t t-if="last_category">
+        <tr style="background-color:#EEE; font-weight:bold; border: 1px solid black;">
+            <td colspan="3" style="text-align:left; border: 1px solid black;">Subtotal</td>
+            <td style="border: 1px solid black;"><t t-esc="totals['Total Quantity']"/></td>
+            <td style="border: 1px solid black;"><t t-esc="totals['Foc']"/></td>
+            <td style="border: 1px solid black;"><t t-esc="totals['Total Price']"/></td>
+            <td style="border: 1px solid black;"><t t-esc="totals['Nsap']"/></td>
+            <td></td>
+            <td style="border: 1px solid black;"><t t-esc="totals['Plan Quantity']"/></td>
+            <td style="border: 1px solid black;"><t t-esc="totals['Plan Value']"/></td>
+            <td style="border: 1px solid black;"><t t-esc="round(totals['Achive'],2)"/></td>
+        </tr>
+    </t>
+</tbody>
+
                 </table>
             </div>
         </t>

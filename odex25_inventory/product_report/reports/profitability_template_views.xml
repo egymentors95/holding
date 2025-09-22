@@ -42,7 +42,7 @@
                     <thead style="background-color: #f0f0f0; font-weight: bold; text-align: center;">
                         <tr style="border: 1px solid black;">
                             <th style="border: 1px solid black;" rowspan="2">Product Category</th>
-                            <th style="border: 1px solid black;" rowspan="2">Default Code</th>
+                            <th style="border: 1px solid black;" rowspan="2">Code</th>
                             <th style="border: 1px solid black;" rowspan="2">Product</th>
 
                             <!-- Last Year -->
@@ -73,18 +73,18 @@
                             <!-- Sub headers Last -->
                             <th style="border: 1px solid black; background-color: #27C2F5;">Quantity</th>
                             <th style="border: 1px solid black; background-color: #27C2F5;">Price</th>
-                            <th style="border: 1px solid black; background-color: #27C2F5;">Nasp</th>
+                            <th style="border: 1px solid black; background-color: #27C2F5;">NASP</th>
 
                             <!-- Sub headers Current -->
                             <th style="border: 1px solid black; background-color: #27F5C1;">Total Quantity</th>
                             <th style="border: 1px solid black; background-color: #27F5C1;">Total Price</th>
-                            <th style="border: 1px solid black; background-color: #27F5C1;">Nasp</th>
+                            <th style="border: 1px solid black; background-color: #27F5C1;">NASP</th>
                             <th style="border: 1px solid black; background-color: #27F5C1;">Sales Person</th>
 
                             <!-- Sub headers YTD Plan -->
                             <th style="border: 1px solid black; background-color: #C8DA44;">Plan Quantity</th>
                             <th style="border: 1px solid black; background-color: #C8DA44;">Value</th>
-                            <th style="border: 1px solid black; background-color: #C8DA44;">Nasp</th>
+                            <th style="border: 1px solid black; background-color: #C8DA44;">NASP</th>
                         </tr>
                     </thead>
 

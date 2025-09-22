@@ -93,7 +93,7 @@ class ProfitabilityReport(models.AbstractModel):
         # الهيدر الفرعي للسنة اللي فاتت
         worksheet.write(row + 1, col + 3, "Quantity", header_format2)
         worksheet.write(row + 1, col + 4, "Price", header_format2)
-        worksheet.write(row + 1, col + 5, "Nasp", header_format2)
+        worksheet.write(row + 1, col + 5, "NASP", header_format2)
 
         # هيدر الفترة الحالية
         worksheet.merge_range(
@@ -105,7 +105,7 @@ class ProfitabilityReport(models.AbstractModel):
         # الهيدر الفرعي للفترة الحالية
         worksheet.write(row + 1, col + 6, "Total Quantity", header_format3)
         worksheet.write(row + 1, col + 7, "Total Price", header_format3)
-        worksheet.write(row + 1, col + 8, "Nasp", header_format3)
+        worksheet.write(row + 1, col + 8, "NASP", header_format3)
         worksheet.write(row + 1, col + 9, "Sales Person", header_format3)
 
         worksheet.merge_range(
@@ -115,7 +115,7 @@ class ProfitabilityReport(models.AbstractModel):
         )
         worksheet.write(row + 1, col + 10, "Plan Quantity", header_format4)
         worksheet.write(row + 1, col + 11, "Value", header_format4)
-        worksheet.write(row + 1, col + 12, "Nasp", header_format4)
+        worksheet.write(row + 1, col + 12, "NASP", header_format4)
         worksheet.merge_range(row, col + 13, row+1, col + 13, "Qty %", header_format5)
         worksheet.merge_range(row, col + 14, row+1, col + 14, "Value %", header_format5)
 
@@ -123,14 +123,53 @@ class ProfitabilityReport(models.AbstractModel):
 
         # ---------------- Data Rows ----------------
         last_category = None
-        for record in lots_data:
-            # Product Category (merge if same)
-            if record['Product Category'] == last_category:
-                worksheet.write(row, col, "", cell_format)
-            else:
-                worksheet.write(row, col, record['Product Category'], cell_format)
-                last_category = record['Product Category']
+        # متغير لتجميع subtotal
+        category_totals = {
+            'Last Year Total Quantity': 0,
+            'Last Year Total Price': 0,
+            'Last Year Nsap': 0,
+            'Total Quantity': 0,
+            'Total Price': 0,
+            'Nsap': 0,
+            'Total Plan Quantity': 0,
+            'Total Plan Price': 0,
+            'Plan Nsap': 0,
+            'QTY': 0,
+            'Value': 0,
+        }
 
+        for record in lots_data:
+            # لو دخلنا كاتيجوري جديدة
+            if record['Product Category'] != last_category:
+                # اطبع subtotal للكاتيجوري اللي فاتت
+                if last_category:
+                    worksheet.write(row, col, f"Total", header_format)
+                    worksheet.write_number(row, col + 3, category_totals['Last Year Total Quantity'], header_format)
+                    worksheet.write_number(row, col + 4, category_totals['Last Year Total Price'], header_format)
+                    worksheet.write_number(row, col + 5, category_totals['Last Year Nsap'], header_format)
+
+                    worksheet.write_number(row, col + 6, category_totals['Total Quantity'], header_format)
+                    worksheet.write_number(row, col + 7, category_totals['Total Price'], header_format)
+                    worksheet.write_number(row, col + 8, category_totals['Nsap'], header_format)
+                    worksheet.write(row, col + 9, "", header_format)
+
+                    worksheet.write_number(row, col + 10, category_totals['Total Plan Quantity'], header_format)
+                    worksheet.write_number(row, col + 11, category_totals['Total Plan Price'], header_format)
+                    worksheet.write_number(row, col + 12, category_totals['Plan Nsap'], header_format)
+                    worksheet.write_number(row, col + 13, category_totals['QTY'], header_format)
+                    worksheet.write_number(row, col + 14, category_totals['Value'], header_format)
+
+                    row += 1
+                    # reset totals
+                    category_totals = {k: 0 for k in category_totals}
+
+                # اطبع صف الكاتيجوري الجديدة
+                worksheet.merge_range(row, col, row, col + 14, record['Product Category'], header_format0)
+                last_category = record['Product Category']
+                row += 1
+
+            # اطبع تفاصيل المنتج
+            worksheet.write(row, col, "", cell_format)  # فاضي مكان الكاتيجوري
             worksheet.write(row, col + 1, record['Default Code'] or '', cell_format)
             worksheet.write(row, col + 2, record['Product'] or '', cell_format)
 
@@ -138,10 +177,9 @@ class ProfitabilityReport(models.AbstractModel):
             worksheet.write_number(row, col + 4, record['Last Year Total Price'], cell_format)
             worksheet.write_number(row, col + 5, record['Last Year Nsap'], cell_format)
 
-
             worksheet.write_number(row, col + 6, record['Total Quantity'], cell_format)
             worksheet.write_number(row, col + 7, record['Total Price'], cell_format)
-            worksheet.write_number(row, col + 8, round(record['Nsap'],2), cell_format)
+            worksheet.write_number(row, col + 8, round(record['Nsap'], 2), cell_format)
             worksheet.write(row, col + 9, record['Sales Person'], cell_format)
 
             worksheet.write_number(row, col + 10, record['Total Plan Quantity'], cell_format)
@@ -150,5 +188,37 @@ class ProfitabilityReport(models.AbstractModel):
             worksheet.write_number(row, col + 13, record['QTY'], cell_format)
             worksheet.write_number(row, col + 14, record['Value'], cell_format)
 
+            # جمع القيم في totals
+            category_totals['Last Year Total Quantity'] += record['Last Year Total Quantity'] or 0
+            category_totals['Last Year Total Price'] += record['Last Year Total Price'] or 0
+            category_totals['Last Year Nsap'] += record['Last Year Nsap'] or 0
+            category_totals['Total Quantity'] += record['Total Quantity'] or 0
+            category_totals['Total Price'] += record['Total Price'] or 0
+            category_totals['Nsap'] += record['Nsap'] or 0
+            category_totals['Total Plan Quantity'] += record['Total Plan Quantity'] or 0
+            category_totals['Total Plan Price'] += record['Total Plan Price'] or 0
+            category_totals['Plan Nsap'] += record['Plan Nsap'] or 0
+            category_totals['QTY'] += record['QTY'] or 0
+            category_totals['Value'] += record['Value'] or 0
+
+            row += 1
+
+        # اطبع subtotal بعد آخر كاتيجوري
+        if last_category:
+            worksheet.write(row, col, f"Total", header_format)
+            worksheet.write_number(row, col + 3, category_totals['Last Year Total Quantity'], header_format)
+            worksheet.write_number(row, col + 4, category_totals['Last Year Total Price'], header_format)
+            worksheet.write_number(row, col + 5, category_totals['Last Year Nsap'], header_format)
+
+            worksheet.write_number(row, col + 6, category_totals['Total Quantity'], header_format)
+            worksheet.write_number(row, col + 7, category_totals['Total Price'], header_format)
+            worksheet.write_number(row, col + 8, category_totals['Nsap'], header_format)
+            worksheet.write(row, col + 9, "", header_format)
+
+            worksheet.write_number(row, col + 10, category_totals['Total Plan Quantity'], header_format)
+            worksheet.write_number(row, col + 11, category_totals['Total Plan Price'], header_format)
+            worksheet.write_number(row, col + 12, category_totals['Plan Nsap'], header_format)
+            worksheet.write_number(row, col + 13, category_totals['QTY'], header_format)
+            worksheet.write_number(row, col + 14, category_totals['Value'], header_format)
 
             row += 1
