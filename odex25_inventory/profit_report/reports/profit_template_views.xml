@@ -63,7 +63,7 @@
                         <tr style="border: 1px solid black;">
                             <!-- Sub headers for Last Year -->
                             <th style="border: 1px solid black; background-color: #27C2F5;">Total QTY</th>
-                            <th style="border: 1px solid black; background-color: #27C2F5;">Total Price</th>
+                            <th style="border: 1px solid black; background-color: #27C2F5;">Total Value</th>
                             <th style="border: 1px solid black; background-color: #27C2F5;">NASP</th>
                             <th style="border: 1px solid black; background-color: #27C2F5;">NAPP</th>
                             <th style="border: 1px solid black; background-color: #27C2F5;">Profit Value</th>
@@ -71,91 +71,134 @@
 
                             <!-- Sub headers for Current Period -->
                             <th style="border: 1px solid black; background-color: #27F5C1;">Total QTY</th>
-                            <th style="border: 1px solid black; background-color: #27F5C1;">Total Price</th>
+                            <th style="border: 1px solid black; background-color: #27F5C1;">Total Value</th>
                             <th style="border: 1px solid black; background-color: #27F5C1;">NASP</th>
                             <th style="border: 1px solid black; background-color: #27F5C1;">NAPP</th>
                             <th style="border: 1px solid black; background-color: #27F5C1;">Profit Value</th>
                             <th style="border: 1px solid black; background-color: #27F5C1;">Profit Margin</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <t t-set="last_category" t-value="None"/>
-                        <t t-foreach="(report_data or {}).get('product_ids', [])" t-as="line">
-                            <tr style="border: 1px solid black;">
-                                <!-- Product Category -->
-                                <td style="border: 1px solid black;">
-                                    <t t-if="line['Product Category'] != last_category">
-                                        <t t-esc="line['Product Category']"/>
-                                        <t t-set="last_category" t-value="line['Product Category']"/>
-                                    </t>
-                                </td>
-                                <!-- Default Code -->
-                                <td style="border: 1px solid black;">
-                                    <t t-esc="line['Default Code']"/>
-                                </td>
+                   <tbody>
+    <t t-set="last_category" t-value="None"/>
+    <t t-set="totals" t-value="{
+        'Last Year Total Quantity': 0,
+        'Last Year Total Price': 0,
+        'Last Year Nsap': 0,
+        'Last Year Naap': 0,
+        'Last Profit Value': 0,
+        'Last Margin': 0,
+        'Total Quantity': 0,
+        'Total Price': 0,
+        'Nsap': 0,
+        'Naap': 0,
+        'Profit Value': 0,
+        'Margin': 0
+    }"/>
 
-                                <!-- Product -->
-                                <td style="border: 1px solid black;">
-                                    <t t-esc="line['Product']"/>
-                                </td>
+    <t t-foreach="(report_data or {}).get('product_ids', [])" t-as="line">
 
-                                <!-- Last Year Total Quantity -->
-                                <td style="border: 1px solid black;">
-                                    <t t-esc="line['Last Year Total Quantity']"/>
-                                </td>
+        <!-- لو الكاتيجوري اتغيرت -->
+        <t t-if="last_category and line['Product Category'] != last_category">
+            <!-- Subtotal -->
+            <tr style="background-color:#EEE; font-weight:bold; border: 1px solid black;">
+                <td colspan="3" style="text-align:center;">Total</td>
+                <td><t t-esc="totals['Last Year Total Quantity']"/></td>
+                <td><t t-esc="totals['Last Year Total Price']"/></td>
+                <td><t t-esc="totals['Last Year Nsap']"/></td>
+                <td><t t-esc="totals['Last Year Naap']"/></td>
+                <td><t t-esc="totals['Last Profit Value']"/></td>
+                <td><t t-esc="totals['Last Margin']"/></td>
+                <td><t t-esc="totals['Total Quantity']"/></td>
+                <td><t t-esc="totals['Total Price']"/></td>
+                <td><t t-esc="totals['Nsap']"/></td>
+                <td><t t-esc="totals['Naap']"/></td>
+                <td><t t-esc="totals['Profit Value']"/></td>
+                <td><t t-esc="totals['Margin']"/></td>
+            </tr>
 
-                                <!-- Last Year Total Price -->
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Last Year Total Price']"/>
-                                </td>
+            <!-- Reset totals -->
+            <t t-set="totals" t-value="{
+                'Last Year Total Quantity': 0,
+                'Last Year Total Price': 0,
+                'Last Year Nsap': 0,
+                'Last Year Naap': 0,
+                'Last Profit Value': 0,
+                'Last Margin': 0,
+                'Total Quantity': 0,
+                'Total Price': 0,
+                'Nsap': 0,
+                'Naap': 0,
+                'Profit Value': 0,
+                'Margin': 0
+            }"/>
+        </t>
 
-                                <!-- Last Year Nsap -->
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Last Year Nsap']"/>
-                                </td>
+        <!-- كاتيجوري جديدة -->
+        <t t-if="line['Product Category'] != last_category">
+            <tr style="background-color:#F0EBEB; font-weight:bold; border: 1px solid black;">
+                <td colspan="15" style="text-align:left; border: 1px solid black;">
+                    <t t-esc="line['Product Category']"/>
+                </td>
+            </tr>
+            <t t-set="last_category" t-value="line['Product Category']"/>
+        </t>
 
-                                  <!-- Last Year Naap -->
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Last Year Naap']"/>
-                                </td>
+        <!-- بيانات المنتج -->
+        <tr style="border: 1px solid black;">
+            <td></td>
+            <td><t t-esc="line['Default Code']"/></td>
+            <td><t t-esc="line['Product']"/></td>
+            <td><t t-esc="round(line['Last Year Total Quantity'],2)"/></td>
+            <td><t t-esc="round(line['Last Year Total Price'],2)"/></td>
+            <td><t t-esc="round(line['Last Year Nsap'],2)"/></td>
+            <td><t t-esc="round(line['Last Year Naap'],2)"/></td>
+            <td><t t-esc="round(line['Last Profit Value'],2)"/></td>
+            <td><t t-esc="round(line['Last Margin'],2)"/></td>
+            <td><t t-esc="round(line['Total Quantity'],2)"/></td>
+            <td><t t-esc="round(line['Total Price'],2)"/></td>
+            <td><t t-esc="round(line['Nsap'],2)"/></td>
+            <td><t t-esc="round(line['Naap'],2)"/></td>
+            <td><t t-esc="round(line['Profit Value'],2)"/></td>
+            <td><t t-esc="round(line['Margin'],2)"/></td>
+        </tr>
 
-                                <!-- Last Profit Value -->
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Last Profit Value']"/>
-                                </td>
-                                <!-- Last Margin -->
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Last Margin']"/>
-                                </td>
+        <!-- تحديث totals -->
+        <t t-set="totals" t-value="{
+            'Last Year Total Quantity': totals['Last Year Total Quantity'] + (line['Last Year Total Quantity'] or 0),
+            'Last Year Total Price': totals['Last Year Total Price'] + (line['Last Year Total Price'] or 0),
+            'Last Year Nsap': totals['Last Year Nsap'] + (line['Last Year Nsap'] or 0),
+            'Last Year Naap': totals['Last Year Naap'] + (line['Last Year Naap'] or 0),
+            'Last Profit Value': totals['Last Profit Value'] + (line['Last Profit Value'] or 0),
+            'Last Margin': totals['Last Margin'] + (line['Last Margin'] or 0),
+            'Total Quantity': totals['Total Quantity'] + (line['Total Quantity'] or 0),
+            'Total Price': totals['Total Price'] + (line['Total Price'] or 0),
+            'Nsap': totals['Nsap'] + (line['Nsap'] or 0),
+            'Naap': totals['Naap'] + (line['Naap'] or 0),
+            'Profit Value': totals['Profit Value'] + (line['Profit Value'] or 0),
+            'Margin': totals['Margin'] + (line['Margin'] or 0)
+        }"/>
+    </t>
 
-                                <!-- Total Quantity -->
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Total Quantity']"/>
-                                </td>
-                                <!-- Total Price -->
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Total Price']"/>
-                                </td>
-                                <!-- Nsap -->
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Nsap']"/>
-                                </td>
-                                <!-- Naap -->
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Naap']"/>
-                                </td>
-                                 <!-- Profit Value -->
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Profit Value']"/>
-                                </td>
-                                <!-- Margin -->
-                                <td style="border: 1px solid black; text-align: center;">
-                                    <t t-esc="line['Margin']"/>
-                                </td>
+    <!-- Subtotal آخر كاتيجوري -->
+    <t t-if="last_category">
+        <tr style="background-color:#EEE; font-weight:bold; border: 1px solid black;">
+            <td colspan="3" style="text-align:center;">Total</td>
+            <td><t t-esc="round(totals['Last Year Total Quantity'],2)"/></td>
+            <td><t t-esc="round(totals['Last Year Total Price'],2)"/></td>
+            <td><t t-esc="round(totals['Last Year Nsap'],2)"/></td>
+            <td><t t-esc="round(totals['Last Year Naap'],2)"/></td>
+            <td><t t-esc="round(totals['Last Profit Value'],2)"/></td>
+            <td><t t-esc="round(totals['Last Margin'],2)"/></td>
+            <td><t t-esc="round(totals['Total Quantity'],2)"/></td>
+            <td><t t-esc="round(totals['Total Price'],2)"/></td>
+            <td><t t-esc="round(totals['Nsap'],2)"/></td>
+            <td><t t-esc="round(totals['Naap'],2)"/></td>
+            <td><t t-esc="round(totals['Profit Value'],2)"/></td>
+            <td><t t-esc="round(totals['Margin'],2)"/></td>
+        </tr>
+    </t>
+</tbody>
 
-                            </tr>
-                        </t>
-                    </tbody>
                 </table>
             </div>
         </t>

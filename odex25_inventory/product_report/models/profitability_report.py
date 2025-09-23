@@ -92,7 +92,7 @@ class ProfitabilityReport(models.AbstractModel):
 
         # الهيدر الفرعي للسنة اللي فاتت
         worksheet.write(row + 1, col + 3, "QTY", header_format2)
-        worksheet.write(row + 1, col + 4, "Price", header_format2)
+        worksheet.write(row + 1, col + 4, "Value", header_format2)
         worksheet.write(row + 1, col + 5, "NASP", header_format2)
 
         # هيدر الفترة الحالية
@@ -104,7 +104,7 @@ class ProfitabilityReport(models.AbstractModel):
 
         # الهيدر الفرعي للفترة الحالية
         worksheet.write(row + 1, col + 6, "Total QTY", header_format3)
-        worksheet.write(row + 1, col + 7, "Total Price", header_format3)
+        worksheet.write(row + 1, col + 7, "Total Value", header_format3)
         worksheet.write(row + 1, col + 8, "NASP", header_format3)
         worksheet.write(row + 1, col + 9, "Sales Person", header_format3)
 
@@ -116,8 +116,17 @@ class ProfitabilityReport(models.AbstractModel):
         worksheet.write(row + 1, col + 10, "Plan QTY", header_format4)
         worksheet.write(row + 1, col + 11, "Value", header_format4)
         worksheet.write(row + 1, col + 12, "NASP", header_format4)
-        worksheet.merge_range(row, col + 13, row+1, col + 13, "Qty %", header_format5)
-        worksheet.merge_range(row, col + 14, row+1, col + 14, "Value %", header_format5)
+
+        worksheet.merge_range(
+            row, col + 13, row, col + 14,
+            f"Achived %",
+            header_format5
+        )
+        worksheet.write(row + 1, col + 11, "Qty %", header_format5)
+        worksheet.write(row + 1, col + 11, "Value %", header_format5)
+
+        # worksheet.merge_range(row, col + 13, row+1, col + 13, "Qty %", header_format5)
+        # worksheet.merge_range(row, col + 14, row+1, col + 14, "Value %", header_format5)
 
         row += 2
 

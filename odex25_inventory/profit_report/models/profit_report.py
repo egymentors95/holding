@@ -94,7 +94,7 @@ class ProfitReport(models.AbstractModel):
 
         # الهيدر الفرعي للسنة اللي فاتت
         worksheet.write(row + 1, col + 3, "Total QTY", header_format2)
-        worksheet.write(row + 1, col + 4, "Total Price", header_format2)
+        worksheet.write(row + 1, col + 4, "Total Value", header_format2)
         worksheet.write(row + 1, col + 5, "NASP", header_format2)
         worksheet.write(row + 1, col + 6, "NAPP", header_format2)
         worksheet.write(row + 1, col + 7, "Profit Value", header_format2)
@@ -109,7 +109,7 @@ class ProfitReport(models.AbstractModel):
 
         # الهيدر الفرعي للفترة الحالية
         worksheet.write(row + 1, col + 9, "Total QTY", header_format3)
-        worksheet.write(row + 1, col + 10, "Total Price", header_format3)
+        worksheet.write(row + 1, col + 10, "Total Value", header_format3)
         worksheet.write(row + 1, col + 11, "NASP", header_format3)
         worksheet.write(row + 1, col + 12, "NAPP", header_format3)
         worksheet.write(row + 1, col + 13, "Profit Value", header_format3)
@@ -130,19 +130,18 @@ class ProfitReport(models.AbstractModel):
             worksheet.write(row, col + 1, record['Default Code'] or '', cell_format)
             worksheet.write(row, col + 2, record['Product'] or '', cell_format)
 
-            worksheet.write_number(row, col + 3, record['Last Year Total Quantity'], cell_format_light)
-            worksheet.write_number(row, col + 4, record['Last Year Total Price'], cell_format_light)
-            worksheet.write_number(row, col + 5, record['Last Year Nsap'], cell_format_light)
-            worksheet.write_number(row, col + 6, record['Last Year Naap'], cell_format_light)
-            worksheet.write_number(row, col + 7, record['Last Profit Value'], cell_format_light)
-            worksheet.write_number(row, col + 8, record['Last Margin'], cell_format_light_right)
+            worksheet.write_number(row, col + 3, round(record['Last Year Total Quantity'],2), cell_format_light)
+            worksheet.write_number(row, col + 4, round(record['Last Year Total Price'],2), cell_format_light)
+            worksheet.write_number(row, col + 5, round(record['Last Year Nsap'],2), cell_format_light)
+            worksheet.write_number(row, col + 6, round(record['Last Year Naap'],2), cell_format_light)
+            worksheet.write_number(row, col + 7, round(record['Last Profit Value'],2), cell_format_light)
+            worksheet.write_number(row, col + 8, round(record['Last Margin'],2), cell_format_light_right)
 
-
-            worksheet.write_number(row, col + 9, record['Total Quantity'], cell_format_light)
-            worksheet.write_number(row, col + 10, record['Total Price'], cell_format_light)
-            worksheet.write_number(row, col + 11, round(record['Nsap'],2), cell_format_light)
-            worksheet.write_number(row, col + 12, round(record['Naap'],2), cell_format_light)
-            worksheet.write_number(row, col + 13, record['Profit Value'], cell_format_light)
-            worksheet.write_number(row, col + 14, round(record['Margin'],2), cell_format_light_right)
+            worksheet.write_number(row, col + 9, round(record['Total Quantity'],2), cell_format_light)
+            worksheet.write_number(row, col + 10, round(record['Total Price'],2), cell_format_light)
+            worksheet.write_number(row, col + 11, round(record['Nsap'], 2), cell_format_light)
+            worksheet.write_number(row, col + 12, round(record['Naap'], 2), cell_format_light)
+            worksheet.write_number(row, col + 13, round(record['Profit Value'],2), cell_format_light)
+            worksheet.write_number(row, col + 14, round(record['Margin'], 2), cell_format_light_right)
 
             row += 1
