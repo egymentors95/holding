@@ -249,6 +249,15 @@ class HrEmployee(models.Model):
                     help='New participants who have no prior periods of contribution under the GOSI.')
     insurance_years = fields.Integer(string="Insurance Years", compute='_compute_insurance_years', store=True)
 
+
+    parent_id = fields.Many2one(
+        'hr.employee',
+        'Manager',
+        readonly=False,
+        domain=lambda self: [('company_id', 'in', self.env.user.company_ids.ids)]
+
+    )
+
     @api.depends('insurance_date')
     def _compute_insurance_years(self):
         for emp in self:
@@ -482,15 +491,15 @@ class HrEmployee(models.Model):
                             rec.emp_no = str(rec.employee_type_id.code) + str(fix_code)'''
 
     # get address_home_id field from user_id partner and email
-    @api.onchange('user_id','work_email','name')
-    def _get_address_home_id(self):
-        for item in self:
-            if item.user_id:
-               item.address_home_id = item.user_id.partner_id.id
-               ''' reset email in related partner user '''
-               item.user_id.write({'name': item.name})
-               if item.work_email:
-                  item.user_id.partner_id.write({'email': item.work_email, 'employee': True})
+    # @api.onchange('user_id','work_email','name')
+    # def _get_address_home_id(self):
+    #     for item in self:
+    #         if item.user_id:
+    #            item.address_home_id = item.user_id.partner_id.id
+    #            ''' reset email in related partner user '''
+    #            item.user_id.write({'name': item.name})
+    #            if item.work_email:
+    #               item.user_id.partner_id.write({'email': item.work_email, 'employee': True})
 
     @api.depends("country_id")
     def _check_nationality_type(self):
