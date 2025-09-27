@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <!-- Inherit Form View to Modify it -->
+    <record id="is_partner_view_account_form" model="ir.ui.view">
+        <field name="name">is.partner.view.account.form</field>
+        <field name="model">account.account</field>
+        <field name="inherit_id" ref="account.view_account_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//group[1]/group[2]" position="inside">
+                <field name="is_partner"/>
+                <field name="is_analytic"/>
+            </xpath>
+
+        </field>
+    </record>
+
+
+</odoo>

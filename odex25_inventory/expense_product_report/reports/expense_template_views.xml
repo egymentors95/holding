@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Header Template -->
+    <template id="expense_report_header">
+        <div class="header">
+            <table class="table table-borderless" style="width: 100%;">
+                <tr>
+                    <td>
+                        <div><strong>Report:</strong> Expense Report</div>
+                        <div><strong>Date from:</strong> <span t-esc="report_data.get('date_from')"/></div>
+                        <div><strong>Date to:</strong> <span t-esc="report_data.get('date_to')"/></div>
+                        <div><strong>Currency:</strong> SR or USD</div>
+                    </td>
+                    <td style="text-align: right;">
+                        <img src="/expense_product_report/static/img/logo.png" width="120"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </template>
+
+    <!-- Main HTML Report -->
+    <template id="expense_report_html">
+        <t t-call="web.html_container">
+            <t t-call="expense_product_report.expense_report_header"/>
+            <div class="page">
+                <table class="table table-bordered" style="width:100%; border:1px solid #000; text-align:center;">
+                    <thead style="background-color:#f0f0f0;">
+                        <tr>
+                            <th>Team</th>
+                            <th>Account</th>
+                            <t t-foreach="report_data.get('employees', [])" t-as="emp">
+                                <th t-esc="emp"/>
+                            </t>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-set="last_team" t-value="None"/>
+                        <t t-set="team_totals" t-value="{}"/>
+                        <t t-set="grand_total" t-value="{}"/>
+
+                        <t t-foreach="report_data.get('product_ids', [])" t-as="line">
+                            <!-- Subtotal if team changed -->
+                            <t t-if="last_team and line['sales_team'] != last_team">
+                                <tr style="font-weight:bold; background:#EEE;">
+                                    <td t-esc="'Subtotal ' + last_team"/>
+                                    <td></td>
+                                    <t t-foreach="report_data.get('employees', [])" t-as="emp">
+                                        <td t-esc="team_totals.get(emp, 0)"/>
+                                    </t>
+                                    <td t-esc="sum(team_totals.values())"/>
+                                </tr>
+                                <t t-set="team_totals" t-value="{}"/>
+                            </t>
+
+                            <!-- Team header row -->
+                            <t t-if="line['sales_team'] != last_team">
+                                <tr style="background:#f0ebeb; font-weight:bold;">
+                                    <td colspan="100%" style="text-align:left;" t-esc="line['sales_team']"/>
+                                </tr>
+                                <t t-set="last_team" t-value="line['sales_team']"/>
+                            </t>
+
+                            <!-- Data row -->
+                            <tr>
+                                <td></td>
+                                <td t-esc="line.get('account')"/>
+                                <t t-set="row_total" t-value="0"/>
+                                <t t-foreach="report_data.get('employees', [])" t-as="emp">
+                                    <t t-set="value" t-value="line['debit'] if line.get('employee') == emp else 0"/>
+                                    <td t-esc="value"/>
+                                    <t t-set="team_totals[emp]" t-value="(team_totals.get(emp,0) or 0) + value"/>
+                                    <t t-set="grand_total[emp]" t-value="(grand_total.get(emp,0) or 0) + value"/>
+                                    <t t-set="row_total" t-value="row_total + value"/>
+                                </t>
+                                <td t-esc="row_total"/>
+                            </tr>
+                        </t>
+
+                        <!-- Subtotal آخر فريق -->
+                        <t t-if="last_team">
+                            <tr style="font-weight:bold; background:#EEE;">
+                                <td t-esc="'Subtotal ' + last_team"/>
+                                <td></td>
+                                <t t-foreach="report_data.get('employees', [])" t-as="emp">
+                                    <td t-esc="team_totals.get(emp,0)"/>
+                                </t>
+                                <td t-esc="sum(team_totals.values())"/>
+                            </tr>
+                        </t>
+
+                        <!-- Grand Total -->
+                        <tr style="font-weight:bold; background:#DDD;">
+                            <td>Grand Total</td>
+                            <td></td>
+                            <t t-foreach="report_data.get('employees', [])" t-as="emp">
+                                <td t-esc="grand_total.get(emp,0)"/>
+                            </t>
+                            <td t-esc="sum(grand_total.values())"/>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+</odoo>

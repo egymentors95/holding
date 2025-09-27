@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="report_action_expense" model="ir.actions.report">
+        <field name="name">Expense XLS Report</field>
+        <field name="model">expense.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">expense_product_report.expense_report_xlsx</field>
+        <field name="report_file">expense_product_report.expense_report_xlsx</field>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="report_action_expense_html" model="ir.actions.report">
+        <field name="name">Expense Report</field>
+        <field name="model">expense.wizard</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">expense_product_report.expense_report_html</field>
+        <field name="report_file">expense_product_report.expense_report_html</field>
+        <field name="binding_type">report</field>
+    </record>
+
+
+</odoo>
