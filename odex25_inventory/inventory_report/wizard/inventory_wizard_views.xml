@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="inventory_report_wizard_view_form" model="ir.ui.view">
+            <field name="name">inventory.report.wizard.view.form</field>
+            <field name="model">inventory.report.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="date_from"/>
+                            </group>
+                            <group>
+                                <field name="date_to"/>
+                            </group>
+                            <group>
+                                <field name="product_ids" widget="many2many_tags"/>
+                                <field name="product_category_ids" widget="many2many_tags"/>
+                                <field name="lot_ids" widget="many2many_tags"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="action_view_report" type="object" string="View" class="btn-primary"/>
+                        <button string="View(Report)" name="action_print_report_html" type="object"
+                                class="btn-primary"/>
+                        <button string="Export Xlsx" name="action_print_report_xlsx" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="inventory_report_wizard_view_action" model="ir.actions.act_window">
+            <field name="name">Inventory Report</field>
+            <field name="res_model">inventory.report.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                </p>
+            </field>
+        </record>
+
+          <menuitem name="Inventory Reports"
+                  id="parent_menu_inventory_wizard_view_action"
+                  parent="stock.menu_stock_root"
+                  sequence="100"/>
+
+        <menuitem name="Inventory Report"
+                  id="menu_inventory_wizard_view_action"
+                  action="inventory_report_wizard_view_action"
+                  parent="inventory_report.parent_menu_inventory_wizard_view_action"
+                  sequence="10"/>
+
+
+    </data>
+</odoo>

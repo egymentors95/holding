@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="custom_header">
+        <div class="header">
+            <table class="table table-borderless" style="border: none; width: 100%;" dir="ltr">
+                <tbody>
+                    <tr>
+                        <td colspan="8">
+                            <div>
+                                <span style="font-weight: bold;">Report:</span>
+                                <span>Purchase Report</span>
+                            </div>
+                            <div>
+                                <span style="font-weight: bold;">Date from:</span>
+                                <span t-esc="report_data and report_data.get('date_from')"/>
+                            </div>
+                            <div>
+                                <span style="font-weight: bold;">Date to:</span>
+                                <span t-esc="report_data and report_data.get('date_to')"/>
+                            </div>
+                            <div>
+                                <span style="font-weight: bold;">Currency:</span>
+                                <span>SR or USD</span>
+                            </div>
+                        </td>
+                        <td colspan="4" style="text-align: right;">
+                            <img src='/inventory_report/static/img/logo.png' width="120px"/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </template>
+
+    <template id="inventory_report_html">
+        <t t-call="web.html_container">
+            <t t-call="inventory_report.custom_header"/>
+
+            <div class="page">
+                <table class="table table-sm table-bordered"
+                       style="width:100%; border: 1px solid black; text-align: center;">
+                    <thead style="background-color: #f0f0f0; font-weight: bold;">
+                        <tr style="border: 1px solid black;">
+                            <th style="border: 1px solid black;">Product Category</th>
+                            <th style="border: 1px solid black;">Code</th>
+                            <th style="border: 1px solid black;">Product</th>
+                            <th style="border: 1px solid black;">Lot</th>
+                            <th style="border: 1px solid black;">QTY</th>
+                            <th style="border: 1px solid black;">QTY Last 6M</th>
+                            <th style="border: 1px solid black;">QTY Avg</th>
+                            <th style="border: 1px solid black;">NAAP</th>
+                            <th style="border: 1px solid black;">Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-set="last_category" t-value="None"/>
+                        <t t-set="totals" t-value="{'Total QTY': 0, 'QTY Last 6M': 0, 'QTY Avg': 0,
+                                'NAAP': 0, 'Value': 0,}"/>
+
+                        <t t-foreach="(report_data or {}).get('product_ids', [])" t-as="line">
+
+                            <!-- لو الكاتيجوري اتغيرت -->
+                            <t t-if="last_category and line['Product Category'] != last_category">
+                                <!-- اطبع subtotal -->
+                                <tr style="background-color:#EEE; font-weight:bold; border: 1px solid black;">
+                                    <td colspan="4" style="text-align:right; border: 1px solid black;">Total</td>
+                                    <td style="border: 1px solid black;">
+                                        <t t-esc="totals['Total QTY']"/>
+                                    </td>
+                                    <td style="border: 1px solid black;">
+                                        <t t-esc="totals['QTY Last 6M']"/>
+                                    </td>
+                                    <td style="border: 1px solid black;">
+                                        <t t-esc="totals['QTY Avg']"/>
+                                    </td>
+                                    <td style="border: 1px solid black;">
+                                        <t t-esc="totals['NAAP']"/>
+                                    </td>
+                                    <td style="border: 1px solid black;">
+                                        <t t-esc="totals['Value']"/>
+                                    </td>
+                                </tr>
+
+                                <!-- reset totals -->
+                                <t t-set="totals" t-value="{'Total QTY': 0, 'QTY Last 6M': 0, 'QTY Avg': 0,
+                                'NAAP': 0, 'Value': 0,}"/>
+                            </t>
+
+                            <!-- لو كاتيجوري جديدة اطبع اسمها -->
+                            <t t-if="line['Product Category'] != last_category">
+                                <tr style="background-color:#F0EBEB; font-weight:bold; border: 1px solid black;">
+                                    <td colspan="9" style="text-align: left; border: 1px solid black;">
+                                        <t t-esc="line['Product Category']"/>
+                                    </td>
+                                </tr>
+                                <t t-set="last_category" t-value="line['Product Category']"/>
+                            </t>
+
+                            <!-- بيانات المنتج -->
+                            <tr style="border: 1px solid black;">
+                                <td></td>
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['Default Code']"/>
+                                </td>
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['Product']"/>
+                                </td>
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['on_hand_qty']"/>
+                                </td>
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['sold_last_6_months']"/>
+                                </td>
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['avg_sold_last_6_months']"/>
+                                </td>
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['equ_month']"/>
+                                </td>
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['naap']"/>
+                                </td>
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['value']"/>
+                                </td>
+                            </tr>
+
+                            <!-- تحديث totals -->
+                            <t t-set="totals" t-value="{
+            'Total QTY': totals['Total QTY'] + (line['on_hand_qty'] or 0),
+            'QTY Last 6M': totals['QTY Last 6M'] + (line['sold_last_6_months'] or 0),
+            'QTY Avg': totals['QTY Avg'] + (line['avg_sold_last_6_months'] or 0),
+            'NAAP': totals['NAAP'] + (line['naap'] or 0),
+            'Value': totals['Value'] + (line['value'] or 0),
+        }"/>
+                        </t>
+
+                        <!-- Subtotal بعد آخر كاتيجوري -->
+                        <t t-if="last_category">
+                            <tr style="background-color:#EEE; font-weight:bold; border: 1px solid black;">
+                                <td colspan="4" style="text-align:left; border: 1px solid black;">Total</td>
+                                <td style="border: 1px solid black;">
+                                    <t t-esc="totals['Total QTY']"/>
+                                </td>
+                                <td style="border: 1px solid black;">
+                                    <t t-esc="totals['QTY Last 6M']"/>
+                                </td>
+                                <td style="border: 1px solid black;">
+                                    <t t-esc="totals['QTY Avg']"/>
+                                </td>
+                                <td style="border: 1px solid black;">
+                                    <t t-esc="totals['NAAP']"/>
+                                </td>
+
+                                <td style="border: 1px solid black;">
+                                    <t t-esc="round(totals['Value'],2)"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+
+                </table>
+            </div>
+        </t>
+    </template>
+
+</odoo>
