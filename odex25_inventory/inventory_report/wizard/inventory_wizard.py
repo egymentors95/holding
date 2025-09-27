@@ -34,6 +34,7 @@ class InventoryReportWizard(models.TransientModel):
             ('date', '<=', self.date_to),
             ('company_id', 'in', self.env.companies.ids),
             ('state', '=', 'done'),
+
         ]
         if self.product_ids:
             domain_sales_period.append(('product_id', 'in', self.product_ids.ids))
@@ -57,6 +58,9 @@ class InventoryReportWizard(models.TransientModel):
                 ('date', '<=', last_6_months_end),
                 ('company_id', 'in', self.env.companies.ids),
                 ('move_id.state', '=', 'posted'),
+                ('product_id', '!=', False),
+                ('move_id.move_type', 'in', ['out_invoice', 'out_refund']),
+
             ]
 
             sales_lines_6m = self.env['account.move.line'].search(domain_sales_6m)
@@ -69,6 +73,8 @@ class InventoryReportWizard(models.TransientModel):
             ('date', '<=', self.date_to),
             ('company_id', 'in', self.env.companies.ids),
             ('move_id.state', '=', 'posted'),
+            ('product_id', '!=', False),
+            ('move_id.move_type', 'in', ['in_invoice', 'in_refund']),
 
         ]
 
