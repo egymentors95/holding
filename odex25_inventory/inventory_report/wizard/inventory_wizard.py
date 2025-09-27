@@ -59,11 +59,12 @@ class InventoryReportWizard(models.TransientModel):
                 ('company_id', 'in', self.env.companies.ids),
                 ('move_id.state', '=', 'posted'),
                 ('product_id', '!=', False),
+                ('account_id.internal_group', '=', 'income'),
                 ('move_id.move_type', 'in', ['out_invoice', 'out_refund']),
-
             ]
 
             sales_lines_6m = self.env['account.move.line'].search(domain_sales_6m)
+            print('sales_lines_6m', sales_lines_6m)
 
         # -----------------------------------
         # 3- المشتريات (account.move.line)
@@ -79,6 +80,7 @@ class InventoryReportWizard(models.TransientModel):
         ]
 
         purchase_lines = self.env['account.move.line'].search(domain_purchases)
+        print('purchase_lines', purchase_lines)
 
 
         # -----------------------------------

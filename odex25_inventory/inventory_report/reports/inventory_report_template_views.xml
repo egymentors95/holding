@@ -66,22 +66,22 @@
                                 <tr style="background-color:#EEE; font-weight:bold; border: 1px solid black;">
                                     <td colspan="4" style="text-align:left; border: 1px solid black;">Total</td>
                                     <td style="border: 1px solid black;">
-                                        <t t-esc="totals['Total QTY']"/>
+                                        <t t-esc="round(totals['Total QTY'],2)"/>
                                     </td>
                                     <td style="border: 1px solid black;">
-                                        <t t-esc="totals['QTY Last 6M']"/>
+                                        <t t-esc="round(totals['QTY Last 6M'],2)"/>
                                     </td>
                                     <td style="border: 1px solid black;">
-                                        <t t-esc="totals['QTY Avg']"/>
+                                        <t t-esc="round(totals['QTY Avg'],2)"/>
                                     </td>
                                     <td style="border: 1px solid black;">
-                                        <t t-esc="totals['Equ Month']"/>
+                                        <t t-esc="round(totals['Equ Month'],2)"/>
                                     </td>
                                     <td style="border: 1px solid black;">
-                                        <t t-esc="totals['NAAP']"/>
+                                        <t t-esc="round(totals['NAAP'],2)"/>
                                     </td>
                                     <td style="border: 1px solid black;">
-                                        <t t-esc="totals['Value']"/>
+                                        <t t-esc="round(totals['Value'],2)"/>
                                     </td>
                                 </tr>
 
