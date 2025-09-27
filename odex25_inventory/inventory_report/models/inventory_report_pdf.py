@@ -2,7 +2,7 @@ from odoo import models, fields, api
 
 
 class InventoryReportHtml(models.AbstractModel):
-    _name = 'report.inventory_report.report_action_inventory_report_html'
+    _name = 'report.inventory_report.inventory_report_html'
     _description = 'Inventory HTML Report'
 
     @api.model
@@ -10,5 +10,5 @@ class InventoryReportHtml(models.AbstractModel):
         print('Data received in report:', data)
         return {
             'report_data': data or {},
-            'docs': self.env['purchase.bill.wizard'].browse(docids),
+            'docs': self.env['inventory.report.wizard'].browse(docids),
         }

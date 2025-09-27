@@ -4,6 +4,12 @@ from odoo.exceptions import UserError
 from dateutil.relativedelta import relativedelta
 
 
+# -*- coding: utf-8 -*-
+from odoo import api, fields, models, _
+from odoo.exceptions import UserError
+from dateutil.relativedelta import relativedelta
+
+
 class InventoryReportWizard(models.TransientModel):
     _name = 'inventory.report.wizard'
     _description = 'Inventory Report'
@@ -28,7 +34,6 @@ class InventoryReportWizard(models.TransientModel):
             ('date', '<=', self.date_to),
             ('company_id', 'in', self.env.companies.ids),
             ('state', '=', 'done'),
-            ('picking_id.picking_type_code', '=', 'outgoing'),
         ]
         if self.product_ids:
             domain_sales_period.append(('product_id', 'in', self.product_ids.ids))
@@ -38,6 +43,7 @@ class InventoryReportWizard(models.TransientModel):
             domain_sales_period.append(('lot_id', 'in', self.lot_ids.ids))
 
         sales_lines_period = self.env['stock.move.line'].search(domain_sales_period)
+        print('sales_lines_period', sales_lines_period)
 
         # -----------------------------------
         # 2- مبيعات آخر 6 شهور
@@ -50,19 +56,10 @@ class InventoryReportWizard(models.TransientModel):
                 ('date', '>=', last_6_months_start),
                 ('date', '<=', last_6_months_end),
                 ('company_id', 'in', self.env.companies.ids),
-                ('state', '=', 'done'),
-                ('picking_id.picking_type_code', '=', 'outgoing'),
+                ('move_id.state', '=', 'posted'),
             ]
-            if self.product_ids:
-                domain_sales_6m.append(('product_id', 'in', self.product_ids.ids))
-            if self.product_category_ids:
-                domain_sales_6m.append(('product_id.categ_id', 'in', self.product_category_ids.ids))
-            if self.lot_ids:
-                domain_sales_6m.append(('lot_id', 'in', self.lot_ids.ids))
 
-            sales_lines_6m = self.env['stock.move.line'].search(domain_sales_6m)
-        else:
-            sales_lines_6m = self.env['stock.move.line']
+            sales_lines_6m = self.env['account.move.line'].search(domain_sales_6m)
 
         # -----------------------------------
         # 3- المشتريات (account.move.line)
@@ -72,32 +69,28 @@ class InventoryReportWizard(models.TransientModel):
             ('date', '<=', self.date_to),
             ('company_id', 'in', self.env.companies.ids),
             ('move_id.state', '=', 'posted'),
+
         ]
-        if self.product_ids:
-            domain_purchases.append(('product_id', 'in', self.product_ids.ids))
-        if self.product_category_ids:
-            domain_purchases.append(('product_id.categ_id', 'in', self.product_category_ids.ids))
 
         purchase_lines = self.env['account.move.line'].search(domain_purchases)
 
-        # -----------------------------------
-        # 4- تجميع كل المنتجات
-        # -----------------------------------
-        all_products = (sales_lines_period.mapped("product_id") |
-                        sales_lines_6m.mapped("product_id") |
-                        purchase_lines.mapped("product_id"))
 
         # -----------------------------------
         # 5- لوب واحد لكل منتج
         # -----------------------------------
-        for product in all_products:
+        for product in sales_lines_period.mapped('product_id'):
             # مبيعات الفترة
             period_lines = sales_lines_period.filtered(lambda l: l.product_id == product)
             move_qty = sum(period_lines.mapped("qty_done"))
 
             # مبيعات آخر 6 شهور
             sales_6m_lines = sales_lines_6m.filtered(lambda l: l.product_id == product)
-            sold_last_6_months = sum(sales_6m_lines.mapped("qty_done"))
+            qty_out_invoice = sum(
+                sales_6m_lines.filtered(lambda l: l.move_id.move_type == 'out_invoice').mapped('quantity'))
+            qty_out_refund = sum(
+                sales_6m_lines.filtered(lambda l: l.move_id.move_type == 'out_refund').mapped('quantity'))
+            sold_last_6_months = qty_out_invoice - qty_out_refund
+
             avg_sold_last_6_months = sold_last_6_months / 6 if sold_last_6_months else 0
             on_hand_qty = product.qty_available
             equ_month = on_hand_qty / avg_sold_last_6_months if avg_sold_last_6_months else 0
@@ -130,7 +123,7 @@ class InventoryReportWizard(models.TransientModel):
                 'move_qty': move_qty,  # مبيعات الفترة
                 'sold_last_6_months': sold_last_6_months,  # مبيعات 6 شهور
                 'avg_sold_last_6_months': avg_sold_last_6_months,  # المتوسط الشهري
-                'equ_month': equ_month,  # يغطي كام شهر
+                'equ_month': round(equ_month,2),  # يغطي كام شهر
                 'purchased_qty': total_quantity_invoice,  # الكمية المشتراة
                 'purchased_value': total_price_invoice,  # قيمة المشتريات
                 'naap': naap,  # متوسط الشراء
@@ -185,3 +178,4 @@ class InventoryReportWizard(models.TransientModel):
             'view_mode': 'tree',
             'target': 'current',
         }
+

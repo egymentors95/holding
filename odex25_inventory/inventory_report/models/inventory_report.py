@@ -110,7 +110,7 @@ class InvoiceBillReport(models.AbstractModel):
 
             # لو كاتيجوري جديدة نطبعها في صف كامل لوحدها
             if record['Product Category'] != last_category:
-                worksheet.merge_range(row, col, row, col + 10, record['Product Category'], header_format)
+                worksheet.merge_range(row, col, row, col + 9, record['Product Category'], header_format)
                 last_category = record['Product Category']
                 row += 1  # ننزل سطر بعد الكاتيجوري
 
