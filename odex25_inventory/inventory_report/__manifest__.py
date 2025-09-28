@@ -6,7 +6,7 @@
     "author": "IBS",
     "website": "https://www.ibs-na.com",
     "license": "AGPL-3",
-    "depends": ['base', 'stock', 'report_xlsx', 'account', 'purchase_requisition_custom'],
+    "depends": ['base', 'stock', 'report_xlsx', 'account', 'purchase_requisition_custom', 'partner_category'],
     "data": [
         "security/ir.model.access.csv",
         "wizard/inventory_wizard_views.xml",

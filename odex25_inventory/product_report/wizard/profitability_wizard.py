@@ -13,6 +13,7 @@ class ProfitabilityWizard(models.TransientModel):
     date_to = fields.Date(string='Date To')
     sales_person_ids = fields.Many2many(string='Sales Persons', comodel_name='res.users')
     product_category_ids = fields.Many2many(string='Product Categories', comodel_name='product.category')
+    is_sales_person = fields.Boolean()
 
     def get_report_data(self):
         combined_data = []
@@ -64,8 +65,17 @@ class ProfitabilityWizard(models.TransientModel):
             default_code = product.default_code or ''
 
             # لو فيه أكتر من Sales Person
-            for sales_person in product_lines.mapped('move_id.invoice_user_id'):
-                sales_lines = product_lines.filtered(lambda l: l.move_id.invoice_user_id == sales_person)
+            # لو is_sales_person = True 👉 نفصل على حسب Sales Person
+            if self.is_sales_person:
+                sales_persons = product_lines.mapped('move_id.invoice_user_id')
+            else:
+                # نخليها Sales Person واحد وهمي (None) عشان نجمع كله
+                sales_persons = [False]
+
+            for sales_person in sales_persons:
+                sales_lines = product_lines
+                if sales_person:
+                    sales_lines = product_lines.filtered(lambda l: l.move_id.invoice_user_id == sales_person)
 
                 # -------- خطط المبيعات --------
                 number_of_months = 0
@@ -73,13 +83,16 @@ class ProfitabilityWizard(models.TransientModel):
                     diff = relativedelta(self.date_to, self.date_from)
                     number_of_months = diff.years * 12 + diff.months + 1
 
-                plan_lines = self.env['sales.plan.lines'].search([
+                plan_domain = [
                     ('product_id', '=', product.id),
-                    ('sales_plan_id.sales_person_id', '=', sales_person.id),
                     ('sales_plan_id.date_from', '<=', self.date_to),
                     ('sales_plan_id.date_to', '>=', self.date_from),
                     ('sales_plan_id.state', '=', 'confirmed'),
-                ])
+                ]
+                if sales_person:  # يعني في حالة is_sales_person = True
+                    plan_domain.append(('sales_plan_id.sales_person_id', '=', sales_person.id))
+
+                plan_lines = self.env['sales.plan.lines'].search(plan_domain)
 
                 plan_quantity = sum(plan_lines.mapped('quantity_per_month'))
                 total_plan_quantity = plan_quantity * number_of_months if number_of_months else 0.0
@@ -118,11 +131,14 @@ class ProfitabilityWizard(models.TransientModel):
 
                 # -------- Append --------
                 combined_data.append({
+                    'Product Category ID': product.categ_id.product_category,
+                    'Product Order': product.product_category,
+
                     'Product Category': product_category,
                     'Product': product_name,
                     'Default Code': default_code,
-                    'Sales Person': sales_person.name,
-                    'Sales Person id': sales_person.id,
+                    'Sales Person': sales_person.name if sales_person else "All Sales",
+                    'Sales Person id': sales_person.id if sales_person else False,
 
                     'Total Quantity': total_quantity,
                     'Total Price': total_price,
@@ -139,6 +155,13 @@ class ProfitabilityWizard(models.TransientModel):
                     'QTY': qty_percentage,
                     'Value': value_percentage,
                 })
+                combined_data = sorted(
+                    combined_data,
+                    key=lambda x: (
+                        x['Product Category ID'] or 999999,  # يرتب الكاتيجوري بالأرقام
+                        x['Product Order'] or 999999  # يرتب البرودكت داخل الكاتيجوري
+                    )
+                )
 
         return {'combined_data': combined_data}
 

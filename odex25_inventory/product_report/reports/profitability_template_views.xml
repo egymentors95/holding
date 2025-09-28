@@ -85,8 +85,8 @@
                             <th style="border: 1px solid black; background-color: #C8DA44;">Value</th>
                             <th style="border: 1px solid black; background-color: #C8DA44;">NASP</th>
 
-                            <th style="border: 1px solid black; background-color: #E6376F;" >Qty %</th>
-                            <th style="border: 1px solid black; background-color: #E6376F;" >Value %</th>
+                            <th style="border: 1px solid black; background-color: #E6376F;">Qty %</th>
+                            <th style="border: 1px solid black; background-color: #E6376F;">Value %</th>
 
                         </tr>
                     </thead>
@@ -253,29 +253,29 @@
                                     <t t-esc="totals['Last Year Nsap']"/>
                                 </td>
                                 <td style="border: 1px solid black;">
-                                    <t t-esc="totals['Total Quantity']"/>
+                                    <t t-esc="round(totals['Total Quantity'],2)"/>
                                 </td>
                                 <td style="border: 1px solid black;">
-                                    <t t-esc="totals['Total Price']"/>
+                                    <t t-esc="round(totals['Total Price'],2)"/>
                                 </td>
                                 <td style="border: 1px solid black;">
-                                    <t t-esc="totals['Nsap']"/>
+                                    <t t-esc="round(totals['Nsap'],2)"/>
                                 </td>
                                 <td></td>
                                 <td style="border: 1px solid black;">
-                                    <t t-esc="totals['Total Plan Quantity']"/>
+                                    <t t-esc="round(totals['Total Plan Quantity'],2)"/>
                                 </td>
                                 <td style="border: 1px solid black;">
-                                    <t t-esc="totals['Total Plan Price']"/>
+                                    <t t-esc="round(totals['Total Plan Price'],2)"/>
                                 </td>
                                 <td style="border: 1px solid black;">
-                                    <t t-esc="totals['Plan Nsap']"/>
+                                    <t t-esc="round(totals['Plan Nsap'],2)"/>
                                 </td>
                                 <td style="border: 1px solid black;">
-                                    <t t-esc="totals['QTY']"/>
+                                    <t t-esc="round(totals['QTY'],2)"/>
                                 </td>
                                 <td style="border: 1px solid black;">
-                                    <t t-esc="totals['Value']"/>
+                                    <t t-esc="round(totals['Value'],2)"/>
                                 </td>
                             </tr>
                         </t>

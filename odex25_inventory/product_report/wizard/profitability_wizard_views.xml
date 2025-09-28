@@ -16,7 +16,8 @@
                             </group>
                             <group>
                                 <field name="product_ids" widget="many2many_tags"/>
-                                <field name="sales_person_ids" widget="many2many_tags"/>
+                                <field name="is_sales_person"/>
+                                <field name="sales_person_ids" widget="many2many_tags" attrs="{'invisible': [('is_sales_person', '=', False)]}"/>
                                 <field name="product_category_ids" widget="many2many_tags"/>
                             </group>
                         </group>

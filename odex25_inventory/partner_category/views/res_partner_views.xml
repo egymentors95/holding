@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <!-- Inherit Form View to Modify it -->
+    <record id="partner_category_view_partner_form" model="ir.ui.view">
+        <field name="name">partner.category.view.partner.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//group[1]/group[2]" position="inside">
+                <field name="partner_category"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Inherit Form View to Modify it -->
+    <record id="partner_category_view_res_partner_filter" model="ir.ui.view">
+        <field name="name">partner.category.view.res.partner.filter</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//search" position="inside">
+                <field name="partner_category" string="Partner Category"/>
+            </xpath>
+            <xpath expr="//search/group" position="inside">
+                <filter name="group_partner_category" string="Partner Category" context="{'group_by': 'partner_category'}"/>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

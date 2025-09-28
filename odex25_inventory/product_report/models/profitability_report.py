@@ -75,7 +75,7 @@ class ProfitabilityReport(models.AbstractModel):
         worksheet.write(row, col + 1, f"{date_to}", header_format0)
         row += 1
         worksheet.write(row, col, f"Currency", header_format0)
-        worksheet.write(row, col + 1, f"SR", header_format0)
+        worksheet.write(row, col + 1, f"SR or USD", header_format0)
         row += 2
 
         # ---------------- Table Headers ----------------
@@ -122,8 +122,8 @@ class ProfitabilityReport(models.AbstractModel):
             f"Achived %",
             header_format5
         )
-        worksheet.write(row + 1, col + 11, "Qty %", header_format5)
-        worksheet.write(row + 1, col + 11, "Value %", header_format5)
+        worksheet.write(row + 1, col + 13, "Qty %", header_format5)
+        worksheet.write(row + 1, col + 14, "Value %", header_format5)
 
         # worksheet.merge_range(row, col + 13, row+1, col + 13, "Qty %", header_format5)
         # worksheet.merge_range(row, col + 14, row+1, col + 14, "Value %", header_format5)
@@ -153,20 +153,20 @@ class ProfitabilityReport(models.AbstractModel):
                 # اطبع subtotal للكاتيجوري اللي فاتت
                 if last_category:
                     worksheet.write(row, col, f"Total", header_format)
-                    worksheet.write_number(row, col + 3, category_totals['Last Year Total Quantity'], header_format)
-                    worksheet.write_number(row, col + 4, category_totals['Last Year Total Price'], header_format)
-                    worksheet.write_number(row, col + 5, category_totals['Last Year Nsap'], header_format)
+                    worksheet.write_number(row, col + 3, round(category_totals['Last Year Total Quantity'],2), header_format)
+                    worksheet.write_number(row, col + 4, round(category_totals['Last Year Total Price'],2), header_format)
+                    worksheet.write_number(row, col + 5, round(category_totals['Last Year Nsap'],2), header_format)
 
-                    worksheet.write_number(row, col + 6, category_totals['Total Quantity'], header_format)
-                    worksheet.write_number(row, col + 7, category_totals['Total Price'], header_format)
-                    worksheet.write_number(row, col + 8, category_totals['Nsap'], header_format)
+                    worksheet.write_number(row, col + 6, round(category_totals['Total Quantity'],2), header_format)
+                    worksheet.write_number(row, col + 7, round(category_totals['Total Price'],2), header_format)
+                    worksheet.write_number(row, col + 8, round(category_totals['Nsap'],2), header_format)
                     worksheet.write(row, col + 9, "", header_format)
 
-                    worksheet.write_number(row, col + 10, category_totals['Total Plan Quantity'], header_format)
-                    worksheet.write_number(row, col + 11, category_totals['Total Plan Price'], header_format)
-                    worksheet.write_number(row, col + 12, category_totals['Plan Nsap'], header_format)
-                    worksheet.write_number(row, col + 13, category_totals['QTY'], header_format)
-                    worksheet.write_number(row, col + 14, category_totals['Value'], header_format)
+                    worksheet.write_number(row, col + 10, round(category_totals['Total Plan Quantity'],2), header_format)
+                    worksheet.write_number(row, col + 11, round(category_totals['Total Plan Price'],2), header_format)
+                    worksheet.write_number(row, col + 12, round(category_totals['Plan Nsap'],2), header_format)
+                    worksheet.write_number(row, col + 13, round(category_totals['QTY'],2), header_format)
+                    worksheet.write_number(row, col + 14, round(category_totals['Value'],2), header_format)
 
                     row += 1
                     # reset totals
@@ -182,20 +182,20 @@ class ProfitabilityReport(models.AbstractModel):
             worksheet.write(row, col + 1, record['Default Code'] or '', cell_format)
             worksheet.write(row, col + 2, record['Product'] or '', cell_format)
 
-            worksheet.write_number(row, col + 3, record['Last Year Total Quantity'], cell_format)
-            worksheet.write_number(row, col + 4, record['Last Year Total Price'], cell_format)
-            worksheet.write_number(row, col + 5, record['Last Year Nsap'], cell_format)
+            worksheet.write_number(row, col + 3, round(record['Last Year Total Quantity'],2), cell_format)
+            worksheet.write_number(row, col + 4, round(record['Last Year Total Price'],2), cell_format)
+            worksheet.write_number(row, col + 5, round(record['Last Year Nsap'],2), cell_format)
 
-            worksheet.write_number(row, col + 6, record['Total Quantity'], cell_format)
-            worksheet.write_number(row, col + 7, record['Total Price'], cell_format)
+            worksheet.write_number(row, col + 6, round(record['Total Quantity'],2), cell_format)
+            worksheet.write_number(row, col + 7, round(record['Total Price'],2), cell_format)
             worksheet.write_number(row, col + 8, round(record['Nsap'], 2), cell_format)
             worksheet.write(row, col + 9, record['Sales Person'], cell_format)
 
-            worksheet.write_number(row, col + 10, record['Total Plan Quantity'], cell_format)
-            worksheet.write_number(row, col + 11, record['Total Plan Price'], cell_format)
-            worksheet.write_number(row, col + 12, record['Plan Nsap'], cell_format)
-            worksheet.write_number(row, col + 13, record['QTY'], cell_format)
-            worksheet.write_number(row, col + 14, record['Value'], cell_format)
+            worksheet.write_number(row, col + 10, round(record['Total Plan Quantity'],2), cell_format)
+            worksheet.write_number(row, col + 11, round(record['Total Plan Price'],2), cell_format)
+            worksheet.write_number(row, col + 12, round(record['Plan Nsap'],2), cell_format)
+            worksheet.write_number(row, col + 13, round(record['QTY'],2), cell_format)
+            worksheet.write_number(row, col + 14, round(record['Value'],2), cell_format)
 
             # جمع القيم في totals
             category_totals['Last Year Total Quantity'] += record['Last Year Total Quantity'] or 0
@@ -215,19 +215,19 @@ class ProfitabilityReport(models.AbstractModel):
         # اطبع subtotal بعد آخر كاتيجوري
         if last_category:
             worksheet.write(row, col, f"Total", header_format)
-            worksheet.write_number(row, col + 3, category_totals['Last Year Total Quantity'], header_format)
-            worksheet.write_number(row, col + 4, category_totals['Last Year Total Price'], header_format)
-            worksheet.write_number(row, col + 5, category_totals['Last Year Nsap'], header_format)
+            worksheet.write_number(row, col + 3, round(category_totals['Last Year Total Quantity'],2), header_format)
+            worksheet.write_number(row, col + 4, round(category_totals['Last Year Total Price'],2), header_format)
+            worksheet.write_number(row, col + 5, round(category_totals['Last Year Nsap'],2), header_format)
 
-            worksheet.write_number(row, col + 6, category_totals['Total Quantity'], header_format)
-            worksheet.write_number(row, col + 7, category_totals['Total Price'], header_format)
-            worksheet.write_number(row, col + 8, category_totals['Nsap'], header_format)
+            worksheet.write_number(row, col + 6, round(category_totals['Total Quantity'],2), header_format)
+            worksheet.write_number(row, col + 7, round(category_totals['Total Price'],2), header_format)
+            worksheet.write_number(row, col + 8, round(category_totals['Nsap'],2), header_format)
             worksheet.write(row, col + 9, "", header_format)
 
-            worksheet.write_number(row, col + 10, category_totals['Total Plan Quantity'], header_format)
-            worksheet.write_number(row, col + 11, category_totals['Total Plan Price'], header_format)
-            worksheet.write_number(row, col + 12, category_totals['Plan Nsap'], header_format)
-            worksheet.write_number(row, col + 13, category_totals['QTY'], header_format)
-            worksheet.write_number(row, col + 14, category_totals['Value'], header_format)
+            worksheet.write_number(row, col + 10, round(category_totals['Total Plan Quantity'],2), header_format)
+            worksheet.write_number(row, col + 11, round(category_totals['Total Plan Price'],2), header_format)
+            worksheet.write_number(row, col + 12, round(category_totals['Plan Nsap'],2), header_format)
+            worksheet.write_number(row, col + 13, round(category_totals['QTY'],2), header_format)
+            worksheet.write_number(row, col + 14, round(category_totals['Value'],2), header_format)
 
             row += 1
