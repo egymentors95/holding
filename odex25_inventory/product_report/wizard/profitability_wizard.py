@@ -15,6 +15,7 @@ class ProfitabilityWizard(models.TransientModel):
     sales_person_ids = fields.Many2many(string='Sales Persons', comodel_name='res.users')
     product_category_ids = fields.Many2many(string='Product Categories', comodel_name='product.category')
     partner_category_ids = fields.Many2many(comodel_name='partner.category', string='Partner Category')
+    is_sales_person = fields.Boolean()
 
 
     def get_report_data(self):
@@ -79,23 +80,35 @@ class ProfitabilityWizard(models.TransientModel):
             product_name = product.name
             default_code = product.default_code or ''
 
-            # لو فيه أكتر من Sales Person
-            for sales_person in product_lines.mapped('move_id.invoice_user_id'):
-                sales_lines = product_lines.filtered(lambda l: l.move_id.invoice_user_id == sales_person)
+            if self.is_sales_person:
+                if self.sales_person_ids:
+                    sales_persons = self.sales_person_ids
+                else:
+                    sales_persons = product_lines.mapped('move_id.invoice_user_id')
+            else:
+                sales_persons = [False]
 
+            for sales_person in sales_persons:
+                sales_lines = product_lines
+                if sales_person:
+                    sales_lines = product_lines.filtered(lambda l: l.move_id.invoice_user_id == sales_person)
                 # -------- خطط المبيعات --------
                 number_of_months = 0
                 if self.date_from and self.date_to:
                     diff = relativedelta(self.date_to, self.date_from)
                     number_of_months = diff.years * 12 + diff.months + 1
 
-                plan_lines = self.env['sales.plan.lines'].search([
+                plan_domain = [
                     ('product_id', '=', product.id),
-                    ('sales_plan_id.sales_person_id', '=', sales_person.id),
+
                     ('sales_plan_id.date_from', '<=', self.date_to),
                     ('sales_plan_id.date_to', '>=', self.date_from),
                     ('sales_plan_id.state', '=', 'confirmed'),
-                ])
+                ]
+                if sales_person:  # يعني في حالة is_sales_person = True
+                    plan_domain.append(('sales_plan_id.sales_person_id', '=', sales_person.id))
+
+                plan_lines = self.env['sales.plan.lines'].search(plan_domain)
 
 
                 plan_quantity = sum(plan_lines.mapped('quantity_per_month'))
@@ -121,7 +134,12 @@ class ProfitabilityWizard(models.TransientModel):
                 value_percentage = total_price / total_plan_price * 100 if total_plan_price else 0.0
 
                 # -------- السنة اللي فاتت --------
-                last_year_sales = last_year_lines.filtered(lambda l: l.product_id == product and l.move_id.invoice_user_id == sales_person)
+                if sales_person:
+                    last_year_sales = last_year_lines.filtered(
+                        lambda l: l.product_id == product and l.move_id.invoice_user_id == sales_person
+                    )
+                else:
+                    last_year_sales = last_year_lines.filtered(lambda l: l.product_id == product)
 
                 last_qty_out_invoice = sum(last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_invoice').mapped('quantity'))
                 last_qty_out_refund = sum(last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_refund').mapped('quantity'))
@@ -162,13 +180,13 @@ class ProfitabilityWizard(models.TransientModel):
                     'Value': value_percentage,
                     'achieved_nasp': achieved_nasp,
                 })
-                combined_data = sorted(
-                    combined_data,
-                    key=lambda x: (
-                        x['Product Category ID'] or 999999,  # يرتب الكاتيجوري بالأرقام
-                        x['Product Order'] or 999999  # يرتب البرودكت داخل الكاتيجوري
-                    )
+            combined_data = sorted(
+                combined_data,
+                key=lambda x: (
+                    x['Product Category ID'] or 999999,  # يرتب الكاتيجوري بالأرقام
+                    x['Product Order'] or 999999  # يرتب البرودكت داخل الكاتيجوري
                 )
+            )
 
         return {'combined_data': combined_data}
 
