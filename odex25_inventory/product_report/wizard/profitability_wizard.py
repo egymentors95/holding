@@ -46,7 +46,7 @@ class ProfitabilityWizard(models.TransientModel):
             domain.append(('product_id.categ_id', 'in', self.product_category_ids.ids))
         if self.partner_category_ids:
             partners = self.env['res.partner'].search([
-                ('category_id', 'in', self.partner_category_ids.ids)
+                ('partner_category', 'in', self.partner_category_ids.ids)
             ])
             domain.append(('move_id.partner_id', 'in', partners.ids))
 
@@ -70,7 +70,7 @@ class ProfitabilityWizard(models.TransientModel):
             domain2.append(('product_id.categ_id', 'in', self.product_category_ids.ids))
         if self.partner_category_ids:
             partners = self.env['res.partner'].search([
-                ('category_id', 'in', self.partner_category_ids.ids)
+                ('partner_category', 'in', self.partner_category_ids.ids)
             ])
             domain2.append(('move_id.partner_id', 'in', partners.ids))
 
