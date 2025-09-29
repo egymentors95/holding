@@ -58,6 +58,9 @@ class ProfitabilityReport(models.AbstractModel):
                                               'align': 'center', 'valign': 'vcenter', 'border': 2})
         header_format6 = workbook.add_format({'bold': True, 'bg_color': '#f0f0f0', 'num_format': '#,##0.00',
                                              'align': 'center', 'valign': 'vcenter', 'border': 2})
+        header_format7 = workbook.add_format({'bold': True, 'bg_color': '#305935',
+                                             'align': 'left', 'valign': 'vcenter', 'border': 2})
+
         cell_format = workbook.add_format({'align': 'center', 'valign': 'vcenter','num_format': '#,##0.00',
                                            'border': 0, 'left': 2, 'right': 2, 'top': 1, 'bottom': 1})
         cell_format1 = workbook.add_format({'align': 'center', 'valign': 'vcenter',
@@ -88,184 +91,155 @@ class ProfitabilityReport(models.AbstractModel):
         worksheet.write(row, col + 1, f"SR or USD", header_format0)
         row += 2
 
-        # ---------------- Table Headers ----------------
-        worksheet.merge_range(row, col, row+1, col, "Product Category", header_format)
-        worksheet.merge_range(row, col + 1, row+1, col + 1, "Default Code", header_format)
-        worksheet.merge_range(row, col + 2, row+1, col + 2, "Product", header_format)
+        sales_persons = list(set([rec['Sales Person'] for rec in lots_data])) or ["No Sales Person"]
 
-        # هيدر السنة اللي فاتت
-        worksheet.merge_range(
-            row, col + 3, row, col + 5,
-            f"Last ({date_from_last_year.date()} → {date_to_last_year.date()})",
-            header_format2
-        )
+        for sales_person in sales_persons:
+            # عنوان Sales Person
+            worksheet.merge_range(row, col, row, col + 14, f"Sales Person: {sales_person}", header_format7)
+            row += 2
 
-        # الهيدر الفرعي للسنة اللي فاتت
-        worksheet.write(row + 1, col + 3, "QTY", header_format2)
-        worksheet.write(row + 1, col + 4, "Value", header_format2)
-        worksheet.write(row + 1, col + 5, "NASP", header_format2)
+            # Table Headers
+            worksheet.merge_range(row, col, row+1, col, "Product Category", header_format)
+            worksheet.merge_range(row, col + 1, row+1, col + 1, "Default Code", header_format)
+            worksheet.merge_range(row, col + 2, row+1, col + 2, "Product", header_format)
 
-        # هيدر الفترة الحالية
-        worksheet.merge_range(
-            row, col + 6, row, col + 9,
-            f"Current ({date_from} → {date_to})",
-            header_format3
-        )
+            worksheet.merge_range(
+                row, col + 3, row, col + 5,
+                f"Last ({date_from_last_year.date()} → {date_to_last_year.date()})",
+                header_format2
+            )
+            worksheet.write(row + 1, col + 3, "QTY", header_format2)
+            worksheet.write(row + 1, col + 4, "Value", header_format2)
+            worksheet.write(row + 1, col + 5, "NASP", header_format2)
 
-        # الهيدر الفرعي للفترة الحالية
-        worksheet.write(row + 1, col + 6, "Total QTY", header_format3)
-        worksheet.write(row + 1, col + 7, "Total Value", header_format3)
-        worksheet.write(row + 1, col + 8, "NASP", header_format3)
-        worksheet.write(row + 1, col + 9, "Sales Person", header_format3)
+            worksheet.merge_range(
+                row, col + 6, row, col + 8,
+                f"Current ({date_from} → {date_to})",
+                header_format3
+            )
+            worksheet.write(row + 1, col + 6, "Total QTY", header_format3)
+            worksheet.write(row + 1, col + 7, "Total Value", header_format3)
+            worksheet.write(row + 1, col + 8, "NASP", header_format3)
+            # worksheet.write(row + 1, col + 9, "Sales Person", header_format3)
 
-        worksheet.merge_range(
-            row, col + 10, row, col + 12,
-            f"YTD Plan ({date_from} → {date_to})",
-            header_format4
-        )
-        worksheet.write(row + 1, col + 10, "Plan QTY", header_format4)
-        worksheet.write(row + 1, col + 11, "Value", header_format4)
-        worksheet.write(row + 1, col + 12, "NASP", header_format4)
+            worksheet.merge_range(
+                row, col + 9, row, col + 11,
+                f"YTD Plan ({date_from} → {date_to})",
+                header_format4
+            )
+            worksheet.write(row + 1, col + 9, "Plan QTY", header_format4)
+            worksheet.write(row + 1, col + 10, "Value", header_format4)
+            worksheet.write(row + 1, col + 11, "NASP", header_format4)
 
-        worksheet.merge_range(
-            row, col + 13, row, col + 15,
-            f"Achived %",
-            header_format5
-        )
-        worksheet.write(row + 1, col + 13, "Qty %", header_format5)
-        worksheet.write(row + 1, col + 14, "Value %", header_format5)
-        worksheet.write(row + 1, col + 15, "NASP %", header_format5)
+            worksheet.merge_range(
+                row, col + 12, row, col + 14,
+                f"Achived %",
+                header_format5
+            )
+            worksheet.write(row + 1, col + 12, "Qty %", header_format5)
+            worksheet.write(row + 1, col + 13, "Value %", header_format5)
+            worksheet.write(row + 1, col + 14, "NASP %", header_format5)
 
-        # worksheet.merge_range(row, col + 13, row+1, col + 13, "Qty %", header_format5)
-        # worksheet.merge_range(row, col + 14, row+1, col + 14, "Value %", header_format5)
+            row += 2
 
-        row += 2
+            # Data Rows for this Sales Person
+            last_category = None
+            category_totals = {'Last Year Total Price': 0, 'Total Price': 0,
+                               'Total Plan Price': 0, 'QTY': 0, 'Value': 0}
+            grand_totals = {'Last Year Total Price': 0, 'Total Price': 0,
+                            'Total Plan Price': 0, 'QTY': 0, 'Value': 0}
 
-        # ---------------- Data Rows ----------------
-        last_category = None
+            person_records = [rec for rec in lots_data if rec['Sales Person'] == sales_person]
 
-        # متغير لتجميع subtotal للكاتيجوري
-        category_totals = {
-            'Last Year Total Price': 0,
-            'Total Price': 0,
-            'Total Plan Price': 0,
-            'QTY': 0,
-            'Value': 0,
-        }
+            for record in person_records:
+                if record['Product Category'] != last_category:
+                    if last_category:
+                        # subtotal
+                        worksheet.merge_range(row, col, row, col + 2, f"Subtotal", header_format)
+                        worksheet.write_number(row, col + 3, category_totals['Last Year Total Price'], header_format6)
+                        worksheet.write(row, col + 4, '', header_format6)
+                        worksheet.write(row, col + 5, '', header_format6)
+                        worksheet.write(row, col + 6, '', header_format6)
+                        worksheet.write_number(row, col + 7, category_totals['Total Price'], header_format6)
+                        worksheet.write(row, col + 8, '', header_format6)
+                        worksheet.write(row, col + 9, '', header_format6)
+                        worksheet.write_number(row, col + 10, category_totals['Total Plan Price'], header_format6)
+                        worksheet.write(row, col + 11, '', header_format6)
+                        worksheet.write_number(row, col + 12, category_totals['QTY'], header_format6)
+                        worksheet.write_number(row, col + 13, category_totals['Value'], header_format6)
+                        worksheet.write(row, col + 14, '', header_format6)
 
-        # متغير لتجميع Grand Total لكل الأعمدة
-        grand_totals = {
-            'Last Year Total Price': 0,
-            'Total Price': 0,
-            'Total Plan Price': 0,
-            'QTY': 0,
-            'Value': 0,
-        }
+                        row += 1
 
-        for record in lots_data:
-            # لو دخلنا كاتيجوري جديدة
-            if record['Product Category'] != last_category:
-                # اطبع subtotal للكاتيجوري اللي فاتت
-                if last_category:
-                    worksheet.write(row, col, f"Subtotal", header_format)
-                    worksheet.write(row, col + 3, '', header_format6)
-                    worksheet.write_number(row, col + 4, category_totals['Last Year Total Price'], header_format6)
-                    worksheet.write(row, col + 5, '', header_format6)
+                        for key in grand_totals:
+                            grand_totals[key] += category_totals[key]
+                        category_totals = {k: 0 for k in category_totals}
 
-                    worksheet.write(row, col + 6, "", header_format6)
-                    worksheet.write_number(row, col + 7, category_totals['Total Price'], header_format6)
-                    worksheet.write(row, col + 8, "", header_format6)
-                    worksheet.write(row, col + 9, "", header_format)
-
-                    worksheet.write(row, col + 10, "", header_format6)
-                    worksheet.write_number(row, col + 11, category_totals['Total Plan Price'], header_format6)
-                    worksheet.write(row, col + 12, "", header_format6)
-                    worksheet.write_number(row, col + 13, category_totals['QTY'], header_format6)
-                    worksheet.write_number(row, col + 14, category_totals['Value'], header_format6)
-                    worksheet.write(row, col + 15, '', header_format6)
-
+                    worksheet.merge_range(row, col, row, col + 14, record['Product Category'], header_format0)
+                    last_category = record['Product Category']
                     row += 1
 
-                    # ضيف subtotal للـ grand total
-                    for key in grand_totals:
-                        grand_totals[key] += category_totals[key]
+                # تفاصيل المنتج
+                worksheet.write(row, col, "", cell_format1)
+                worksheet.write(row, col + 1, record['Default Code'] or '', cell_format1)
+                worksheet.write(row, col + 2, record['Product'] or '', cell_format1)
 
-                    # reset subtotal
-                    category_totals = {k: 0 for k in category_totals}
+                worksheet.write_number(row, col + 3, record['Last Year Total Quantity'], cell_format)
+                worksheet.write_number(row, col + 4, record['Last Year Total Price'], cell_format)
+                worksheet.write_number(row, col + 5, record['Last Year Nsap'], cell_format)
 
-                # اطبع صف الكاتيجوري الجديدة
-                worksheet.merge_range(row, col, row, col + 14, record['Product Category'], header_format0)
-                last_category = record['Product Category']
+                worksheet.write_number(row, col + 6, record['Total Quantity'], cell_format)
+                worksheet.write_number(row, col + 7, record['Total Price'], cell_format)
+                worksheet.write_number(row, col + 8, record['Nsap'], cell_format)
+                # worksheet.write(row, col + 9, record['Sales Person'], cell_format1)
+
+                worksheet.write_number(row, col + 9, record['Total Plan Quantity'], cell_format)
+                worksheet.write_number(row, col + 10, record['Total Plan Price'], cell_format)
+                worksheet.write_number(row, col + 11, record['Plan Nsap'], cell_format)
+                worksheet.write_number(row, col + 12, record['QTY'], cell_format)
+                worksheet.write_number(row, col + 13, record['Value'], cell_format)
+                worksheet.write_number(row, col + 14, record['achieved_nasp'], cell_format)
+
+                category_totals['Last Year Total Price'] += record['Last Year Total Price'] or 0
+                category_totals['Total Price'] += record['Total Price'] or 0
+                category_totals['Total Plan Price'] += record['Total Plan Price'] or 0
+                category_totals['QTY'] += record['QTY'] or 0
+                category_totals['Value'] += record['Value'] or 0
                 row += 1
 
-            # اطبع تفاصيل المنتج
-            worksheet.write(row, col, "", cell_format1)
-            worksheet.write(row, col + 1, record['Default Code'] or '', cell_format1)
-            worksheet.write(row, col + 2, record['Product'] or '', cell_format1)
+            # subtotal آخر كاتيجوري
+            if last_category:
+                worksheet.merge_range(row, col, row, col + 2, f"Subtotal", header_format)
+                worksheet.write(row, col + 3, '', header_format6)
+                worksheet.write_number(row, col + 4, category_totals['Last Year Total Price'], header_format6)
+                worksheet.write(row, col + 5, '', header_format6)
+                worksheet.write(row, col + 6, '', header_format6)
+                worksheet.write_number(row, col + 7, category_totals['Total Price'], header_format6)
+                worksheet.write(row, col + 8, '', header_format6)
+                worksheet.write(row, col + 9, '', header_format6)
+                worksheet.write_number(row, col + 10, category_totals['Total Plan Price'], header_format6)
+                worksheet.write(row, col + 11, '', header_format6)
+                worksheet.write_number(row, col + 12, category_totals['QTY'], header_format6)
+                worksheet.write_number(row, col + 13, category_totals['Value'], header_format6)
+                worksheet.write(row, col + 14, '', header_format6)
+                row += 1
 
-            worksheet.write_number(row, col + 3, record['Last Year Total Quantity'], cell_format)
-            worksheet.write_number(row, col + 4, record['Last Year Total Price'], cell_format)
-            worksheet.write_number(row, col + 5, record['Last Year Nsap'], cell_format)
+                for key in grand_totals:
+                    grand_totals[key] += category_totals[key]
 
-            worksheet.write_number(row, col + 6, record['Total Quantity'], cell_format)
-            worksheet.write_number(row, col + 7, record['Total Price'], cell_format)
-            worksheet.write_number(row, col + 8, record['Nsap'], cell_format)
-            worksheet.write(row, col + 9, record['Sales Person'], cell_format1)
-
-            worksheet.write_number(row, col + 10, record['Total Plan Quantity'], cell_format)
-            worksheet.write_number(row, col + 11, record['Total Plan Price'], cell_format)
-            worksheet.write_number(row, col + 12, record['Plan Nsap'], cell_format)
-            worksheet.write_number(row, col + 13, record['QTY'], cell_format)
-            worksheet.write_number(row, col + 14, record['Value'], cell_format)
-            worksheet.write_number(row, col + 15, record['achieved_nasp'], cell_format)
-
-            # جمع القيم في totals
-            category_totals['Last Year Total Price'] += record['Last Year Total Price'] or 0
-            category_totals['Total Price'] += record['Total Price'] or 0
-            category_totals['Total Plan Price'] += record['Total Plan Price'] or 0
-            category_totals['QTY'] += record['QTY'] or 0
-            category_totals['Value'] += record['Value'] or 0
-
-            row += 1
-
-        # اطبع subtotal بعد آخر كاتيجوري
-        if last_category:
-            worksheet.write(row, col, f"Subtotal", header_format)
-            worksheet.write(row, col + 3, "", header_format6)
-            worksheet.write_number(row, col + 4, category_totals['Last Year Total Price'], header_format6)
-            worksheet.write(row, col + 5, "", header_format6)
-
-            worksheet.write(row, col + 6, "", header_format6)
-            worksheet.write_number(row, col + 7, category_totals['Total Price'], header_format6)
-            worksheet.write(row, col + 8, "", header_format6)
-            worksheet.write(row, col + 9, "", header_format)
-
-            worksheet.write(row, col + 10, "", header_format6)
-            worksheet.write_number(row, col + 11, category_totals['Total Plan Price'], header_format6)
-            worksheet.write(row, col + 12, "", header_format6)
-            worksheet.write_number(row, col + 13, category_totals['QTY'], header_format6)
-            worksheet.write_number(row, col + 14, category_totals['Value'], header_format6)
-            worksheet.write(row, col + 15, '', header_format6)
-
-            row += 1
-
-            for key in grand_totals:
-                grand_totals[key] += category_totals[key]
-
-        # ---------------- Grand Total ----------------
-        worksheet.merge_range(row, col, row, col + 2, "Grand Total", header_format2)
-        worksheet.write(row, col + 3, '', header_format6)
-        worksheet.write_number(row, col + 4, grand_totals['Last Year Total Price'], header_format6)
-        worksheet.write(row, col + 5, '', header_format6)
-        worksheet.write(row, col + 6, '', header_format6)
-        worksheet.write_number(row, col + 7, grand_totals['Total Price'], header_format6)
-        worksheet.write(row, col + 8, '', header_format6)
-        worksheet.write(row, col + 9, '', header_format6)
-        worksheet.write(row, col + 10, '', header_format6)
-
-        worksheet.write_number(row, col + 11, grand_totals['Total Plan Price'], header_format6)
-        worksheet.write(row, col + 12, '', header_format6)
-        worksheet.write_number(row, col + 13, grand_totals['QTY'], header_format6)
-        worksheet.write_number(row, col + 14, grand_totals['Value'], header_format6)
-        worksheet.write(row, col + 15, '', header_format6)
+            # Grand total للسيلز بيرسون
+            worksheet.merge_range(row, col, row, col + 2, "Grand Total", header_format2)
+            worksheet.write(row, col + 3, '', header_format2)
+            worksheet.write_number(row, col + 4, grand_totals['Last Year Total Price'], header_format2)
+            worksheet.write(row, col + 5, '', header_format2)
+            worksheet.write(row, col + 6, '', header_format2)
+            worksheet.write_number(row, col + 7, grand_totals['Total Price'], header_format2)
+            worksheet.write(row, col + 8, '', header_format2)
+            worksheet.write(row, col + 9, '', header_format2)
+            worksheet.write_number(row, col + 10, grand_totals['Total Plan Price'], header_format2)
+            worksheet.write(row, col + 11, '', header_format2)
+            worksheet.write_number(row, col + 12, grand_totals['QTY'], header_format2)
+            worksheet.write_number(row, col + 13, grand_totals['Value'], header_format2)
+            worksheet.write(row, col + 14, '', header_format2)
+            row += 3  # مسافة بين كل Sales Person والتاني
 

@@ -189,8 +189,8 @@ class ProfitabilityWizard(models.TransientModel):
             combined_data = sorted(
                 combined_data,
                 key=lambda x: (
-                    x['Product Category ID'] or 999999,  # يرتب الكاتيجوري بالأرقام
-                    x['Product Order'] or 999999  # يرتب البرودكت داخل الكاتيجوري
+                    x['Product Category ID'] or 999999,
+                    x['Product Order'] or 999999
                 )
             )
 
