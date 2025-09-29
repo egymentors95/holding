@@ -45,7 +45,10 @@ class ProfitabilityWizard(models.TransientModel):
         if self.product_category_ids:
             domain.append(('product_id.categ_id', 'in', self.product_category_ids.ids))
         if self.partner_category_ids:
-            domain.append(('move_id.partner_id', 'in', self.partner_category_ids.ids))
+            partners = self.env['res.partner'].search([
+                ('category_id', 'in', self.partner_category_ids.ids)
+            ])
+            domain.append(('move_id.partner_id', 'in', partners.ids))
 
         lines = self.env['account.move.line'].search(domain)
 
@@ -66,7 +69,10 @@ class ProfitabilityWizard(models.TransientModel):
         if self.product_category_ids:
             domain2.append(('product_id.categ_id', 'in', self.product_category_ids.ids))
         if self.partner_category_ids:
-            domain2.append(('move_id.partner_id', 'in', self.partner_category_ids.ids))
+            partners = self.env['res.partner'].search([
+                ('category_id', 'in', self.partner_category_ids.ids)
+            ])
+            domain2.append(('move_id.partner_id', 'in', partners.ids))
 
         last_year_lines = self.env['account.move.line'].search(domain2)
 
@@ -161,7 +167,7 @@ class ProfitabilityWizard(models.TransientModel):
                     'Product Category': product_category,
                     'Product': product_name,
                     'Default Code': default_code,
-                    'Sales Person': sales_person.name if sales_person else "All Sales",
+                    'Sales Person': sales_person.name if sales_person else " ",
                     'Sales Person id': sales_person.id if sales_person else False,
 
                     'Total Quantity': total_quantity,
