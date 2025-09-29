@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from odoo import api, fields, models
 from odoo.exceptions import UserError
 from dateutil.relativedelta import relativedelta
@@ -13,7 +14,8 @@ class ProfitabilityWizard(models.TransientModel):
     date_to = fields.Date(string='Date To')
     sales_person_ids = fields.Many2many(string='Sales Persons', comodel_name='res.users')
     product_category_ids = fields.Many2many(string='Product Categories', comodel_name='product.category')
-    is_sales_person = fields.Boolean()
+    partner_category_ids = fields.Many2many(comodel_name='partner.category', string='Partner Category')
+
 
     def get_report_data(self):
         combined_data = []
@@ -41,19 +43,32 @@ class ProfitabilityWizard(models.TransientModel):
             domain.append(('move_id.invoice_user_id', 'in', self.sales_person_ids.ids))
         if self.product_category_ids:
             domain.append(('product_id.categ_id', 'in', self.product_category_ids.ids))
+        if self.partner_category_ids:
+            domain.append(('move_id.partner_id', 'in', self.partner_category_ids.ids))
 
         lines = self.env['account.move.line'].search(domain)
 
         # -------------------------------
         # جلب خطوط السنة اللي فاتت مرة واحدة
         # -------------------------------
-        last_year_lines = self.env['account.move.line'].search([
+        domain2 = [
             ('date', '>=', date_from_last_year),
             ('date', '<=', date_to_last_year),
             ('company_id', 'in', self.env.companies.ids),
             ('move_id.state', '=', 'posted'),
             ('move_id.move_type', 'in', ['out_invoice', 'out_refund']),
-        ])
+        ]
+        if self.product_ids:
+            domain2.append(('product_id', 'in', self.product_ids.ids))
+        if self.sales_person_ids:
+            domain2.append(('move_id.invoice_user_id', 'in', self.sales_person_ids.ids))
+        if self.product_category_ids:
+            domain2.append(('product_id.categ_id', 'in', self.product_category_ids.ids))
+        if self.partner_category_ids:
+            domain2.append(('move_id.partner_id', 'in', self.partner_category_ids.ids))
+
+        last_year_lines = self.env['account.move.line'].search(domain2)
+
 
         # -------------------------------
         # Loop على المنتجات
@@ -65,17 +80,8 @@ class ProfitabilityWizard(models.TransientModel):
             default_code = product.default_code or ''
 
             # لو فيه أكتر من Sales Person
-            # لو is_sales_person = True 👉 نفصل على حسب Sales Person
-            if self.is_sales_person:
-                sales_persons = product_lines.mapped('move_id.invoice_user_id')
-            else:
-                # نخليها Sales Person واحد وهمي (None) عشان نجمع كله
-                sales_persons = [False]
-
-            for sales_person in sales_persons:
-                sales_lines = product_lines
-                if sales_person:
-                    sales_lines = product_lines.filtered(lambda l: l.move_id.invoice_user_id == sales_person)
+            for sales_person in product_lines.mapped('move_id.invoice_user_id'):
+                sales_lines = product_lines.filtered(lambda l: l.move_id.invoice_user_id == sales_person)
 
                 # -------- خطط المبيعات --------
                 number_of_months = 0
@@ -83,16 +89,14 @@ class ProfitabilityWizard(models.TransientModel):
                     diff = relativedelta(self.date_to, self.date_from)
                     number_of_months = diff.years * 12 + diff.months + 1
 
-                plan_domain = [
+                plan_lines = self.env['sales.plan.lines'].search([
                     ('product_id', '=', product.id),
+                    ('sales_plan_id.sales_person_id', '=', sales_person.id),
                     ('sales_plan_id.date_from', '<=', self.date_to),
                     ('sales_plan_id.date_to', '>=', self.date_from),
                     ('sales_plan_id.state', '=', 'confirmed'),
-                ]
-                if sales_person:  # يعني في حالة is_sales_person = True
-                    plan_domain.append(('sales_plan_id.sales_person_id', '=', sales_person.id))
+                ])
 
-                plan_lines = self.env['sales.plan.lines'].search(plan_domain)
 
                 plan_quantity = sum(plan_lines.mapped('quantity_per_month'))
                 total_plan_quantity = plan_quantity * number_of_months if number_of_months else 0.0
@@ -129,6 +133,8 @@ class ProfitabilityWizard(models.TransientModel):
 
                 last_year_nsap = last_year_total_price / last_year_total_quantity if last_year_total_quantity else 0.0
 
+                achieved_nasp = (nsap / plan_nasp if plan_nasp else 1) * 100
+
                 # -------- Append --------
                 combined_data.append({
                     'Product Category ID': product.categ_id.product_category,
@@ -154,6 +160,7 @@ class ProfitabilityWizard(models.TransientModel):
 
                     'QTY': qty_percentage,
                     'Value': value_percentage,
+                    'achieved_nasp': achieved_nasp,
                 })
                 combined_data = sorted(
                     combined_data,
@@ -210,6 +217,7 @@ class ProfitabilityWizard(models.TransientModel):
                 'plan_nsap': rec['Plan Nsap'],
                 'qty_percentage': rec['QTY'],
                 'value_percentage': rec['Value'],
+                'achieved_nasp': rec['achieved_nasp'],
             })
 
         return {

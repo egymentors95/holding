@@ -23,4 +23,5 @@ class AccountMoveLine2(models.Model):
 
     qty_percentage = fields.Float(string="QTY %")
     value_percentage = fields.Float(string="Value %")
+    achieved_nasp = fields.Float(string="Achieved NASP %")
 

@@ -20,6 +20,7 @@
                 <field name="plan_nsap"/>
                 <field name="qty_percentage"/>
                 <field name="value_percentage"/>
+                <field name="achieved_nasp"/>
             </tree>
         </field>
     </record>
