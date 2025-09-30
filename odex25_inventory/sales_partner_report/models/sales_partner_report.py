@@ -4,8 +4,8 @@ import xlsxwriter
 from odoo.modules.module import get_module_resource
 
 
-class ProfitabilityReport(models.AbstractModel):
-    _name = 'report.product_report.profitability_report'
+class SalesPartnerReport(models.AbstractModel):
+    _name = 'report.sales_partner_report.sales_partner_report_xlsx'
     _inherit = 'report.report_xlsx.abstract'
 
     def generate_xlsx_report(self, workbook, data, records):
@@ -22,7 +22,7 @@ class ProfitabilityReport(models.AbstractModel):
         else:
             date_to_last_year = None
 
-        worksheet = workbook.add_worksheet('Sales Report')
+        worksheet = workbook.add_worksheet('Sales Partner Report')
         row = 0
         col = 0
 
@@ -60,7 +60,7 @@ class ProfitabilityReport(models.AbstractModel):
                                              'align': 'center', 'valign': 'vcenter', 'border': 2})
         header_format7 = workbook.add_format({'bold': True, 'bg_color': '#27F53C',
                                              'align': 'left', 'valign': 'vcenter', 'border': 2})
-        header_format8 = workbook.add_format({'bold': True, 'bg_color': '#,##0.00',
+        header_format8 = workbook.add_format({'bold': True, 'bg_color': '#27C2F5', 'num_format': '#,##0.00',
                                               'align': 'center', 'valign': 'vcenter', 'border': 2})
 
 
@@ -70,7 +70,7 @@ class ProfitabilityReport(models.AbstractModel):
                                            'border': 0, 'left': 2, 'right': 2, 'top': 1, 'bottom': 1})
 
 
-        logo_path = get_module_resource('product_report', 'static/img', 'logo.png')
+        logo_path = get_module_resource('sales_partner_report', 'static/img', 'logo.png')
         if logo_path:
             worksheet.insert_image(0, 9, logo_path, {
                 'x_scale': .88,
@@ -82,7 +82,7 @@ class ProfitabilityReport(models.AbstractModel):
         worksheet.merge_range(row, col + 2, row + 4, col + 8, "")
 
         worksheet.write(row, col, f"Report", header_format0)
-        worksheet.write(row, col + 1, f"Sales Report", header_format0)
+        worksheet.write(row, col + 1, f"Sales Partner Report", header_format0)
         row += 1
         worksheet.write(row, col, f"Date from", header_format0)
         worksheet.write(row, col + 1, f"{date_from}", header_format0)
@@ -94,11 +94,11 @@ class ProfitabilityReport(models.AbstractModel):
         worksheet.write(row, col + 1, f"SR or USD", header_format0)
         row += 2
 
-        sales_persons = list(set([rec['Sales Person'] for rec in lots_data])) or ["No Sales Person"]
+        sales_partners = list(set([rec['Partner'] for rec in lots_data])) or ["No Partner"]
 
-        for sales_person in sales_persons:
+        for sales_partner in sales_partners:
             # عنوان Sales Person
-            worksheet.merge_range(row, col, row, col + 14, f"Sales Person: {sales_person}", header_format7)
+            worksheet.merge_range(row, col, row, col + 14, f"؛Partner: {sales_partner}", header_format7)
             row += 2
 
             # Table Headers
@@ -152,7 +152,7 @@ class ProfitabilityReport(models.AbstractModel):
             grand_totals = {'Last Year Total Price': 0, 'Total Price': 0,
                             'Total Plan Price': 0, 'QTY': 0, 'Value': 0}
 
-            person_records = [rec for rec in lots_data if rec['Sales Person'] == sales_person]
+            person_records = [rec for rec in lots_data if rec['Partner'] == sales_partner]
 
             for record in person_records:
                 if record['Product Category'] != last_category:

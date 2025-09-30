@@ -14,7 +14,6 @@ class ProfitabilityWizard(models.TransientModel):
     date_to = fields.Date(string='Date To')
     sales_person_ids = fields.Many2many(string='Sales Persons', comodel_name='res.users')
     product_category_ids = fields.Many2many(string='Product Categories', comodel_name='product.category')
-    partner_category_ids = fields.Many2many(comodel_name='partner.category', string='Partner Category')
     is_sales_person = fields.Boolean()
 
 
@@ -44,11 +43,6 @@ class ProfitabilityWizard(models.TransientModel):
             domain.append(('move_id.invoice_user_id', 'in', self.sales_person_ids.ids))
         if self.product_category_ids:
             domain.append(('product_id.categ_id', 'in', self.product_category_ids.ids))
-        if self.partner_category_ids:
-            partners = self.env['res.partner'].search([
-                ('partner_category', 'in', self.partner_category_ids.ids)
-            ])
-            domain.append(('move_id.partner_id', 'in', partners.ids))
 
         lines = self.env['account.move.line'].search(domain)
 
@@ -68,11 +62,6 @@ class ProfitabilityWizard(models.TransientModel):
             domain2.append(('move_id.invoice_user_id', 'in', self.sales_person_ids.ids))
         if self.product_category_ids:
             domain2.append(('product_id.categ_id', 'in', self.product_category_ids.ids))
-        if self.partner_category_ids:
-            partners = self.env['res.partner'].search([
-                ('partner_category', 'in', self.partner_category_ids.ids)
-            ])
-            domain2.append(('move_id.partner_id', 'in', partners.ids))
 
         last_year_lines = self.env['account.move.line'].search(domain2)
 

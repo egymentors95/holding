@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="report_action_sales_partner" model="ir.actions.report">
+        <field name="name">Sales Partner Xlsx</field>
+        <field name="model">sales.report.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">sales_partner_report.sales_partner_report_xlsx</field>
+        <field name="report_file">sales_partner_report.sales_partner_report_xlsx</field>
+        <field name="binding_type">report</field>
+    </record>
+
+        <record id="report_action_sales_partner_html" model="ir.actions.report">
+        <field name="name">Sales Partner Report</field>
+        <field name="model">sales.report.wizard</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">sales_partner_report.sales_partner_report_html</field>
+        <field name="report_file">sales_partner_report.sales_partner_report_html</field>
+        <field name="binding_type">report</field>
+    </record>
+
+
+</odoo>
