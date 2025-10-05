@@ -2,6 +2,7 @@ from odoo import models
 from datetime import datetime
 import xlsxwriter
 from odoo.modules.module import get_module_resource
+from itertools import groupby
 
 
 class ProfitReport(models.AbstractModel):
@@ -80,68 +81,119 @@ class ProfitReport(models.AbstractModel):
         worksheet.write(row, col + 1, f"SR", header_format0)
         row += 2
 
-        # ---------------- Table Headers ----------------
-        worksheet.merge_range(row, col, row+1, col, "Product Category", header_format)
-        worksheet.merge_range(row, col + 1, row+1, col + 1, "Default Code", header_format)
-        worksheet.merge_range(row, col + 2, row+1, col + 2, "Product", header_format)
+        # تأكد إن البيانات متسلسلة حسب اسم البارتنر قبل الـ groupby
+        lots_data.sort(key=lambda r: r.get('Partner') or '')
 
-        # هيدر السنة اللي فاتت
-        worksheet.merge_range(
-            row, col + 3, row, col + 8,
-            f"Last Year ({date_from_last_year.date()} → {date_to_last_year.date()})",
-            header_format2
-        )
+        all_records = []  # for grand total
 
-        # الهيدر الفرعي للسنة اللي فاتت
-        worksheet.write(row + 1, col + 3, "Total QTY", header_format2)
-        worksheet.write(row + 1, col + 4, "Total Value", header_format2)
-        worksheet.write(row + 1, col + 5, "NASP", header_format2)
-        worksheet.write(row + 1, col + 6, "NAPP", header_format2)
-        worksheet.write(row + 1, col + 7, "Profit Value", header_format2)
-        worksheet.write(row + 1, col + 8, "Profit Margin", header_format2)
+        for partner_name, partner_records in groupby(lots_data, key=lambda r: r.get('Partner') or 'Unknown Partner'):
+            partner_records = list(partner_records)
+            all_records += partner_records
 
-        # هيدر الفترة الحالية
-        worksheet.merge_range(
-            row, col + 9, row, col + 14,
-            f"Current Period ({date_from} → {date_to})",
-            header_format3
-        )
+            # Partner title
+            worksheet.merge_range(row, col, row, col + 14, f"Partner: {partner_name}", header_format0)
+            row += 2
 
-        # الهيدر الفرعي للفترة الحالية
-        worksheet.write(row + 1, col + 9, "Total QTY", header_format3)
-        worksheet.write(row + 1, col + 10, "Total Value", header_format3)
-        worksheet.write(row + 1, col + 11, "NASP", header_format3)
-        worksheet.write(row + 1, col + 12, "NAPP", header_format3)
-        worksheet.write(row + 1, col + 13, "Profit Value", header_format3)
-        worksheet.write(row + 1, col + 14, "Profit Margin", header_format3)
+            # Table headers
+            worksheet.merge_range(row, col, row + 1, col, "Product Category", header_format)
+            worksheet.merge_range(row, col + 1, row + 1, col + 1, "Default Code", header_format)
+            worksheet.merge_range(row, col + 2, row + 1, col + 2, "Product", header_format)
 
-        row += 2
+            worksheet.merge_range(row, col + 3, row, col + 8,
+                                  f"Last Year ({date_from_last_year.date()} → {date_to_last_year.date()})",
+                                  header_format2)
+            worksheet.write(row + 1, col + 3, "Total QTY", header_format2)
+            worksheet.write(row + 1, col + 4, "Total Value", header_format2)
+            worksheet.write(row + 1, col + 5, "NASP", header_format2)
+            worksheet.write(row + 1, col + 6, "NAPP", header_format2)
+            worksheet.write(row + 1, col + 7, "Profit Value", header_format2)
+            worksheet.write(row + 1, col + 8, "Profit Margin", header_format2)
 
-        # ---------------- Data Rows ----------------
-        last_category = None
-        for record in lots_data:
-            # Product Category (merge if same)
-            if record['Product Category'] == last_category:
-                worksheet.write(row, col, "", cell_format)
-            else:
-                worksheet.write(row, col, record['Product Category'], cell_format)
-                last_category = record['Product Category']
+            worksheet.merge_range(row, col + 9, row, col + 14,
+                                  f"Current Period ({date_from} → {date_to})",
+                                  header_format3)
+            worksheet.write(row + 1, col + 9, "Total QTY", header_format3)
+            worksheet.write(row + 1, col + 10, "Total Value", header_format3)
+            worksheet.write(row + 1, col + 11, "NASP", header_format3)
+            worksheet.write(row + 1, col + 12, "NAPP", header_format3)
+            worksheet.write(row + 1, col + 13, "Profit Value", header_format3)
+            worksheet.write(row + 1, col + 14, "Profit Margin", header_format3)
+            row += 2
 
-            worksheet.write(row, col + 1, record['Default Code'] or '', cell_format)
-            worksheet.write(row, col + 2, record['Product'] or '', cell_format)
+            # Data rows
+            last_category = None
+            for record in partner_records:
+                if record['Product Category'] == last_category:
+                    worksheet.write(row, col, "", cell_format)
+                else:
+                    worksheet.write(row, col, record['Product Category'], cell_format)
+                    last_category = record['Product Category']
 
-            worksheet.write_number(row, col + 3, round(record['Last Year Total Quantity'],2), cell_format_light)
-            worksheet.write_number(row, col + 4, round(record['Last Year Total Price'],2), cell_format_light)
-            worksheet.write_number(row, col + 5, round(record['Last Year Nsap'],2), cell_format_light)
-            worksheet.write_number(row, col + 6, round(record['Last Year Naap'],2), cell_format_light)
-            worksheet.write_number(row, col + 7, round(record['Last Profit Value'],2), cell_format_light)
-            worksheet.write_number(row, col + 8, round(record['Last Margin'],2), cell_format_light_right)
+                worksheet.write(row, col + 1, record['Default Code'] or '', cell_format)
+                worksheet.write(row, col + 2, record['Product'] or '', cell_format)
+                worksheet.write_number(row, col + 3, round(record['Last Year Total Quantity'], 2), cell_format_light)
+                worksheet.write_number(row, col + 4, round(record['Last Year Total Price'], 2), cell_format_light)
+                worksheet.write_number(row, col + 5, round(record['Last Year Nsap'], 2), cell_format_light)
+                worksheet.write_number(row, col + 6, round(record['Last Year Naap'], 2), cell_format_light)
+                worksheet.write_number(row, col + 7, round(record['Last Profit Value'], 2), cell_format_light)
+                worksheet.write_number(row, col + 8, round(record['Last Margin'], 2), cell_format_light)
+                worksheet.write_number(row, col + 9, round(record['Total Quantity'], 2), cell_format_light)
+                worksheet.write_number(row, col + 10, round(record['Total Price'], 2), cell_format_light)
+                worksheet.write_number(row, col + 11, round(record['Nsap'], 2), cell_format_light)
+                worksheet.write_number(row, col + 12, round(record['Naap'], 2), cell_format_light)
+                worksheet.write_number(row, col + 13, round(record['Profit Value'], 2), cell_format_light)
+                worksheet.write_number(row, col + 14, round(record['Margin'], 2), cell_format_light)
+                row += 1
 
-            worksheet.write_number(row, col + 9, round(record['Total Quantity'],2), cell_format_light)
-            worksheet.write_number(row, col + 10, round(record['Total Price'],2), cell_format_light)
-            worksheet.write_number(row, col + 11, round(record['Nsap'], 2), cell_format_light)
-            worksheet.write_number(row, col + 12, round(record['Naap'], 2), cell_format_light)
-            worksheet.write_number(row, col + 13, round(record['Profit Value'],2), cell_format_light)
-            worksheet.write_number(row, col + 14, round(record['Margin'], 2), cell_format_light_right)
+            # Partner subtotal
+            total_last_qty = sum(r['Last Year Total Quantity'] for r in partner_records)
+            total_last_value = sum(r['Last Year Total Price'] for r in partner_records)
+            total_last_profit = sum(r['Last Profit Value'] for r in partner_records)
+            total_curr_qty = sum(r['Total Quantity'] for r in partner_records)
+            total_curr_value = sum(r['Total Price'] for r in partner_records)
+            total_curr_profit = sum(r['Profit Value'] for r in partner_records)
+            total_last_margin = (total_last_profit / total_last_value * 100) if total_last_value else 0
+            total_curr_margin = (total_curr_profit / total_curr_value * 100) if total_curr_value else 0
 
-            row += 1
+            worksheet.write(row, col, "Total", cell_format)
+            worksheet.write_blank(row, col + 1, None, cell_format)
+            worksheet.write_blank(row, col + 2, None, cell_format)
+            worksheet.write_number(row, col + 3, total_last_qty, cell_format)
+            worksheet.write_number(row, col + 4, total_last_value, cell_format)
+            worksheet.write_blank(row, col + 5, None, cell_format)
+            worksheet.write_blank(row, col + 6, None, cell_format)
+            worksheet.write_number(row, col + 7, total_last_profit, cell_format)
+            worksheet.write_number(row, col + 8, total_last_margin, cell_format)
+            worksheet.write_number(row, col + 9, total_curr_qty, cell_format)
+            worksheet.write_number(row, col + 10, total_curr_value, cell_format)
+            worksheet.write_blank(row, col + 11, None, cell_format)
+            worksheet.write_blank(row, col + 12, None, cell_format)
+            worksheet.write_number(row, col + 13, total_curr_profit, cell_format)
+            worksheet.write_number(row, col + 14, total_curr_margin, cell_format)
+
+            row += 3  # space after each partner
+
+        # Grand total (all data)
+        if all_records:
+            grand_last_qty = sum(r['Last Year Total Quantity'] for r in all_records)
+            grand_last_value = sum(r['Last Year Total Price'] for r in all_records)
+            grand_last_profit = sum(r['Last Profit Value'] for r in all_records)
+            grand_curr_qty = sum(r['Total Quantity'] for r in all_records)
+            grand_curr_value = sum(r['Total Price'] for r in all_records)
+            grand_curr_profit = sum(r['Profit Value'] for r in all_records)
+            grand_last_margin = (grand_last_profit / grand_last_value * 100) if grand_last_value else 0
+            grand_curr_margin = (grand_curr_profit / grand_curr_value * 100) if grand_curr_value else 0
+
+            worksheet.merge_range(row, col, row, col + 2, "GRAND TOTAL", cell_format)
+            worksheet.write_number(row, col + 3, grand_last_qty, cell_format)
+            worksheet.write_number(row, col + 4, grand_last_value, cell_format)
+            worksheet.write_blank(row, col + 5, None, cell_format)
+            worksheet.write_blank(row, col + 6, None, cell_format)
+            worksheet.write_number(row, col + 7, grand_last_profit, cell_format)
+            worksheet.write_number(row, col + 8, grand_last_margin, cell_format)
+            worksheet.write_number(row, col + 9, grand_curr_qty, cell_format)
+            worksheet.write_number(row, col + 10, grand_curr_value, cell_format)
+            worksheet.write_blank(row, col + 11, None, cell_format)
+            worksheet.write_blank(row, col + 12, None, cell_format)
+            worksheet.write_number(row, col + 13, grand_curr_profit, cell_format)
+            worksheet.write_number(row, col + 14, grand_curr_margin, cell_format)

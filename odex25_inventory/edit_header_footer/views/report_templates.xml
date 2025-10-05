@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!-- ========== HEADER ========== -->
+    <odoo>
+        <template id="external_layout_background_inherit_custom" inherit_id="web.external_layout_background">
+        <xpath expr="//div[contains(@class,'o_background_header')]" position="replace">
+            <div class="o_background_header" style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+                <!-- Header Left -->
+                <div class="header-left" style="width: 33%; text-align: left;">
+                    <t t-raw="company.header_left or ''"/>
+                </div>
+
+                <!-- Logo Center -->
+                <div class="header-logo" style="width: 33%; text-align: center;">
+                    <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height: 80px;"/>
+                </div>
+
+                <!-- Header Right -->
+                <div class="header-right" style="width: 33%; text-align: right;">
+                    <t t-raw="company.header_right or ''"/>
+                </div>
+            </div>
+        </xpath>
+
+        <!-- Replace Footer -->
+        <xpath expr="//div[contains(@class,'text-center')]" position="replace">
+            <div class="o_background_footer" style="text-align: center; margin-top: 10px;">
+                <t t-raw="company.footer_html or ''"/>
+                <div t-if="report_type == 'pdf'" class="text-muted" style="margin-top: 5px;">
+                    Page <span class="page"/> of <span class="topage"/>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>
+
+</odoo>

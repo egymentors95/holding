@@ -12,6 +12,7 @@ class ProfitReportWizard(models.TransientModel):
     date_from = fields.Date(string='Date From')
     date_to = fields.Date(string='Date To')
     product_category_ids = fields.Many2many(string='Product Categories', comodel_name='product.category')
+    is_partner = fields.Boolean(string='Is Partner', default=False)
 
     def get_report_data(self):
         combined_data = []
@@ -59,97 +60,117 @@ class ProfitReportWizard(models.TransientModel):
             product_name = product.name
             default_code = product.default_code or ''
 
+            # ✅ لو خيار is_partner مفعّل → نقسم حسب البارتنر
+            if self.is_partner:
+                partners = product_lines.mapped('move_id.partner_id')
+            else:
+                partners = [False]  # يعني هنجمع كلهم سوا
 
-            # -------- المبيعات الحالية --------
-            qty_out_invoice = sum(product_lines.filtered(lambda l: l.move_id.move_type == 'out_invoice' and l.account_id.internal_group == 'income').mapped('quantity'))
-            qty_out_refund = sum(product_lines.filtered(lambda l: l.move_id.move_type == 'out_refund' and l.account_id.internal_group == 'income').mapped('quantity'))
-            total_quantity = qty_out_invoice - qty_out_refund
+            for partner in partners:
+                if partner:
+                    current_lines = product_lines.filtered(lambda l: l.move_id.partner_id == partner)
+                    last_year_partner_lines = last_year_lines.filtered(
+                        lambda l: l.product_id == product and l.move_id.partner_id == partner)
+                else:
+                    current_lines = product_lines
+                    last_year_partner_lines = last_year_lines.filtered(lambda l: l.product_id == product)
 
-            price_out_invoice = sum(product_lines.filtered(lambda l: l.move_id.move_type == 'out_invoice' and l.account_id.internal_group == 'income').mapped('price_subtotal'))
-            price_out_refund = sum(product_lines.filtered(lambda l: l.move_id.move_type == 'out_refund' and l.account_id.internal_group == 'income').mapped('price_subtotal'))
-            total_price = price_out_invoice - price_out_refund
+                # -------- المبيعات الحالية --------
+                qty_out_invoice = sum(current_lines.filtered(
+                    lambda l: l.move_id.move_type == 'out_invoice' and l.account_id.internal_group == 'income').mapped(
+                    'quantity'))
+                qty_out_refund = sum(current_lines.filtered(
+                    lambda l: l.move_id.move_type == 'out_refund' and l.account_id.internal_group == 'income').mapped(
+                    'quantity'))
+                total_quantity = qty_out_invoice - qty_out_refund
 
-            nsap = total_price / total_quantity if total_quantity else 0.0
+                price_out_invoice = sum(current_lines.filtered(
+                    lambda l: l.move_id.move_type == 'out_invoice' and l.account_id.internal_group == 'income').mapped(
+                    'price_subtotal'))
+                price_out_refund = sum(current_lines.filtered(
+                    lambda l: l.move_id.move_type == 'out_refund' and l.account_id.internal_group == 'income').mapped(
+                    'price_subtotal'))
+                total_price = price_out_invoice - price_out_refund
 
+                nsap = total_price / total_quantity if total_quantity else 0.0
 
-            # -------- السنة اللي فاتت --------
-            last_year_sales = last_year_lines.filtered(lambda l: l.product_id == product)
+                # -------- السنة اللي فاتت --------
+                last_qty_out_invoice = sum(
+                    last_year_partner_lines.filtered(lambda l: l.move_id.move_type == 'out_invoice').mapped('quantity'))
+                last_qty_out_refund = sum(
+                    last_year_partner_lines.filtered(lambda l: l.move_id.move_type == 'out_refund').mapped('quantity'))
+                last_year_total_quantity = last_qty_out_invoice - last_qty_out_refund
 
-            last_qty_out_invoice = sum(last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_invoice').mapped('quantity'))
-            last_qty_out_refund = sum(last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_refund').mapped('quantity'))
-            last_year_total_quantity = last_qty_out_invoice - last_qty_out_refund
+                last_price_out_invoice = sum(
+                    last_year_partner_lines.filtered(lambda l: l.move_id.move_type == 'out_invoice').mapped(
+                        'price_subtotal'))
+                last_price_out_refund = sum(
+                    last_year_partner_lines.filtered(lambda l: l.move_id.move_type == 'out_refund').mapped(
+                        'price_subtotal'))
+                last_year_total_price = last_price_out_invoice - last_price_out_refund
 
-            last_price_out_invoice = sum(last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_invoice').mapped('price_subtotal'))
-            last_price_out_refund = sum(last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_refund').mapped('price_subtotal'))
-            last_year_total_price = last_price_out_invoice - last_price_out_refund
+                last_year_nsap = last_year_total_price / last_year_total_quantity if last_year_total_quantity else 0.0
 
-            last_year_nsap = last_year_total_price / last_year_total_quantity if last_year_total_quantity else 0.0
+                # -------- المشتريات الحالية --------
+                qty_in_invoice = sum(
+                    current_lines.filtered(lambda l: l.move_id.move_type == 'in_invoice').mapped('quantity'))
+                qty_in_refund = sum(
+                    current_lines.filtered(lambda l: l.move_id.move_type == 'in_refund').mapped('quantity'))
+                total_quantity_invoice = qty_in_invoice - qty_in_refund
 
-            # -------- المشتريات الحالية --------
-            qty_in_invoice = sum(
-                product_lines.filtered(lambda l: l.move_id.move_type == 'in_invoice').mapped('quantity'))
-            qty_in_refund = sum(product_lines.filtered(lambda l: l.move_id.move_type == 'in_refund').mapped('quantity'))
-            total_quantity_invoice = qty_in_invoice - qty_in_refund
+                price_in_invoice = sum(
+                    current_lines.filtered(lambda l: l.move_id.move_type == 'in_invoice').mapped('price_subtotal'))
+                price_in_refund = sum(
+                    current_lines.filtered(lambda l: l.move_id.move_type == 'in_refund').mapped('price_subtotal'))
+                total_price_invoice = price_in_invoice - price_in_refund
 
-            price_in_invoice = sum(
-                product_lines.filtered(lambda l: l.move_id.move_type == 'in_invoice').mapped('price_subtotal'))
-            price_in_refund = sum(
-                product_lines.filtered(lambda l: l.move_id.move_type == 'in_refund').mapped('price_subtotal'))
-            total_price_invoice = price_in_invoice - price_in_refund
+                naap = total_price_invoice / total_quantity_invoice if total_quantity_invoice else 0.0
 
-            naap = total_price_invoice / total_quantity_invoice if total_quantity_invoice else 0.0
+                # -------- السنة اللي فاتت مشتريات --------
+                last_qty_in_invoice = sum(
+                    last_year_partner_lines.filtered(lambda l: l.move_id.move_type == 'in_invoice').mapped('quantity'))
+                last_qty_in_refund = sum(
+                    last_year_partner_lines.filtered(lambda l: l.move_id.move_type == 'in_refund').mapped('quantity'))
+                last_year_total_quantity_invoice = last_qty_in_invoice - last_qty_in_refund
 
-            # -------- السنة اللي فاتت --------
-            last_year_purchases = last_year_lines.filtered(
-                lambda l: l.product_id == product)
+                last_price_in_invoice = sum(
+                    last_year_partner_lines.filtered(lambda l: l.move_id.move_type == 'in_invoice').mapped(
+                        'price_subtotal'))
+                last_price_in_refund = sum(
+                    last_year_partner_lines.filtered(lambda l: l.move_id.move_type == 'in_refund').mapped(
+                        'price_subtotal'))
+                last_year_total_price_invoice = last_price_in_invoice - last_price_in_refund
 
-            last_qty_in_invoice = sum(
-                last_year_purchases.filtered(lambda l: l.move_id.move_type == 'in_invoice').mapped('quantity'))
-            last_qty_in_refund = sum(
-                last_year_purchases.filtered(lambda l: l.move_id.move_type == 'in_refund').mapped('quantity'))
-            last_year_total_quantity_invoice = last_qty_in_invoice - last_qty_in_refund
+                last_year_naap = last_year_total_price_invoice / last_year_total_quantity_invoice if last_year_total_quantity_invoice else 0.0
 
-            last_price_in_invoice = sum(
-                last_year_purchases.filtered(lambda l: l.move_id.move_type == 'in_invoice').mapped('price_subtotal'))
-            last_price_in_refund = sum(
-                last_year_purchases.filtered(lambda l: l.move_id.move_type == 'in_refund').mapped('price_subtotal'))
-            last_year_total_price_invoice = last_price_in_invoice - last_price_in_refund
+                # -------- الحسابات النهائية --------
+                margin = nsap - naap
+                profit_value = margin * total_quantity
+                last_margin = last_year_nsap - last_year_naap
+                last_profit_value = last_margin * last_year_total_quantity
 
-            last_year_naap = last_year_total_price_invoice / last_year_total_quantity_invoice if last_year_total_quantity_invoice else 0.0
-
-            #_________________________________________________________________________________________
-            margin = nsap - naap
-            profit_value = margin * total_quantity
-            last_margin = last_year_nsap - last_year_naap
-            last_profit_value = last_margin * last_year_total_quantity
-
-
-            # -------- Append --------
-            combined_data.append({
-                'Product Category': product_category,
-                'Product': product_name,
-                'Default Code': default_code,
-
-                'Total Quantity': total_quantity,
-                'Total Price': total_price,
-                'Nsap': nsap,
-                'Naap': naap,
-                'Profit Value': profit_value,
-                'Margin': margin,
-
-
-                'Last Year Total Quantity': last_year_total_quantity,
-                'Last Year Total Price': last_year_total_price,
-                'Last Year Nsap': last_year_nsap,
-                'Last Year Naap': last_year_naap,
-                'Last Profit Value': last_profit_value,
-                'Last Margin': last_margin,
-
-
-
-            })
+                # -------- Append --------
+                combined_data.append({
+                    'Partner': partner.name if partner else '',
+                    'Product Category': product_category,
+                    'Product': product_name,
+                    'Default Code': default_code,
+                    'Total Quantity': total_quantity,
+                    'Total Price': total_price,
+                    'Nsap': nsap,
+                    'Naap': naap,
+                    'Profit Value': profit_value,
+                    'Margin': margin,
+                    'Last Year Total Quantity': last_year_total_quantity,
+                    'Last Year Total Price': last_year_total_price,
+                    'Last Year Nsap': last_year_nsap,
+                    'Last Year Naap': last_year_naap,
+                    'Last Profit Value': last_profit_value,
+                    'Last Margin': last_margin,
+                })
 
         return {'combined_data': combined_data}
+
 
     def action_print_report_html(self):
         self.ensure_one()

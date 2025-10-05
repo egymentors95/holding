@@ -39,7 +39,7 @@ class HrContractSalaryScale(models.Model):
 
     @api.depends('salary_scale.transfer_type')
     def compute_move_type(self):
-        self.compute_function()
+        # self.compute_function()
         if self.salary_scale.transfer_type == 'one_by_one':
             self.required_condition = True
         else:

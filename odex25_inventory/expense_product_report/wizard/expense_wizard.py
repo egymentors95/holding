@@ -45,7 +45,7 @@ class ExpenseWizard(models.TransientModel):
             sales_team = expense.move_id.team_id.name
             account = expense.account_id.name
             debit = expense.debit
-            employee = expense.move_id.invoice_user_id.employee_id.name if expense.move_id.invoice_user_id and expense.move_id.invoice_user_id.employee_id else 'N/A'
+            employee = expense.partner_id.user_ids[0].employee_id.name if expense.partner_id.user_ids else 'N/A'
 
 
 
