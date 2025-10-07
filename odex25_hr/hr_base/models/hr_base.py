@@ -41,6 +41,7 @@ class HrEmployee(models.Model):
     grade = fields.Char()
     is_head = fields.Boolean("Is Head  of Function")
     is_line_man = fields.Boolean("Is Line Manager")
+    company_id = fields.Many2one('res.company', required=False)
 
     is_calender = fields.Boolean(default=False)
     spouse_no = fields.Char("Spouse Phone No.")
