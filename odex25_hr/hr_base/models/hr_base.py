@@ -255,7 +255,7 @@ class HrEmployee(models.Model):
         'hr.employee',
         'Manager',
         readonly=False,
-        domain=lambda self: [('company_id', 'in', self.env.user.company_ids.ids)]
+        # domain=lambda self: [('company_id', 'in', self.env.user.company_ids.ids)]
 
     )
 
