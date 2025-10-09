@@ -52,7 +52,7 @@
             </p>
         </field>
     </record>
-    <menuitem id="sponsor_name_menu" name="اسم الكفيل" parent="exp_hr_payroll.menu_payroll_employee"
-              action="sponsor_name_action" sequence="6"/>
+    <menuitem id="sponsor_name_menu" name="اسم الكفيل" parent="hr.menu_hr_main"
+              action="sponsor_name_action" sequence="2"/>
 
 </odoo>

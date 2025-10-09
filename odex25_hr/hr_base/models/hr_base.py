@@ -269,6 +269,8 @@ class HrEmployee(models.Model):
         for rec in self:
             if rec.is_manager:
                 rec.company_id = False
+            else:
+                rec.company_id = self.env.company
 
 
 
