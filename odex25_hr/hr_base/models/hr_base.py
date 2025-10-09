@@ -55,6 +55,10 @@ class HrEmployee(models.Model):
                                       domain="[('partner_id', '=', address_home_id)]",
                                       help="Employee bank salary account", groups="base.group_user")
     bank_code = fields.Char("Bank Name", related="bank_account_id.bank_id.name")
+    res_partner_bank_ids = fields.One2many(comodel_name='res.partner.bank', inverse_name='employee_id', string='Bank Accounts')
+
+
+
     issue = fields.Date("Issue Date")
     expiry = fields.Date("Expiry Date")
     # passport fields to private information page
@@ -258,6 +262,15 @@ class HrEmployee(models.Model):
         # domain=lambda self: [('company_id', 'in', self.env.user.company_ids.ids)]
 
     )
+    is_manager = fields.Boolean(string='Is Manager')
+
+    @api.onchange('is_manager')
+    def _onchange_is_manager(self):
+        for rec in self:
+            if rec.is_manager:
+                rec.company_id = False
+
+
 
     @api.depends('insurance_date')
     def _compute_insurance_years(self):
