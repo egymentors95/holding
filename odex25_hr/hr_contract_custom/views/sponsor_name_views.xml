@@ -13,7 +13,7 @@
                             <field name="sponsor_bank_number"/>
                         </group>
                         <group>
-                            <field name="computer_number"/>
+                            <field name="computer_no"/>
                             <field name="iban_number"/>
                             <field name="labor_office_number"/>
                         </group>
@@ -35,7 +35,7 @@
             <tree string="Sponsor Names">
                 <field name="name"/>
                 <field name="sponsor_bank_number"/>
-                <field name="computer_number"/>
+                <field name="computer_no"/>
                 <field name="iban_number"/>
                 <field name="labor_office_number"/>
             </tree>
