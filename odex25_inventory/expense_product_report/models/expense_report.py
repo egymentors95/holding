@@ -15,127 +15,121 @@ class ExpenseReport(models.AbstractModel):
         date_to = data.get('date_to')
 
         worksheet = workbook.add_worksheet('Expense Report')
-        row = 0
-        col = 0
-
         worksheet.set_column('A:A', 17)
-        worksheet.set_column('B:B', 15)
-        worksheet.set_column('C:C', 15)
-        worksheet.set_column('D:D', 15)
-        worksheet.set_column('E:E', 15)
+        worksheet.set_column('B:B', 25)
+        worksheet.set_column('C:Z', 15)
 
-        # Formats
-        header_format0 = workbook.add_format({'bold': True,
-                                              'align': 'center', 'valign': 'vcenter', 'border': 1})
-        header_format = workbook.add_format({'bold': True, 'bg_color': '#f0f0f0',
-                                             'align': 'center', 'valign': 'vcenter', 'border': 2})
-        header_format1 = workbook.add_format({'bold': True, 'bg_color': '#f0f0f0',
-                                             'align': 'left', 'valign': 'vcenter', 'border': 2})
+        # ======= تنسيقات =======
+        bold = workbook.add_format({'bold': True, 'align': 'center', 'valign': 'vcenter', 'border': 1})
+        header_format = workbook.add_format({'bold': True, 'bg_color': '#D9E1F2', 'align': 'center', 'valign': 'vcenter', 'border': 1})
+        cell_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'border': 1})
+        subtotal_format = workbook.add_format({'bold': True, 'bg_color': '#FCE4D6', 'align': 'center', 'valign': 'vcenter', 'border': 1})
+        grand_total_format = workbook.add_format({'bold': True, 'bg_color': '#C6E0B4', 'align': 'center', 'valign': 'vcenter', 'border': 1})
+        percent_format = workbook.add_format({'num_format': '0.00%', 'align': 'center', 'valign': 'vcenter', 'border': 1})
 
-        cell_format = workbook.add_format({'align': 'center', 'valign': 'vcenter',
-                                           'border': 0, 'left': 2, 'right': 2, 'top': 1, 'bottom': 1})
-
+        # ======= اللوجو =======
         logo_path = get_module_resource('expense_product_report', 'static/img', 'logo.png')
         if logo_path:
-            worksheet.insert_image(0, 6, logo_path, {
-                'x_scale': .88,
-                'y_scale': 0.190,
-            })
+            worksheet.insert_image(0, 6, logo_path, {'x_scale': 0.9, 'y_scale': 0.2})
 
-        # ---------------- Header with dates ----------------
-        worksheet.merge_range(row, col + 2, row + 4, col + 5, "")
-
-        worksheet.write(row, col, f"Report", header_format0)
-        worksheet.write(row, col + 1, f"Expense Report", header_format0)
+        row = 0
+        worksheet.write(row, 0, "Report:", header_format)
+        worksheet.write(row, 1, "Expense Report", cell_format)
         row += 1
-        worksheet.write(row, col, f"Date from", header_format0)
-        worksheet.write(row, col + 1, f"{date_from}", header_format0)
+        worksheet.write(row, 0, "Date From:", header_format)
+        worksheet.write(row, 1, str(date_from or ''), cell_format)
         row += 1
-        worksheet.write(row, col, f"Date to", header_format0)
-        worksheet.write(row, col + 1, f"{date_to}", header_format0)
+        worksheet.write(row, 0, "Date To:", header_format)
+        worksheet.write(row, 1, str(date_to or ''), cell_format)
         row += 1
-        worksheet.write(row, col, f"Currency", header_format0)
-        worksheet.write(row, col + 1, f"SR or USD", header_format0)
+        worksheet.write(row, 0, "Currency:", header_format)
+        worksheet.write(row, 1, "SR or USD", cell_format)
         row += 2
 
-        # ---------------- Table Headers ----------------
-        worksheet.write(row, col, "Team", header_format)
-        worksheet.write(row, col + 1, "Accounts", header_format)
+        # ======= تجهيز البيانات =======
+        grouped_data = {}
+        employees = set()
+        for rec in lots_data:
+            team = rec.get('sales_team') or 'No Team'
+            account = rec.get('account')
+            employee = rec.get('employee') or 'N/A'
+            debit = rec.get('debit') or 0.0
 
-        employees = sorted(set([rec['employee'] for rec in lots_data if rec.get('employee')]))
-        emp_col_map = {}
-        for idx, emp in enumerate(employees):
-            worksheet.write(row, col + 2 + idx, emp, header_format)
-            emp_col_map[emp] = col + 2 + idx
+            employees.add(employee)
+            grouped_data.setdefault(team, {})
+            grouped_data[team].setdefault(account, {'employees': {}, 'total': 0.0})
+            grouped_data[team][account]['employees'][employee] = grouped_data[team][account]['employees'].get(employee, 0.0) + debit
+            grouped_data[team][account]['total'] += debit
 
-        total_col = col + 2 + len(employees)
-        worksheet.write(row, total_col, "Total", header_format)
+        employees = sorted(list(employees))
+        emp_col_map = {emp: idx + 2 for idx, emp in enumerate(employees)}
+        total_col = 2 + len(employees)
+        percent_col = total_col + 1
+
+        # ======= العناوين =======
+        worksheet.write(row, 0, 'Team', header_format)
+        worksheet.write(row, 1, 'Account', header_format)
+        for emp in employees:
+            worksheet.write(row, emp_col_map[emp], emp, header_format)
+        worksheet.write(row, total_col, 'Total', header_format)
+        worksheet.write(row, percent_col, 'Achieve %', header_format)
         row += 1
 
-        # ---------------- Fill Data + Subtotal per Team ----------------
+        # ======= كتابة البيانات =======
         grand_totals = {emp: 0.0 for emp in employees}
-        grand_totals["row_total"] = 0.0
+        grand_totals['total'] = 0.0
 
-        team_totals = {emp: 0.0 for emp in employees}
-        team_totals["row_total"] = 0.0
+        for team, accounts in grouped_data.items():
+            worksheet.merge_range(row, 0, row, percent_col, team, bold)
+            row += 1
+            team_totals = {emp: 0.0 for emp in employees}
+            team_totals['total'] = 0.0
 
-        last_team = None  # لمتابعة آخر Team مكتوب
+            for account, acc_data in accounts.items():
+                worksheet.write(row, 0, '', cell_format)
+                worksheet.write(row, 1, account, cell_format)
 
-        for rec in lots_data:
-            team = rec.get('sales_team')
-            account = rec.get('account')
-            debit = rec.get('debit') or 0.0
-            employee = rec.get('employee')
-
-            # لو التيم اتغير -> اطبع Subtotal للتيم السابق
-            if last_team and team != last_team:
-                worksheet.write(row, col, f"Subtotal {last_team}", header_format)
-                worksheet.write(row, col + 1, "", header_format)
                 for emp in employees:
-                    worksheet.write_number(row, emp_col_map[emp], team_totals[emp], header_format)
-                worksheet.write_number(row, total_col, team_totals["row_total"], header_format)
+                    val = acc_data['employees'].get(emp, 0.0)
+                    worksheet.write_number(row, emp_col_map[emp], val, cell_format)
+                    team_totals[emp] += val
+                    grand_totals[emp] += val
+
+                total_val = acc_data['total']
+                worksheet.write_number(row, total_col, total_val, cell_format)
+                worksheet.write(row, percent_col, '', percent_format)
+                team_totals['total'] += total_val
+                grand_totals['total'] += total_val
                 row += 1
 
-                # إعادة تعيين قيم التيم الجديدة
-                team_totals = {emp: 0.0 for emp in employees}
-                team_totals["row_total"] = 0.0
-
-            # لو التيم جديد، اطبع اسمه في صف كامل
-            if team != last_team:
-                worksheet.merge_range(row, col, row, total_col, team or '', header_format1)
-                last_team = team
-                row += 1
-
-            # كتابة البيانات
-            worksheet.write(row, col, "", cell_format)  # Team فاضية لأنه مكتوب أعلاه
-            worksheet.write(row, col + 1, account or '', cell_format)
-
-            row_total = 0.0
+            # subtotal
+            worksheet.write(row, 0, f"Subtotal {team}", subtotal_format)
+            worksheet.write(row, 1, '', subtotal_format)
             for emp in employees:
-                value = debit if emp == employee else 0.0
-                worksheet.write_number(row, emp_col_map[emp], value, cell_format)
-                team_totals[emp] += value
-                grand_totals[emp] += value
-                row_total += value
-
-            worksheet.write_number(row, total_col, row_total, cell_format)
-            team_totals["row_total"] += row_total
-            grand_totals["row_total"] += row_total
-
+                worksheet.write_number(row, emp_col_map[emp], team_totals[emp], subtotal_format)
+            worksheet.write_number(row, total_col, team_totals['total'], subtotal_format)
+            worksheet.write(row, percent_col, '', subtotal_format)
             row += 1
 
-        # بعد آخر Team اطبع Subtotal
-        if last_team:
-            worksheet.write(row, col, f"Subtotal {last_team}", header_format)
-            worksheet.write(row, col + 1, "", header_format)
-            for emp in employees:
-                worksheet.write_number(row, emp_col_map[emp], team_totals[emp], header_format)
-            worksheet.write_number(row, total_col, team_totals["row_total"], header_format)
-            row += 1
-
-        # ---------------- Grand Total Row ----------------
-        worksheet.write(row, col, "Grand Total", header_format)
-        worksheet.write(row, col + 1, "", header_format)
+        # ======= Grand Total =======
+        worksheet.write(row, 0, 'Grand Total', grand_total_format)
+        worksheet.write(row, 1, '', grand_total_format)
         for emp in employees:
-            worksheet.write_number(row, emp_col_map[emp], grand_totals[emp], header_format)
-        worksheet.write_number(row, total_col, grand_totals["row_total"], header_format)
+            worksheet.write_number(row, emp_col_map[emp], grand_totals[emp], grand_total_format)
+        worksheet.write_number(row, total_col, grand_totals['total'], grand_total_format)
+        worksheet.write_number(row, percent_col, 1, percent_format)
+        grand_total = grand_totals['total']
+        row += 1
+
+        # ======= حساب Achieve% وكتابة القيم =======
+        current_row = 6  # أول صف فعلي بعد العناوين
+        for team, accounts in grouped_data.items():
+            current_row += 1  # تخطي سطر الفريق
+            for account, acc_data in accounts.items():
+                total_val = acc_data['total']
+                achieve = (total_val / grand_total) if grand_total else 0
+                worksheet.write_number(current_row, percent_col, achieve, percent_format)
+                current_row += 1
+            current_row += 1  # تخطي subtotal
+
+        worksheet.set_column(0, percent_col, 16)

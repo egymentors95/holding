@@ -79,24 +79,4 @@ class ExpenseWizard(models.TransientModel):
         return self.env.ref('expense_product_report.report_action_expense_html').report_action(self, data=data)
 
 
-    # def action_view_report(self):
-    #     self.ensure_one()
-    #     report_data = self.get_report_data()['combined_data']
-    #
-    #     self.env['account.move.line2'].search([]).unlink()
-    #
-    #     for rec in report_data:
-    #         self.env['account.move.line2'].create({
-    #             'sales_team': rec['sales_team'],
-    #             'account': rec['account'],
-    #             'debit': rec['debit'],
-    #             'employee': rec['employee'],
-    #         })
-    #
-    #     return {
-    #         'type': 'ir.actions.act_window',
-    #         'name': 'Sales Report',
-    #         'res_model': 'account.move.line2',
-    #         'view_mode': 'tree',
-    #         'target': 'current',
-    #     }
+
