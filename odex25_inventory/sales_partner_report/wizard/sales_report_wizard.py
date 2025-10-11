@@ -77,113 +77,76 @@ class SalesReportWizard(models.TransientModel):
             for partner in product_lines.mapped('move_id.partner_id'):
                 partner_lines = product_lines.filtered(lambda l: l.move_id.partner_id == partner)
 
-                # نجيب السيلز بيرسون من نفس الـ Partner lines
-                sales_persons = partner_lines.mapped('move_id.invoice_user_id')  # ممكن يبقى أكتر من واحد
 
-                for sales_person in sales_persons:
-                    sales_lines = partner_lines.filtered(lambda l: l.move_id.invoice_user_id == sales_person)
+                # -------- خطط المبيعات --------
+                number_of_months = 0
+                if self.date_from and self.date_to:
+                    diff = relativedelta(self.date_to, self.date_from)
+                    number_of_months = diff.years * 12 + diff.months + 1
 
-                    # -------- خطط المبيعات --------
-                    number_of_months = 0
-                    if self.date_from and self.date_to:
-                        diff = relativedelta(self.date_to, self.date_from)
-                        number_of_months = diff.years * 12 + diff.months + 1
 
-                    plan_domain = [
-                        ('product_id', '=', product.id),
-                        ('sales_plan_id.sales_person_id', '=', sales_person.id),
-                        ('sales_plan_id.date_from', '<=', self.date_to),
-                        ('sales_plan_id.date_to', '>=', self.date_from),
-                        ('sales_plan_id.state', '=', 'confirmed'),
-                    ]
+                # -------- المبيعات الحالية --------
+                qty_out_invoice = sum(partner_lines.filtered(lambda
+                                                               l: l.move_id.move_type == 'out_invoice' and l.account_id.internal_group == 'income').mapped(
+                    'quantity'))
+                qty_out_refund = sum(partner_lines.filtered(lambda
+                                                              l: l.move_id.move_type == 'out_refund' and l.account_id.internal_group == 'income').mapped(
+                    'quantity'))
+                total_quantity = qty_out_invoice - qty_out_refund
 
-                    plan_lines = self.env['sales.plan.lines'].search(plan_domain)
+                price_out_invoice = sum(partner_lines.filtered(lambda
+                                                                 l: l.move_id.move_type == 'out_invoice' and l.account_id.internal_group == 'income').mapped(
+                    'price_subtotal'))
+                price_out_refund = sum(partner_lines.filtered(lambda
+                                                                l: l.move_id.move_type == 'out_refund' and l.account_id.internal_group == 'income').mapped(
+                    'price_subtotal'))
+                total_price = price_out_invoice - price_out_refund
 
-                    plan_quantity = sum(plan_lines.mapped('quantity_per_month'))
-                    total_plan_quantity = plan_quantity * number_of_months if number_of_months else 0.0
+                nsap = total_price / total_quantity if total_quantity else 0.0
 
-                    plan_price = sum(plan_lines.mapped('price_total_per_month'))
-                    total_plan_price = plan_price * number_of_months if number_of_months else 0.0
 
-                    plan_nasp = total_plan_price / total_plan_quantity if total_plan_quantity else 0.0
+                # -------- السنة اللي فاتت --------
+                last_year_sales = last_year_lines.filtered(
+                    lambda l: l.product_id == product and
+                              l.move_id.partner_id == partner)
 
-                    # -------- المبيعات الحالية --------
-                    qty_out_invoice = sum(sales_lines.filtered(lambda
-                                                                   l: l.move_id.move_type == 'out_invoice' and l.account_id.internal_group == 'income').mapped(
-                        'quantity'))
-                    qty_out_refund = sum(sales_lines.filtered(lambda
-                                                                  l: l.move_id.move_type == 'out_refund' and l.account_id.internal_group == 'income').mapped(
-                        'quantity'))
-                    total_quantity = qty_out_invoice - qty_out_refund
+                last_qty_out_invoice = sum(
+                    last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_invoice' and l.account_id.internal_group == 'income').mapped('quantity'))
+                last_qty_out_refund = sum(
+                    last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_refund' and l.account_id.internal_group == 'income').mapped('quantity'))
+                last_year_total_quantity = last_qty_out_invoice - last_qty_out_refund
 
-                    price_out_invoice = sum(sales_lines.filtered(lambda
-                                                                     l: l.move_id.move_type == 'out_invoice' and l.account_id.internal_group == 'income').mapped(
+                last_price_out_invoice = sum(
+                    last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_invoice' and l.account_id.internal_group == 'income').mapped(
                         'price_subtotal'))
-                    price_out_refund = sum(sales_lines.filtered(lambda
-                                                                    l: l.move_id.move_type == 'out_refund' and l.account_id.internal_group == 'income').mapped(
+                last_price_out_refund = sum(
+                    last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_refund' and l.account_id.internal_group == 'income').mapped(
                         'price_subtotal'))
-                    total_price = price_out_invoice - price_out_refund
+                last_year_total_price = last_price_out_invoice - last_price_out_refund
 
-                    nsap = total_price / total_quantity if total_quantity else 0.0
+                last_year_nsap = last_year_total_price / last_year_total_quantity if last_year_total_quantity else 0.0
 
-                    qty_percentage = total_quantity / total_plan_quantity * 100 if total_plan_quantity else 0.0
-                    value_percentage = total_price / total_plan_price * 100 if total_plan_price else 0.0
 
-                    # -------- السنة اللي فاتت --------
-                    last_year_sales = last_year_lines.filtered(
-                        lambda l: l.product_id == product and
-                                  l.move_id.partner_id == partner and
-                                  l.move_id.invoice_user_id == sales_person
-                    )
+                # -------- Append --------
+                combined_data.append({
+                    'Product Category ID': product.categ_id.product_category,
+                    'Product Order': product.product_category,
 
-                    last_qty_out_invoice = sum(
-                        last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_invoice').mapped('quantity'))
-                    last_qty_out_refund = sum(
-                        last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_refund').mapped('quantity'))
-                    last_year_total_quantity = last_qty_out_invoice - last_qty_out_refund
+                    'Product Category': product_category,
+                    'Product': product_name,
+                    'Default Code': default_code,
+                    'Partner': partner.name,
+                    'Partner id': partner.id,
 
-                    last_price_out_invoice = sum(
-                        last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_invoice').mapped(
-                            'price_subtotal'))
-                    last_price_out_refund = sum(
-                        last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_refund').mapped(
-                            'price_subtotal'))
-                    last_year_total_price = last_price_out_invoice - last_price_out_refund
+                    'Total Quantity': total_quantity,
+                    'Total Price': total_price,
+                    'Nsap': nsap,
 
-                    last_year_nsap = last_year_total_price / last_year_total_quantity if last_year_total_quantity else 0.0
+                    'Last Year Total Quantity': last_year_total_quantity,
+                    'Last Year Total Price': last_year_total_price,
+                    'Last Year Nsap': last_year_nsap,
 
-                    achieved_nasp = (nsap / plan_nasp if plan_nasp else 1) * 100
-
-                    # -------- Append --------
-                    combined_data.append({
-                        'Product Category ID': product.categ_id.product_category,
-                        'Product Order': product.product_category,
-
-                        'Product Category': product_category,
-                        'Product': product_name,
-                        'Default Code': default_code,
-                        'Partner': partner.name,
-                        'Partner id': partner.id,
-
-                        'Sales Person': sales_person.name if sales_person else " ",
-                        'Sales Person id': sales_person.id if sales_person else False,
-
-                        'Total Quantity': total_quantity,
-                        'Total Price': total_price,
-                        'Nsap': nsap,
-
-                        'Last Year Total Quantity': last_year_total_quantity,
-                        'Last Year Total Price': last_year_total_price,
-                        'Last Year Nsap': last_year_nsap,
-
-                        'Total Plan Quantity': total_plan_quantity,
-                        'Total Plan Price': total_plan_price,
-                        'Plan Nsap': plan_nasp,
-
-                        'QTY': qty_percentage,
-                        'Value': value_percentage,
-                        'achieved_nasp': achieved_nasp,
-                    })
+                })
             combined_data = sorted(
                 combined_data,
                 key=lambda x: (
