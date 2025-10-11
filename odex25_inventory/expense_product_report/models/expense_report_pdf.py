@@ -6,53 +6,64 @@ class ExpenseReportHtml(models.AbstractModel):
 
     @api.model
     def _get_report_values(self, docids, data=None):
-        combined_data = data.get('product_ids', [])
+        lots_data = data.get('product_ids', [])
         date_from = data.get('date_from')
         date_to = data.get('date_to')
 
-        # 1️⃣ تأكد من وجود موظف
-        for rec in combined_data:
-            if not rec.get('employee'):
-                rec['employee'] = 'N/A'
+        grouped_data = {}
+        employees = set()
 
-        # 2️⃣ استخراج الموظفين
-        employees = sorted(set([rec['employee'] for rec in combined_data if rec.get('employee')]))
-
-        # 3️⃣ تجميع البيانات حسب الفريق والحساب
-        grouped = {}
-        for rec in combined_data:
+        # --- تجميع البيانات ---
+        for rec in lots_data:
             team = rec.get('sales_team') or 'No Team'
-            account = rec.get('account') or 'No Account'
+            account = rec.get('account')
             employee = rec.get('employee') or 'N/A'
             debit = rec.get('debit') or 0.0
 
-            grouped.setdefault(team, {})
-            grouped[team].setdefault(account, {emp: 0.0 for emp in employees})
-            grouped[team][account].setdefault('total', 0.0)
+            employees.add(employee)
+            grouped_data.setdefault(team, {})
+            grouped_data[team].setdefault(account, {'employees': {}, 'total': 0.0})
+            grouped_data[team][account]['employees'][employee] = (
+                grouped_data[team][account]['employees'].get(employee, 0.0) + debit
+            )
+            grouped_data[team][account]['total'] += debit
 
-            grouped[team][account][employee] += debit
-            grouped[team][account]['total'] += debit
+        employees = sorted(list(employees))
 
-        # 4️⃣ حساب Grand Total
+        # --- حساب الإجماليات ---
         grand_totals = {emp: 0.0 for emp in employees}
         grand_totals['total'] = 0.0
-        for team in grouped.values():
-            for acc_data in team.values():
+        team_summaries = {}
+
+        for team, accounts in grouped_data.items():
+            team_total_sum = 0.0
+            team_totals = {emp: 0.0 for emp in employees}
+
+            for acc, acc_data in accounts.items():
                 for emp in employees:
-                    grand_totals[emp] += acc_data.get(emp, 0.0)
+                    val = acc_data['employees'].get(emp, 0.0)
+                    team_totals[emp] += val
+                    grand_totals[emp] += val
+                team_total_sum += acc_data['total']
                 grand_totals['total'] += acc_data['total']
 
-        # 5️⃣ حساب Achieve% لكل حساب
-        grand_total_value = grand_totals['total'] or 1.0  # عشان ما يقسمش على صفر
-        for team in grouped:
-            for acc_name, acc_data in grouped[team].items():
-                acc_data['achieve'] = (acc_data['total'] / grand_total_value) * 100.0
+            team_totals['total'] = team_total_sum
+            team_summaries[team] = team_totals
+
+        # --- حساب Achieve كنسبة من Grand Total (وليس من كل موظف) ---
+        total_val = grand_totals.get('total', 0.0)
+        for team, team_totals in team_summaries.items():
+            team_achieve = {}
+            for emp in employees:
+                team_achieve[emp] = (team_totals[emp] / total_val * 100) if total_val else 0
+            team_achieve['total'] = (team_totals['total'] / total_val * 100) if total_val else 0
+            team_summaries[team]['achieve'] = team_achieve
 
         return {
             'date_from': date_from,
             'date_to': date_to,
+            'grouped': grouped_data,
             'employees': employees,
-            'grouped': grouped,
             'grand_totals': grand_totals,
+            'team_summaries': team_summaries,
         }
-

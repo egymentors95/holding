@@ -58,7 +58,8 @@ class ExpenseReport(models.AbstractModel):
             employees.add(employee)
             grouped_data.setdefault(team, {})
             grouped_data[team].setdefault(account, {'employees': {}, 'total': 0.0})
-            grouped_data[team][account]['employees'][employee] = grouped_data[team][account]['employees'].get(employee, 0.0) + debit
+            grouped_data[team][account]['employees'][employee] = grouped_data[team][account]['employees'].get(employee,
+                                                                                                              0.0) + debit
             grouped_data[team][account]['total'] += debit
 
         employees = sorted(list(employees))
@@ -66,7 +67,7 @@ class ExpenseReport(models.AbstractModel):
         total_col = 2 + len(employees)
         percent_col = total_col + 1
 
-        # ======= العناوين =======
+        # ======= عناوين الأعمدة =======
         worksheet.write(row, 0, 'Team', header_format)
         worksheet.write(row, 1, 'Account', header_format)
         for emp in employees:
@@ -75,10 +76,12 @@ class ExpenseReport(models.AbstractModel):
         worksheet.write(row, percent_col, 'Achieve %', header_format)
         row += 1
 
-        # ======= كتابة البيانات =======
+        # ======= إعداد القيم الإجمالية =======
         grand_totals = {emp: 0.0 for emp in employees}
         grand_totals['total'] = 0.0
+        teams_summary = []  # لتخزين نتائج كل فريق
 
+        # ======= كتابة البيانات =======
         for team, accounts in grouped_data.items():
             worksheet.merge_range(row, 0, row, percent_col, team, bold)
             row += 1
@@ -111,6 +114,11 @@ class ExpenseReport(models.AbstractModel):
             worksheet.write(row, percent_col, '', subtotal_format)
             row += 1
 
+            # نحجز مكان صف Achieve لاحقاً
+            achieve_row = row
+            row += 1
+            teams_summary.append((achieve_row, team, team_totals))
+
         # ======= Grand Total =======
         worksheet.write(row, 0, 'Grand Total', grand_total_format)
         worksheet.write(row, 1, '', grand_total_format)
@@ -118,18 +126,30 @@ class ExpenseReport(models.AbstractModel):
             worksheet.write_number(row, emp_col_map[emp], grand_totals[emp], grand_total_format)
         worksheet.write_number(row, total_col, grand_totals['total'], grand_total_format)
         worksheet.write_number(row, percent_col, 1, percent_format)
-        grand_total = grand_totals['total']
+        grand_total_val = grand_totals['total']
         row += 1
 
-        # ======= حساب Achieve% وكتابة القيم =======
+        # ======= حساب Achieve % للصفوف =======
         current_row = 6  # أول صف فعلي بعد العناوين
         for team, accounts in grouped_data.items():
-            current_row += 1  # تخطي سطر الفريق
+            current_row += 1  # تخطي صف الفريق
             for account, acc_data in accounts.items():
                 total_val = acc_data['total']
-                achieve = (total_val / grand_total) if grand_total else 0
+                achieve = (total_val / grand_total_val) if grand_total_val else 0
                 worksheet.write_number(current_row, percent_col, achieve, percent_format)
                 current_row += 1
-            current_row += 1  # تخطي subtotal
+            current_row += 2  # تخطي subtotal + سطر Achieve
+
+        # ======= حساب صف Achieve لكل Team =======
+        for team_row, team_name, team_totals in teams_summary:
+            worksheet.write(team_row, 0, f"Achieve {team_name}", subtotal_format)
+            worksheet.write(team_row, 1, '', subtotal_format)
+            for emp in employees:
+                emp_team_val = team_totals.get(emp, 0.0)
+                achieve_val = (emp_team_val / grand_total_val) if grand_total_val else 0
+                worksheet.write_number(team_row, emp_col_map[emp], achieve_val, percent_format)
+            total_achieve = (team_totals['total'] / grand_total_val) if grand_total_val else 0
+            worksheet.write_number(team_row, total_col, total_achieve, percent_format)
+            worksheet.write(team_row, percent_col, '', subtotal_format)
 
         worksheet.set_column(0, percent_col, 16)

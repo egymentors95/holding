@@ -1,28 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
-        <template id="custom_header">
+    <template id="custom_header">
         <div class="header">
             <table class="table table-borderless" style="border: none; width: 100%;" dir="ltr">
                 <tbody>
                     <tr>
                         <td colspan="8">
-                            <div>
-                                <span style="font-weight: bold;">Report:</span>
-                                <span>Expenses Report</span>
-                            </div>
-                            <div>
-                                <span style="font-weight: bold;">Date from:</span>
-                               <span t-esc="date_from"/>
-                            </div>
-                            <div>
-                                <span style="font-weight: bold;">Date to:</span>
-                                <span  t-esc="date_to"/>
-                            </div>
-                            <div>
-                                <span style="font-weight: bold;">Currency:</span>
-                                <span>SR</span>
-                            </div>
+                            <div><b>Report:</b> Expenses Report</div>
+                            <div><b>Date from:</b> <span t-esc="date_from"/></div>
+                            <div><b>Date to:</b> <span t-esc="date_to"/></div>
+                            <div><b>Currency:</b> SR</div>
                         </td>
                         <td colspan="4" style="text-align: right;">
                             <img src='/sales_partner_report/static/img/logo.png' width="120px"/>
@@ -33,67 +21,93 @@
         </div>
     </template>
 
-
-
-
     <template id="expense_report_html">
         <t t-call="web.html_container">
             <t t-call="expense_product_report.custom_header"/>
 
-                <div class="page">
-                    <table class="table table-bordered" style="width:100%; border-collapse: collapse; text-align:center;">
-                        <thead>
-                            <tr style="background-color:#f0f0f0;">
-                                <th>Team</th>
-                                <th>Account</th>
-                                <t t-foreach="employees" t-as="emp">
-                                    <th><t t-esc="emp"/></th>
-                                </t>
-                                <th>Total</th>
-                                <th>Achieve %</th>
+            <div class="page">
+                <table class="table table-bordered" style="width:100%; border-collapse: collapse; text-align:center;">
+                    <thead>
+                        <tr style="background-color:#f0f0f0;">
+                            <th>Team</th>
+                            <th>Account</th>
+                            <t t-foreach="employees" t-as="emp">
+                                <th><t t-esc="emp"/></th>
+                            </t>
+                            <th>Total</th>
+                            <th>Achieve %</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <t t-foreach="grouped.items()" t-as="team_item">
+                            <t t-set="team_name" t-value="team_item[0]"/>
+                            <t t-set="team_data" t-value="team_item[1]"/>
+                            <t t-set="team_summary" t-value="team_summaries.get(team_name, {})"/>
+                            <t t-set="team_achieve" t-value="team_summary.get('achieve', {})"/>
+
+                            <!-- Team Header -->
+                            <tr style="background-color:#ddd;">
+                                <td t-att-colspan="4 + len(employees)" style="text-align:left; font-weight:bold;">
+                                    <t t-esc="team_name"/>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <t t-foreach="grouped.items()" t-as="team_item">
-                                <t t-set="team_name" t-value="team_item[0]"/>
-                                <t t-set="team_data" t-value="team_item[1]"/>
 
-                                <!-- Team header -->
-                                <tr style="background-color:#ddd;">
-                                    <td t-att-colspan="4 + len(employees)" style="text-align:left; font-weight:bold;">
-                                        <t t-esc="team_name"/>
-                                    </td>
+                            <!-- Accounts -->
+                            <t t-foreach="team_data.items()" t-as="acc_item">
+                                <t t-set="account_name" t-value="acc_item[0]"/>
+                                <t t-set="account_data" t-value="acc_item[1]"/>
+                                <t t-set="account_total" t-value="account_data.get('total', 0.0)"/>
+                                <t t-set="achieve_value"
+                                   t-value="(account_total / (grand_totals.get('total', 1.0) or 1.0)) * 100"/>
+
+                                <tr>
+                                    <td></td>
+                                    <td><t t-esc="account_name"/></td>
+                                    <t t-foreach="employees" t-as="emp">
+                                        <td><t t-esc="account_data.get('employees', {}).get(emp, 0.0)"/></td>
+                                    </t>
+                                    <td><t t-esc="account_total"/></td>
+                                    <td><t t-esc="str(round(achieve_value, 2)) + ' %'"/></td>
                                 </tr>
-
-                                <!-- Accounts rows -->
-                                <t t-foreach="team_data.items()" t-as="acc_item">
-                                    <t t-set="account_name" t-value="acc_item[0]"/>
-                                    <t t-set="account_data" t-value="acc_item[1]"/>
-                                    <tr>
-                                        <td></td>
-                                        <td><t t-esc="account_name"/></td>
-                                        <t t-foreach="employees" t-as="emp">
-                                            <td><t t-esc="account_data.get(emp, 0.0)"/></td>
-                                        </t>
-                                        <td><t t-esc="account_data['total']"/></td>
-                                        <td><t t-esc="str(round(account_data.get('achieve', 0.0), 2)) + ' %'"/></td>
-                                    </tr>
-                                </t>
                             </t>
 
-                            <!-- Grand Total -->
-                            <tr style="font-weight:bold; background-color:#eaeaea;">
-                                <td colspan="2">Grand Total</td>
+                            <!-- Subtotal -->
+                            <tr style="font-weight:bold; background-color:#f7f7f7;">
+                                <td colspan="2">Subtotal <t t-esc="team_name"/></td>
                                 <t t-foreach="employees" t-as="emp">
-                                    <td><t t-esc="grand_totals.get(emp, 0.0)"/></td>
+                                    <td><t t-esc="team_summary.get(emp, 0.0)"/></td>
                                 </t>
-                                <td><t t-esc="grand_totals.get('total', 0.0)"/></td>
-                                <td>100.00 %</td>
+                                <td><t t-esc="team_summary.get('total', 0.0)"/></td>
+                                <td></td>
                             </tr>
-                        </tbody>
-                    </table>
-                </div>
 
+                     <!-- فقط تأكد إن الـ Achieve بياخد من team_summaries -->
+<tr style="font-weight:bold; background-color:#d9f7d9;">
+    <td colspan="2">Achieve <t t-esc="team_name"/></td>
+    <t t-foreach="employees" t-as="emp">
+        <td><t t-esc="str(round(team_achieve.get(emp, 0.0), 2)) + ' %'"/></td>
+    </t>
+    <td><t t-esc="str(round(team_achieve.get('total', 0.0), 2)) + ' %'"/></td>
+    <td></td>
+</tr>
+
+
+                        </t>
+
+                        <!-- Grand Total -->
+                        <tr style="font-weight:bold; background-color:#eaeaea;">
+                            <td colspan="2">Grand Total</td>
+                            <t t-foreach="employees" t-as="emp">
+                                <td><t t-esc="grand_totals.get(emp, 0.0)"/></td>
+                            </t>
+                            <td><t t-esc="grand_totals.get('total', 0.0)"/></td>
+                            <td>100.00 %</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </t>
     </template>
+
 </odoo>
