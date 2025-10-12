@@ -81,18 +81,18 @@ class ProfitReportWizard(models.TransientModel):
 
                 # -------- المبيعات الحالية --------
                 qty_out_invoice = sum(current_lines.filtered(
-                    lambda l: l.move_id.move_type == 'out_invoice' and l.account_id.internal_group == 'income').mapped(
+                    lambda l: l.move_id.move_type == 'out_invoice' ).mapped(
                     'quantity'))
                 qty_out_refund = sum(current_lines.filtered(
-                    lambda l: l.move_id.move_type == 'out_refund' and l.account_id.internal_group == 'income').mapped(
+                    lambda l: l.move_id.move_type == 'out_refund' ).mapped(
                     'quantity'))
                 total_quantity = qty_out_invoice - qty_out_refund
 
                 price_out_invoice = sum(current_lines.filtered(
-                    lambda l: l.move_id.move_type == 'out_invoice' and l.account_id.internal_group == 'income').mapped(
+                    lambda l: l.move_id.move_type == 'out_invoice' ).mapped(
                     'price_subtotal'))
                 price_out_refund = sum(current_lines.filtered(
-                    lambda l: l.move_id.move_type == 'out_refund' and l.account_id.internal_group == 'income').mapped(
+                    lambda l: l.move_id.move_type == 'out_refund' ).mapped(
                     'price_subtotal'))
                 total_price = price_out_invoice - price_out_refund
 

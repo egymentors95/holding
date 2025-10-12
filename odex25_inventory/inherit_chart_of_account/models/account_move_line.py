@@ -1,8 +1,11 @@
-from odoo import models, _
+from odoo import models, _, fields
 from odoo.exceptions import UserError
 
 class AccountMoveLine(models.Model):
     _inherit = "account.move.line"
+
+    move_type = fields.Selection(related='move_id.move_type', store=True, string="Move Type", readonly=True)
+    product_category_id = fields.Many2one(related='product_id.categ_id', string='Product Category', store=True, readonly=True)
 
     def _check_blocked_accounts(self):
         for line in self:
