@@ -118,7 +118,8 @@ class InventoryReportWizard(models.TransientModel):
                 purchase_product_lines.filtered(lambda l: l.move_id.move_type == 'in_refund').mapped('price_subtotal'))
             total_price_invoice = price_in_invoice - price_in_refund
 
-            naap = total_price_invoice / total_quantity_invoice if total_quantity_invoice else 0.0
+            # naap = total_price_invoice / total_quantity_invoice if total_quantity_invoice else 0.0
+            naap = product.standard_price
             value = naap * on_hand_qty
 
             combined_data.append({

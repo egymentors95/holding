@@ -140,7 +140,8 @@ class PurchaseBillWizard(models.TransientModel):
                     vendor_lines.filtered(lambda l: l.move_id.move_type == 'in_refund').mapped('price_subtotal'))
                 total_price = price_in_invoice - price_in_refund
 
-                nsap = total_price / total_quantity if total_quantity else 0.0
+                nsap = product.standard_price
+                # nsap = total_price / total_quantity if total_quantity else 0.0
 
                 # -------- السنة اللي فاتت --------
                 last_year_purchases = last_year_lines.filtered(
@@ -159,7 +160,8 @@ class PurchaseBillWizard(models.TransientModel):
                     last_year_purchases.filtered(lambda l: l.move_id.move_type == 'in_refund').mapped('price_subtotal'))
                 last_year_total_price = last_price_in_invoice - last_price_in_refund
 
-                last_year_nsap = last_year_total_price / last_year_total_quantity if last_year_total_quantity else 0.0
+                # last_year_nsap = last_year_total_price / last_year_total_quantity if last_year_total_quantity else 0.0
+                last_year_nsap = product.standard_price
 
                 # -------- Append --------
                 combined_data.append({
