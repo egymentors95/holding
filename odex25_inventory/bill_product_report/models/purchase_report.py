@@ -99,14 +99,14 @@ class InvoiceBillReport(models.AbstractModel):
 
         # الهيدر الفرعي للفترة الحالية
         worksheet.merge_range(
-            row, col + 7, row, col + 10,
+            row, col + 7, row, col + 9,
             f"Full Year Plan",
             header_format3
         )
-        worksheet.write(row + 1, col + 7, "Vendor", header_format3)
-        worksheet.write(row + 1, col + 8, "QTY", header_format3)
-        worksheet.write(row + 1, col + 9, "Value", header_format3)
-        worksheet.write(row + 1, col + 10, "Ach.%", header_format3)
+        # worksheet.write(row + 1, col + 7, "Vendor", header_format3)
+        worksheet.write(row + 1, col + 7, "QTY", header_format3)
+        worksheet.write(row + 1, col + 8, "Value", header_format3)
+        worksheet.write(row + 1, col + 9, "Ach.%", header_format3)
         row += 2
 
         # ---------------- Data Rows ----------------
@@ -131,10 +131,10 @@ class InvoiceBillReport(models.AbstractModel):
                 worksheet.write_number(row, col + 4, category_totals['Foc'], header_format)
                 worksheet.write_number(row, col + 5, category_totals['Total Price'], header_format)
                 worksheet.write_number(row, col + 6, category_totals['Nsap'], header_format)
-                worksheet.write(row, col + 7, "", header_format)
-                worksheet.write_number(row, col + 8, category_totals['Plan Quantity'], header_format)
-                worksheet.write_number(row, col + 9, category_totals['Plan Value'], header_format)
-                worksheet.write_number(row, col + 10, category_totals['Achive'], header_format)
+                # worksheet.write(row, col + 7, "", header_format)
+                worksheet.write_number(row, col + 7, category_totals['Plan Quantity'], header_format)
+                worksheet.write_number(row, col + 8, category_totals['Plan Value'], header_format)
+                worksheet.write_number(row, col + 9, category_totals['Achive'], header_format)
                 row += 2  # نسيب سطر فاصل بعد الـ Subtotal
 
                 # Reset totals
@@ -142,7 +142,7 @@ class InvoiceBillReport(models.AbstractModel):
 
             # لو كاتيجوري جديدة نطبعها في صف كامل لوحدها
             if record['Product Category'] != last_category:
-                worksheet.merge_range(row, col, row, col + 10, record['Product Category'], header_format)
+                worksheet.merge_range(row, col, row, col + 9, record['Product Category'], header_format)
                 last_category = record['Product Category']
                 row += 1  # ننزل سطر بعد الكاتيجوري
 
@@ -153,10 +153,10 @@ class InvoiceBillReport(models.AbstractModel):
             worksheet.write_number(row, col + 4, record['Foc'], cell_format)
             worksheet.write_number(row, col + 5, record['Total Price'], cell_format)
             worksheet.write_number(row, col + 6, record['Nsap'], cell_format)
-            worksheet.write(row, col + 7, record['Vendor'], cell_format)
-            worksheet.write_number(row, col + 8, record['Plan Quantity'], cell_format)
-            worksheet.write_number(row, col + 9, record['Plan Value'], cell_format)
-            worksheet.write_number(row, col + 10, record['Achive'], cell_format)
+            # worksheet.write(row, col + 7, record['Vendor'], cell_format)
+            worksheet.write_number(row, col + 7, record['Plan Quantity'], cell_format)
+            worksheet.write_number(row, col + 8, record['Plan Value'], cell_format)
+            worksheet.write_number(row, col + 9, record['Achive'], cell_format)
 
             # نجمع القيم عشان subtotal
             category_totals['Total Quantity'] += record['Total Quantity']
@@ -178,9 +178,9 @@ class InvoiceBillReport(models.AbstractModel):
             worksheet.write_number(row, col + 4, category_totals['Foc'], header_format)
             worksheet.write_number(row, col + 5, category_totals['Total Price'], header_format)
             worksheet.write_number(row, col + 6, category_totals['Nsap'], header_format)
-            worksheet.write(row, col + 7, "", header_format)
+            # worksheet.write(row, col + 7, "", header_format)
 
-            worksheet.write_number(row, col + 8, category_totals['Plan Quantity'], header_format)
-            worksheet.write_number(row, col + 9, category_totals['Plan Value'], header_format)
-            worksheet.write_number(row, col + 10, category_totals['Achive'], header_format)
+            worksheet.write_number(row, col + 7, category_totals['Plan Quantity'], header_format)
+            worksheet.write_number(row, col + 8, category_totals['Plan Value'], header_format)
+            worksheet.write_number(row, col + 9, category_totals['Achive'], header_format)
 

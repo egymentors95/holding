@@ -136,12 +136,12 @@ class ProfitabilityWizard(models.TransientModel):
                 else:
                     last_year_sales = last_year_lines.filtered(lambda l: l.product_id == product)
 
-                last_qty_out_invoice = sum(last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_invoice').mapped('quantity'))
-                last_qty_out_refund = sum(last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_refund').mapped('quantity'))
+                last_qty_out_invoice = sum(last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_invoice' and l.account_id.internal_group == 'income').mapped('quantity'))
+                last_qty_out_refund = sum(last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_refund' and l.account_id.internal_group == 'income').mapped('quantity'))
                 last_year_total_quantity = last_qty_out_invoice - last_qty_out_refund
 
-                last_price_out_invoice = sum(last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_invoice').mapped('price_subtotal'))
-                last_price_out_refund = sum(last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_refund').mapped('price_subtotal'))
+                last_price_out_invoice = sum(last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_invoice' and l.account_id.internal_group == 'income').mapped('price_subtotal'))
+                last_price_out_refund = sum(last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_refund' and l.account_id.internal_group == 'income').mapped('price_subtotal'))
                 last_year_total_price = last_price_out_invoice - last_price_out_refund
 
                 last_year_nsap = last_year_total_price / last_year_total_quantity if last_year_total_quantity else 0.0

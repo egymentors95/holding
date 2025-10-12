@@ -49,7 +49,7 @@
                             <th style="border: 1px solid black;  background-color:#27C2F5;" colspan="4">QTY</th>
 
                             <!-- Full Year Plan -->
-                            <th style="border: 1px solid black; background-color:#27F5C1;" colspan="4">Full Year Plan
+                            <th style="border: 1px solid black; background-color:#27F5C1;" colspan="3">Full Year Plan
                             </th>
                         </tr>
                         <tr style="border: 1px solid black;">
@@ -59,7 +59,7 @@
                             <th style="border: 1px solid black; background-color:#27C2F5;">Value</th>
                             <th style="border: 1px solid black; background-color:#27C2F5;">NAAP</th>
 
-                            <th style="border: 1px solid black; background-color:#27F5C1;">Vendor</th>
+<!--                            <th style="border: 1px solid black; background-color:#27F5C1;">Vendor</th>-->
                             <th style="border: 1px solid black; background-color:#27F5C1;">QTY</th>
                             <th style="border: 1px solid black;  background-color:#27F5C1;">Value</th>
                             <th style="border: 1px solid black;  background-color:#27F5C1;">Ach.%</th>
@@ -82,7 +82,7 @@
                 <td style="border: 1px solid black;"><t t-esc="totals['Foc']"/></td>
                 <td style="border: 1px solid black;"><t t-esc="totals['Total Price']"/></td>
                 <td style="border: 1px solid black;"><t t-esc="totals['Nsap']"/></td>
-                <td></td>
+<!--                <td></td>-->
                 <td style="border: 1px solid black;"><t t-esc="totals['Plan Quantity']"/></td>
                 <td style="border: 1px solid black;"><t t-esc="totals['Plan Value']"/></td>
                 <td style="border: 1px solid black;"><t t-esc="totals['Achive']"/></td>
@@ -96,7 +96,7 @@
         <!-- لو كاتيجوري جديدة اطبع اسمها -->
         <t t-if="line['Product Category'] != last_category">
             <tr style="background-color:#F0EBEB; font-weight:bold; border: 1px solid black;">
-                <td colspan="11" style="text-align: left; border: 1px solid black;">
+                <td colspan="10" style="text-align: left; border: 1px solid black;">
                     <t t-esc="line['Product Category']"/>
                 </td>
             </tr>
@@ -112,7 +112,7 @@
             <td style="border: 1px solid black; text-align: center;"><t t-esc="line['Foc']"/></td>
             <td style="border: 1px solid black; text-align: center;"><t t-esc="line['Total Price']"/></td>
             <td style="border: 1px solid black; text-align: center;"><t t-esc="line['Nsap']"/></td>
-            <td style="border: 1px solid black; text-align: center;"><t t-esc="line['Vendor']"/></td>
+<!--            <td style="border: 1px solid black; text-align: center;"><t t-esc="line['Vendor']"/></td>-->
             <td style="border: 1px solid black; text-align: center;"><t t-esc="line['Plan Quantity']"/></td>
             <td style="border: 1px solid black; text-align: center;"><t t-esc="line['Plan Value']"/></td>
             <td style="border: 1px solid black; text-align: center;"><t t-esc="round(line['Achive'] or 0, 2)"/></td>
@@ -138,7 +138,7 @@
             <td style="border: 1px solid black;"><t t-esc="totals['Foc']"/></td>
             <td style="border: 1px solid black;"><t t-esc="totals['Total Price']"/></td>
             <td style="border: 1px solid black;"><t t-esc="totals['Nsap']"/></td>
-            <td></td>
+<!--            <td></td>-->
             <td style="border: 1px solid black;"><t t-esc="totals['Plan Quantity']"/></td>
             <td style="border: 1px solid black;"><t t-esc="totals['Plan Value']"/></td>
             <td style="border: 1px solid black;"><t t-esc="round(totals['Achive'],2)"/></td>
