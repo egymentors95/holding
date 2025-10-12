@@ -34,6 +34,7 @@ class SalesReportWizard(models.TransientModel):
             ('date', '<=', self.date_to),
             ('company_id', 'in', self.env.companies.ids),
             ('move_id.state', '=', 'posted'),
+            ('account_id.internal_group', '=', 'income'),
             ('move_id.move_type', 'in', ['out_invoice', 'out_refund']),
         ]
         if self.product_ids:
@@ -53,6 +54,7 @@ class SalesReportWizard(models.TransientModel):
             ('date', '<=', date_to_last_year),
             ('company_id', 'in', self.env.companies.ids),
             ('move_id.state', '=', 'posted'),
+            ('account_id.internal_group', '=', 'income'),
             ('move_id.move_type', 'in', ['out_invoice', 'out_refund']),
         ]
         if self.product_ids:
