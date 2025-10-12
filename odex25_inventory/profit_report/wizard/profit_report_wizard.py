@@ -32,6 +32,8 @@ class ProfitReportWizard(models.TransientModel):
             ('date', '<=', self.date_to),
             ('company_id', 'in', self.env.companies.ids),
             ('move_id.state', '=', 'posted'),
+            ('account_id.internal_group', '=', 'income'),
+
         ]
         if self.product_ids:
             domain.append(('product_id', 'in', self.product_ids.ids))
@@ -48,6 +50,8 @@ class ProfitReportWizard(models.TransientModel):
             ('date', '<=', date_to_last_year),
             ('company_id', 'in', self.env.companies.ids),
             ('move_id.state', '=', 'posted'),
+            ('account_id.internal_group', '=', 'income'),
+
         ])
 
 
