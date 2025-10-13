@@ -70,12 +70,14 @@ class InvoiceBillReport(models.AbstractModel):
         worksheet.write(row, col + 1, "Code", header_format)
         worksheet.write(row, col + 2, "Product", header_format)
         worksheet.write(row, col + 3, "Lot", header_format)
-        worksheet.write(row, col + 4, "QTY", header_format)
-        worksheet.write(row, col + 5, "QTY Last 6M", header_format)
-        worksheet.write(row, col + 6, "QTY Avg", header_format)
-        worksheet.write(row, col + 7, "Equ/Month", header_format)
-        worksheet.write(row, col + 8, "NAAP", header_format)
-        worksheet.write(row, col + 9, "Value", header_format)
+        worksheet.write(row, col + 4, "Expiry Date", header_format)
+        worksheet.write(row, col + 5, "Total Dos", header_format)
+        worksheet.write(row, col + 6, "QTY", header_format)
+        worksheet.write(row, col + 7, "QTY Last 6M", header_format)
+        worksheet.write(row, col + 8, "QTY Avg", header_format)
+        worksheet.write(row, col + 9, "Equ/Month", header_format)
+        worksheet.write(row, col + 10, "NAAP", header_format)
+        worksheet.write(row, col + 11, "Value", header_format)
         row += 1
 
         # ---------------- Data Rows ----------------
@@ -87,6 +89,7 @@ class InvoiceBillReport(models.AbstractModel):
             'Total Equ/Month': 0,
             'Total NAAP': 0,
             'Total Value': 0,
+            'Total_dos': 0,
 
         }
 
@@ -97,12 +100,14 @@ class InvoiceBillReport(models.AbstractModel):
                 worksheet.write(row, col + 1, "Total", header_format)
                 worksheet.write(row, col + 2, "", header_format)
                 worksheet.write(row, col + 3, "", header_format)
-                worksheet.write_number(row, col + 4, category_totals['Total QTY'], header_format)
-                worksheet.write_number(row, col + 5, category_totals['Total QTY Last 6M'], header_format)
-                worksheet.write_number(row, col + 6, category_totals['Total QTY Avg'], header_format)
-                worksheet.write_number(row, col + 7, category_totals['Total Equ/Month'], header_format)
-                worksheet.write_number(row, col + 8, category_totals['Total NAAP'], header_format)
-                worksheet.write_number(row, col + 9, category_totals['Total Value'], header_format)
+                worksheet.write(row, col + 4, "", header_format)
+                worksheet.write_number(row, col + 5, category_totals['Total QTY'], header_format)
+                worksheet.write_number(row, col + 6, category_totals['Total_dos'], header_format)
+                worksheet.write_number(row, col + 7, category_totals['Total QTY Last 6M'], header_format)
+                worksheet.write_number(row, col + 8, category_totals['Total QTY Avg'], header_format)
+                worksheet.write_number(row, col + 9, category_totals['Total Equ/Month'], header_format)
+                worksheet.write_number(row, col + 10, category_totals['Total NAAP'], header_format)
+                worksheet.write_number(row, col + 11, category_totals['Total Value'], header_format)
                 row += 2  # نسيب سطر فاصل بعد الـ Subtotal
 
                 # Reset totals
@@ -110,7 +115,7 @@ class InvoiceBillReport(models.AbstractModel):
 
             # لو كاتيجوري جديدة نطبعها في صف كامل لوحدها
             if record['Product Category'] != last_category:
-                worksheet.merge_range(row, col, row, col + 9, record['Product Category'], header_format)
+                worksheet.merge_range(row, col, row, col + 11, record['Product Category'], header_format)
                 last_category = record['Product Category']
                 row += 1  # ننزل سطر بعد الكاتيجوري
 
@@ -118,13 +123,14 @@ class InvoiceBillReport(models.AbstractModel):
             worksheet.write(row, col + 1, record['Default Code'] or '', cell_format)
             worksheet.write(row, col + 2, record['Product'] or '', cell_format)
             worksheet.write(row, col + 3, record['Lots'] or '', cell_format)
-
-            worksheet.write_number(row, col + 4, record['on_hand_qty'], cell_format)
-            worksheet.write_number(row, col + 5, record['sold_last_6_months'], cell_format)
-            worksheet.write_number(row, col + 6, record['avg_sold_last_6_months'], cell_format)
-            worksheet.write_number(row, col + 7, record['equ_month'], cell_format)
-            worksheet.write_number(row, col + 8, record['naap'], cell_format)
-            worksheet.write_number(row, col + 9, record['value'], cell_format)
+            worksheet.write(row, col + 4, record['expiry_date'] or '', cell_format)
+            worksheet.write_number(row, col + 5, record['on_hand_qty'], cell_format)
+            worksheet.write_number(row, col + 6, record['Total Dos'], cell_format)
+            worksheet.write_number(row, col + 7, record['sold_last_6_months'], cell_format)
+            worksheet.write_number(row, col + 8, record['avg_sold_last_6_months'], cell_format)
+            worksheet.write_number(row, col + 9, record['equ_month'], cell_format)
+            worksheet.write_number(row, col + 10, record['naap'], cell_format)
+            worksheet.write_number(row, col + 11, record['value'], cell_format)
 
             # نجمع القيم عشان subtotal
             category_totals['Total QTY'] += record['on_hand_qty']
@@ -133,6 +139,7 @@ class InvoiceBillReport(models.AbstractModel):
             category_totals['Total Equ/Month'] += record['equ_month']
             category_totals['Total NAAP'] += record['naap']
             category_totals['Total Value'] += record['value']
+            category_totals['Total_dos'] += record['Total Dos']
 
             row += 1
 
@@ -141,10 +148,12 @@ class InvoiceBillReport(models.AbstractModel):
             worksheet.write(row, col + 1, "Total", header_format)
             worksheet.write(row, col + 2, "", header_format)
             worksheet.write(row, col + 3, "", header_format)
+            worksheet.write(row, col + 4, "", header_format)
 
-            worksheet.write_number(row, col + 4, category_totals['Total QTY'], header_format)
-            worksheet.write_number(row, col + 5, category_totals['Total QTY Last 6M'], header_format)
-            worksheet.write_number(row, col + 6, category_totals['Total QTY Avg'], header_format)
-            worksheet.write_number(row, col + 7, category_totals['Total Equ/Month'], header_format)
-            worksheet.write_number(row, col + 8, category_totals['Total NAAP'], header_format)
-            worksheet.write_number(row, col + 9, category_totals['Total Value'], header_format)
+            worksheet.write_number(row, col + 5, category_totals['Total QTY'], header_format)
+            worksheet.write_number(row, col + 6, category_totals['Total_dos'], header_format)
+            worksheet.write_number(row, col + 7, category_totals['Total QTY Last 6M'], header_format)
+            worksheet.write_number(row, col + 8, category_totals['Total QTY Avg'], header_format)
+            worksheet.write_number(row, col + 9, category_totals['Total Equ/Month'], header_format)
+            worksheet.write_number(row, col + 10, category_totals['Total NAAP'], header_format)
+            worksheet.write_number(row, col + 11, category_totals['Total Value'], header_format)

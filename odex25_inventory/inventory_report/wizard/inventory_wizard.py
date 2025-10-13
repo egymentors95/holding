@@ -121,13 +121,17 @@ class InventoryReportWizard(models.TransientModel):
             # naap = total_price_invoice / total_quantity_invoice if total_quantity_invoice else 0.0
             naap = product.standard_price
             value = naap * on_hand_qty
+            total_dos = product.qty_available * product.dos
 
             combined_data.append({
                 'Product': product.name,
                 'Default Code': product.default_code or '',
                 'Product Category': product.categ_id.name,
-
                 'Lots': ", ".join(period_lines.mapped("lot_id.name")),
+
+                'expiry_date': ", ".join(period_lines.mapped("lot_id.expiration_date")),
+                'Total Dos': total_dos,
+
                 'on_hand_qty': product.qty_available,  # الكمية الحالية
                 'move_qty': move_qty,  # مبيعات الفترة
                 'sold_last_6_months': sold_last_6_months,  # مبيعات 6 شهور

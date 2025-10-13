@@ -45,7 +45,9 @@
                             <th style="border: 1px solid black;">Code</th>
                             <th style="border: 1px solid black;">Product</th>
                             <th style="border: 1px solid black;">Lot</th>
+                            <th style="border: 1px solid black;">Expiry Date</th>
                             <th style="border: 1px solid black;">QTY</th>
+                            <th style="border: 1px solid black;">Total Dos</th>
                             <th style="border: 1px solid black;">QTY Last 6M</th>
                             <th style="border: 1px solid black;">QTY Avg</th>
                             <th style="border: 1px solid black;">Equ/Month</th>
@@ -56,7 +58,7 @@
                     <tbody>
                         <t t-set="last_category" t-value="None"/>
                         <t t-set="totals" t-value="{'Total QTY': 0, 'QTY Last 6M': 0, 'QTY Avg': 0, 'Equ Month':0,
-                                'NAAP': 0, 'Value': 0,}"/>
+                                'NAAP': 0, 'Value': 0,'Total_dos':0}"/>
 
                         <t t-foreach="(report_data or {}).get('product_ids', [])" t-as="line">
 
@@ -64,10 +66,15 @@
                             <t t-if="last_category and line['Product Category'] != last_category">
                                 <!-- اطبع subtotal -->
                                 <tr style="background-color:#EEE; font-weight:bold; border: 1px solid black;">
-                                    <td colspan="4" style="text-align:left; border: 1px solid black;">Total</td>
+                                    <td colspan="5" style="text-align:left; border: 1px solid black;">Total</td>
+
                                     <td style="border: 1px solid black;">
                                         <t t-esc="round(totals['Total QTY'],2)"/>
                                     </td>
+                                                                        <td style="border: 1px solid black;">
+                                        <t t-esc="round(totals['Total_dos'],2)"/>
+                                    </td>
+
                                     <td style="border: 1px solid black;">
                                         <t t-esc="round(totals['QTY Last 6M'],2)"/>
                                     </td>
@@ -87,13 +94,13 @@
 
                                 <!-- reset totals -->
                                 <t t-set="totals" t-value="{'Total QTY': 0, 'QTY Last 6M': 0, 'QTY Avg': 0,'Equ Month':0,
-                                'NAAP': 0, 'Value': 0,}"/>
+                                'NAAP': 0, 'Value': 0,'Total_dos':0}"/>
                             </t>
 
                             <!-- لو كاتيجوري جديدة اطبع اسمها -->
                             <t t-if="line['Product Category'] != last_category">
                                 <tr style="background-color:#F0EBEB; font-weight:bold; border: 1px solid black;">
-                                    <td colspan="10" style="text-align: left; border: 1px solid black;">
+                                    <td colspan="12" style="text-align: left; border: 1px solid black;">
                                         <t t-esc="line['Product Category']"/>
                                     </td>
                                 </tr>
@@ -112,6 +119,14 @@
                                 <td style="border: 1px solid black; text-align: center;">
                                     <t t-esc="line['Lots']"/>
                                 </td>
+
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['expiry_date']"/>
+                                </td>
+                                <td style="border: 1px solid black; text-align: center;">
+                                    <t t-esc="line['Total Dos']"/>
+                                </td>
+
                                 <td style="border: 1px solid black; text-align: center;">
                                     <t t-esc="round(line['on_hand_qty'],2)"/>
                                 </td>
@@ -140,16 +155,22 @@
             'NAAP': totals['NAAP'] + (line['naap'] or 0),
             'Equ Month': totals['Equ Month'] + (line['equ_month'] or 0),
             'Value': totals['Value'] + (line['value'] or 0),
+            'Total_dos': totals['Total_dos'] + (line['Total Dos'] or 0),
         }"/>
                         </t>
 
                         <!-- Subtotal بعد آخر كاتيجوري -->
                         <t t-if="last_category">
                             <tr style="background-color:#EEE; font-weight:bold; border: 1px solid black;">
-                                <td colspan="4" style="text-align:left; border: 1px solid black;">Total</td>
+                                <td colspan="5" style="text-align:left; border: 1px solid black;">Total</td>
+
                                 <td style="border: 1px solid black;">
                                     <t t-esc="round(totals['Total QTY'],2)"/>
                                 </td>
+                                                                <td style="border: 1px solid black;">
+                                    <t t-esc="round(totals['Total_dos'],2)"/>
+                                </td>
+
                                 <td style="border: 1px solid black;">
                                     <t t-esc="round(totals['QTY Last 6M'],2)"/>
                                 </td>
