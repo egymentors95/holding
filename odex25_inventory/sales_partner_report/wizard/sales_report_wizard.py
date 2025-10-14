@@ -49,7 +49,7 @@ class SalesReportWizard(models.TransientModel):
         if self.product_category_ids:
             domain.append(('product_id.categ_id', 'in', self.product_category_ids.ids))
         if self.partner_category_ids:
-            domain.append(('move_id.partner_id.category_id', 'in', self.partner_category_ids.ids))
+            domain.append(('move_id.partner_category_id', 'in', self.partner_category_ids.ids))
 
         lines = self.env['account.move.line'].search(domain)
 
@@ -71,7 +71,7 @@ class SalesReportWizard(models.TransientModel):
         if self.product_category_ids:
             domain2.append(('product_id.categ_id', 'in', self.product_category_ids.ids))
         if self.partner_category_ids:
-            domain2.append(('move_id.partner_id.category_id', 'in', self.partner_category_ids.ids))
+            domain2.append(('move_id.partner_category_id', 'in', self.partner_category_ids.ids))
 
 
         last_year_lines = self.env['account.move.line'].search(domain2)
