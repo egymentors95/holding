@@ -6,11 +6,12 @@
     "author": "IBS",
     "website": "https://www.ibs-na.com",
     "license": "AGPL-3",
-    "depends": ['base','stock', 'report_xlsx','account'],
+    "depends": ['base','stock', 'report_xlsx','account', 'partner_category'],
     "data": [
         "security/ir.model.access.csv",
         # "views/account_move_line2_views.xml",
         "views/account_account_views.xml",
+        "views/account_move_views.xml",
         "wizard/expense_wizard_views.xml",
         "reports/expense_template_views.xml",
         "reports/action_reports.xml",

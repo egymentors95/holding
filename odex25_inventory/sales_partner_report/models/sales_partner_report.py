@@ -36,11 +36,6 @@ class SalesPartnerReport(models.AbstractModel):
         worksheet.set_column('H:H', 15)
         worksheet.set_column('I:I', 12)
         worksheet.set_column('J:J', 15)
-        # worksheet.set_column('K:K', 15)
-        # worksheet.set_column('L:L', 15)
-        # worksheet.set_column('N:N', 15)
-        # worksheet.set_column('O:O', 15)
-        # worksheet.set_column('P:P', 15)
 
 
         # Formats
@@ -51,10 +46,6 @@ class SalesPartnerReport(models.AbstractModel):
         header_format2 = workbook.add_format({'bold': True, 'bg_color': '#27C2F5',
                                               'align': 'center', 'valign': 'vcenter', 'border': 2})
         header_format3 = workbook.add_format({'bold': True, 'bg_color': '#27F5C1',
-                                              'align': 'center', 'valign': 'vcenter', 'border': 2})
-        header_format4 = workbook.add_format({'bold': True, 'bg_color': '#C8DA44',
-                                              'align': 'center', 'valign': 'vcenter', 'border': 2})
-        header_format5 = workbook.add_format({'bold': True, 'bg_color': '#E6376F',
                                               'align': 'center', 'valign': 'vcenter', 'border': 2})
         header_format6 = workbook.add_format({'bold': True, 'bg_color': '#f0f0f0', 'num_format': '#,##0.00',
                                              'align': 'center', 'valign': 'vcenter', 'border': 2})
@@ -94,11 +85,19 @@ class SalesPartnerReport(models.AbstractModel):
         worksheet.write(row, col + 1, f"SR or USD", header_format0)
         row += 2
 
-        sales_partners = list(set([rec['Partner'] for rec in lots_data])) or ["No Partner"]
+        # sales_partners = list(set([rec['Partner'] for rec in lots_data])) or ["No Partner"]
+        group_mode = self.env.context.get('group_mode', 'partners')
 
-        for sales_partner in sales_partners:
+        if group_mode == 'category':
+            # اجمع حسب تصنيف الشركاء
+            group_entities = list(set([rec['Partner Category'] for rec in lots_data])) or ["No Category"]
+        else:
+            # اجمع حسب الشريك نفسه
+            group_entities = list(set([rec['Partner'] for rec in lots_data])) or ["No Partner"]
+
+        for group_entity in group_entities:
             # عنوان Sales Person
-            worksheet.merge_range(row, col, row, col + 8, f"؛Partner: {sales_partner}", header_format7)
+            worksheet.merge_range(row, col, row, col + 8, f"{'Partner Category' if group_mode == 'category' else 'Partner'}: {group_entity}",header_format7)
             row += 2
 
             # Table Headers
@@ -123,25 +122,6 @@ class SalesPartnerReport(models.AbstractModel):
             worksheet.write(row + 1, col + 6, "Total QTY", header_format3)
             worksheet.write(row + 1, col + 7, "Total Value", header_format3)
             worksheet.write(row + 1, col + 8, "NASP", header_format3)
-            # worksheet.write(row + 1, col + 9, "Sales Person", header_format3)
-
-            # worksheet.merge_range(
-            #     row, col + 9, row, col + 11,
-            #     f"YTD Plan ({date_from} → {date_to})",
-            #     header_format4
-            # )
-            # worksheet.write(row + 1, col + 9, "Plan QTY", header_format4)
-            # worksheet.write(row + 1, col + 10, "Value", header_format4)
-            # worksheet.write(row + 1, col + 11, "NASP", header_format4)
-            #
-            # worksheet.merge_range(
-            #     row, col + 12, row, col + 14,
-            #     f"Achived %",
-            #     header_format5
-            # )
-            # worksheet.write(row + 1, col + 12, "Qty %", header_format5)
-            # worksheet.write(row + 1, col + 13, "Value %", header_format5)
-            # worksheet.write(row + 1, col + 14, "NASP %", header_format5)
 
             row += 2
 
@@ -152,7 +132,10 @@ class SalesPartnerReport(models.AbstractModel):
             grand_totals = {'Last Year Total Price': 0, 'Total Price': 0,
                            }
 
-            person_records = [rec for rec in lots_data if rec['Partner'] == sales_partner]
+            if group_mode == 'category':
+                person_records = [rec for rec in lots_data if rec['Partner Category'] == group_entity]
+            else:
+                person_records = [rec for rec in lots_data if rec['Partner'] == group_entity]
 
             for record in person_records:
                 if record['Product Category'] != last_category:
@@ -165,12 +148,6 @@ class SalesPartnerReport(models.AbstractModel):
                         worksheet.write(row, col + 6, '', header_format6)
                         worksheet.write_number(row, col + 7, category_totals['Total Price'], header_format6)
                         worksheet.write(row, col + 8, '', header_format6)
-                        # worksheet.write(row, col + 9, '', header_format6)
-                        # worksheet.write_number(row, col + 10, category_totals['Total Plan Price'], header_format6)
-                        # worksheet.write(row, col + 11, '', header_format6)
-                        # worksheet.write(row, col + 12, '', header_format6)
-                        # worksheet.write_number(row, col + 13, category_totals['Value'], header_format6)
-                        # worksheet.write(row, col + 14, '', header_format6)
 
                         row += 1
 
@@ -194,20 +171,9 @@ class SalesPartnerReport(models.AbstractModel):
                 worksheet.write_number(row, col + 6, record['Total Quantity'], cell_format)
                 worksheet.write_number(row, col + 7, record['Total Price'], cell_format)
                 worksheet.write_number(row, col + 8, record['Nsap'], cell_format)
-                # worksheet.write(row, col + 9, record['Sales Person'], cell_format1)
-
-                # worksheet.write_number(row, col + 9, record['Total Plan Quantity'], cell_format)
-                # worksheet.write_number(row, col + 10, record['Total Plan Price'], cell_format)
-                # worksheet.write_number(row, col + 11, record['Plan Nsap'], cell_format)
-                # worksheet.write_number(row, col + 12, record['QTY'], cell_format)
-                # worksheet.write_number(row, col + 13, record['Value'], cell_format)
-                # worksheet.write_number(row, col + 14, record['achieved_nasp'], cell_format)
 
                 category_totals['Last Year Total Price'] += record['Last Year Total Price'] or 0
                 category_totals['Total Price'] += record['Total Price'] or 0
-                # category_totals['Total Plan Price'] += record['Total Plan Price'] or 0
-                # category_totals['QTY'] += record['QTY'] or 0
-                # category_totals['Value'] += record['Value'] or 0
                 row += 1
 
             # subtotal آخر كاتيجوري
@@ -219,12 +185,6 @@ class SalesPartnerReport(models.AbstractModel):
                 worksheet.write(row, col + 6, '', header_format6)
                 worksheet.write_number(row, col + 7, category_totals['Total Price'], header_format6)
                 worksheet.write(row, col + 8, '', header_format6)
-                # worksheet.write(row, col + 9, '', header_format6)
-                # worksheet.write_number(row, col + 10, category_totals['Total Plan Price'], header_format6)
-                # worksheet.write(row, col + 11, '', header_format6)
-                # worksheet.write(row, col + 12, '', header_format6)
-                # worksheet.write_number(row, col + 13, category_totals['Value'], header_format6)
-                # worksheet.write(row, col + 14, '', header_format6)
                 row += 1
 
                 for key in grand_totals:
@@ -238,11 +198,5 @@ class SalesPartnerReport(models.AbstractModel):
             worksheet.write(row, col + 6, '', header_format8)
             worksheet.write_number(row, col + 7, grand_totals['Total Price'], header_format8)
             worksheet.write(row, col + 8, '', header_format8)
-            # worksheet.write(row, col + 9, '', header_format8)
-            # worksheet.write_number(row, col + 10, grand_totals['Total Plan Price'], header_format8)
-            # worksheet.write(row, col + 11, '', header_format8)
-            # worksheet.write(row, col + 12, '', header_format8)
-            # worksheet.write_number(row, col + 13, grand_totals['Value'], header_format8)
-            # worksheet.write(row, col + 14, '', header_format8)
             row += 3  # مسافة بين كل Sales Person والتاني
 

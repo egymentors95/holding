@@ -66,7 +66,7 @@
                                        'required':[('state','in',('draft','review'))]}"/>
                                 <field name="mission_check" string="Mission/Training Not Holiday?"
                                        attrs="{'readonly': [('state','!=','draft')]}"/>
-                               <field name="company_id" groups="base.group_multi_company" readonly="1"/>
+                                <field name="company_id" groups="base.group_multi_company" readonly="1"/>
                             </group>
                         </group>
                         <group>
@@ -133,6 +133,26 @@
                                 <separator string="Notes"/>
                                 <field name="note" attrs="{'readonly': [('state', '!=', 'draft')]}" nolabel="1"/>
                             </page>
+
+                            <page string="Accounting Info">
+                                <group>
+                                    <field name="transfer_by_emp_type"/>
+<!--                                    <field name="journal_id" string="Journal"-->
+                                         />
+                                    <field name="account_id" string="Account"
+                                         />
+                                    <field name="analytic_account_id" string="Analytic Account"/>
+
+                                </group>
+                                <field name="account_ids"
+                                       attrs="{'invisible' : [('transfer_by_emp_type', '=', False)]}">
+                                    <tree editable="bottom">
+                                        <field name="emp_type_id"/>
+                                        <field name="debit_account_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+
 
                         </notebook>
                     </sheet>

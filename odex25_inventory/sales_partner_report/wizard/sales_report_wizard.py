@@ -12,8 +12,13 @@ class SalesReportWizard(models.TransientModel):
     product_ids = fields.Many2many(string='Products', comodel_name='product.product')
     date_from = fields.Date(string='Date From')
     date_to = fields.Date(string='Date To')
-    partner_ids = fields.Many2many(string='Partners', comodel_name='res.partner')
     product_category_ids = fields.Many2many(string='Product Categories', comodel_name='product.category')
+    groub_by_partner = fields.Selection([
+        ('partners', 'Partners'),
+        ('category', 'Category'),
+    ], string='Group by Partner', default='partners')
+    partner_ids = fields.Many2many(string='Partners', comodel_name='res.partner')
+    partner_category_ids = fields.Many2many(string='Partner Categories', comodel_name='partner.category')
 
 
     def get_report_data(self):
@@ -43,6 +48,8 @@ class SalesReportWizard(models.TransientModel):
             domain.append(('move_id.partner_id', 'in', self.partner_ids.ids))
         if self.product_category_ids:
             domain.append(('product_id.categ_id', 'in', self.product_category_ids.ids))
+        if self.partner_category_ids:
+            domain.append(('move_id.partner_id.category_id', 'in', self.partner_category_ids.ids))
 
         lines = self.env['account.move.line'].search(domain)
 
@@ -63,6 +70,9 @@ class SalesReportWizard(models.TransientModel):
             domain2.append(('move_id.partner_id', 'in', self.partner_ids.ids))
         if self.product_category_ids:
             domain2.append(('product_id.categ_id', 'in', self.product_category_ids.ids))
+        if self.partner_category_ids:
+            domain2.append(('move_id.partner_id.category_id', 'in', self.partner_category_ids.ids))
+
 
         last_year_lines = self.env['account.move.line'].search(domain2)
 
@@ -76,8 +86,22 @@ class SalesReportWizard(models.TransientModel):
             product_name = product.name
             default_code = product.default_code or ''
 
-            for partner in product_lines.mapped('move_id.partner_id'):
-                partner_lines = product_lines.filtered(lambda l: l.move_id.partner_id == partner)
+            partner_category_ids = False
+            if self.groub_by_partner == 'partners':
+                partner_category_ids = product_lines.mapped('move_id.partner_id')
+            else:
+                partner_category_ids = product_lines.mapped('move_id.partner_category_id')
+
+
+            for partner in partner_category_ids:
+                partner_lines = False
+                if self.groub_by_partner == 'partners':
+                    partner_lines = product_lines.filtered(lambda l: l.move_id.partner_id == partner)
+                else:
+                    partner_lines = product_lines.filtered(lambda l: l.move_id.partner_category_id == partner)
+
+
+
 
 
                 # -------- خطط المبيعات --------
@@ -139,6 +163,8 @@ class SalesReportWizard(models.TransientModel):
                     'Default Code': default_code,
                     'Partner': partner.name,
                     'Partner id': partner.id,
+                    'Partner Category': partner.name if self.groub_by_partner == 'category' else (
+                        partner.category_id.name if hasattr(partner, 'category_id') else ''),
 
                     'Total Quantity': total_quantity,
                     'Total Price': total_price,
@@ -166,7 +192,10 @@ class SalesReportWizard(models.TransientModel):
             'date_to': self.date_to,
             'product_ids': self.get_report_data()['combined_data'],
         }
-        return self.env.ref('sales_partner_report.report_action_sales_partner').report_action(self, data=data)
+        ctx = dict(self.env.context)
+        ctx['group_mode'] = self.groub_by_partner
+        return self.env.ref('sales_partner_report.report_action_sales_partner').with_context(ctx).report_action(self,
+                                                                                                                data=data)
 
     def action_print_report_html(self):
         self.ensure_one()

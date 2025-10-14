@@ -80,6 +80,14 @@ class HrTicketing(models.Model):
     ticket_date = fields.Date(string='Ticket Date')
     destination = fields.Many2one('mission.destination', string='Destination')
 
+    transfer_by_emp_type = fields.Boolean('Transfer By Emp Type')
+    account_id = fields.Many2one('account.account')
+    analytic_account_id = fields.Many2one(comodel_name='account.analytic.account')
+    account_ids = fields.One2many('hr.mission.type.account', 'ticket_id')
+
+
+
+
     def unlink(self):
         for item in self:
             if item.state != 'draft':

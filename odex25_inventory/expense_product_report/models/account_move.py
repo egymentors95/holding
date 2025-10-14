@@ -5,6 +5,14 @@ from odoo.exceptions import UserError
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
+    team_id = fields.Many2one('crm.team', string='Sales Team', tracking=True)
+    partner_category_id = fields.Many2one(comodel_name='partner.category', string='Partner Category', compute='_compute_partner_category', store=True)
+
+    @api.depends('partner_id', 'partner_id.category_id')
+    def _compute_partner_category(self):
+        for move in self:
+            move.partner_category_id = move.partner_id.partner_category.id if move.partner_id else False
+
     def action_post(self):
         for move in self:
             if move.move_type == 'entry':
