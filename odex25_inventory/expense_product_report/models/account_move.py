@@ -13,6 +13,13 @@ class AccountMove(models.Model):
         for move in self:
             move.partner_category_id = move.partner_id.partner_category.id if move.partner_id else False
 
+    def server_action_partner_category(self):
+        for move in self:
+            if move.partner_id:
+                move.partner_category_id = move.partner_id.partner_category.id
+            else:
+                move.partner_category_id = False
+
     def action_post(self):
         for move in self:
             if move.move_type == 'entry':
