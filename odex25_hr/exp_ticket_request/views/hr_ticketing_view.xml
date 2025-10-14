@@ -66,7 +66,7 @@
                                        'required':[('state','in',('draft','review'))]}"/>
                                 <field name="mission_check" string="Mission/Training Not Holiday?"
                                        attrs="{'readonly': [('state','!=','draft')]}"/>
-                                <field name="company_id" groups="base.group_multi_company" readonly="1"/>
+                               <field name="company_id" groups="base.group_multi_company" readonly="1"/>
                             </group>
                         </group>
                         <group>
@@ -133,8 +133,6 @@
                                 <separator string="Notes"/>
                                 <field name="note" attrs="{'readonly': [('state', '!=', 'draft')]}" nolabel="1"/>
                             </page>
-
-
 
                         </notebook>
                     </sheet>
