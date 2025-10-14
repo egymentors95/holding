@@ -12,8 +12,6 @@
                 <page string="Accounting Info">
                     <group>
                         <field name="transfer_by_emp_type"/>
-                        <!--                                    <field name="journal_id" string="Journal"-->
-                        />
                         <field name="account_id" string="Account"
                         />
                         <field name="analytic_account_id" string="Analytic Account"/>
