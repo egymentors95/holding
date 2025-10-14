@@ -5,7 +5,7 @@
     <record id="account_ids_hr_ticket_request_action" model="ir.ui.view">
         <field name="name">account.ids.hr.ticket.request.action</field>
         <field name="model">hr.ticket.request</field>
-        <field name="inherit_id" ref="exp_ticket_request.hr_ticket_request_action"/>
+        <field name="inherit_id" ref="exp_ticket_request.hr_ticket_request_form"/>
         <field name="arch" type="xml">
 
             <xpath expr="//notebook" position="inside">
