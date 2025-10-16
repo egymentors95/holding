@@ -129,7 +129,9 @@ class InventoryReportWizard(models.TransientModel):
                 'Product Category': product.categ_id.name,
                 'Lots': ", ".join(period_lines.mapped("lot_id.name")),
 
-                'expiry_date': ", ".join(period_lines.mapped("lot_id.expiration_date")),
+                'expiry_date': ", ".join([
+                    d.strftime('%d/%m/%Y') if d else '' for d in period_lines.mapped("lot_id.expiration_date")
+                ]),
                 'Total Dos': total_dos,
 
                 'on_hand_qty': product.qty_available,  # الكمية الحالية
