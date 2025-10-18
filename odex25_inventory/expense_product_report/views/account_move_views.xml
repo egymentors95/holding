@@ -12,6 +12,11 @@
                 <field name="partner_category_id"/>
             </xpath>
 
+            <xpath expr="//field[@name='line_ids']/tree/field[@name='account_id']" position="attributes">
+                <attribute name="options">{'no_create': True}</attribute>
+            </xpath>
+
+
         </field>
     </record>
 

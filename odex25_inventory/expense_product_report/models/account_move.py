@@ -20,7 +20,8 @@ class AccountMove(models.Model):
             else:
                 move.partner_category_id = False
 
-    def action_post(self):
+    def _check_move_lines_validations(self):
+        """تتحقق من الشروط الخاصة بخطوط القيد."""
         for move in self:
             if move.move_type == 'entry':
                 errors = []
@@ -42,8 +43,18 @@ class AccountMove(models.Model):
                 if errors:
                     raise UserError("\n".join(errors))
 
-        # بعد التحقق، استدعي السلوك الأصلي
-        return super(AccountMove, self).action_post()
+    def write(self, vals):
+        """ننفذ التحقق عند أي تعديل."""
+        res = super(AccountMove, self).write(vals)
+        self._check_move_lines_validations()
+        return res
+
+    @api.model
+    def create(self, vals):
+        """ننفذ التحقق عند الإنشاء."""
+        move = super(AccountMove, self).create(vals)
+        move._check_move_lines_validations()
+        return move
 
 
 

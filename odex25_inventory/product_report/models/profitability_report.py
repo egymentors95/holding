@@ -186,11 +186,11 @@ class ProfitabilityReport(models.AbstractModel):
                         category_totals['Value'] += rec['Value'] or 0
 
                     # بعد عرض منتجات private category معينة، نضيف subtotal خاص بيها
-                    total_qty_dos = sum((r['Total Quantity'] or 0) * (r.get('Dos') or 0) for r in priv_records)
+                    total_qty_dos = sum((r['Total Quantity'] or 0) * (r.get('Dos') or 0) for r in priv_records) / 1000000
                     total_plan_qty_dos = sum(
-                        (r['Total Plan Quantity'] or 0) * (r.get('Dos') or 0) for r in priv_records)
+                        (r['Total Plan Quantity'] or 0) * (r.get('Dos') or 0) for r in priv_records)/ 1000000
                     last_year_qty_dos = sum(
-                        (r['Last Year Total Quantity'] or 0) * (r.get('Dos') or 0) for r in priv_records)
+                        (r['Last Year Total Quantity'] or 0) * (r.get('Dos') or 0) for r in priv_records)/ 1000000
 
                     total_price = sum(r['Total Price'] or 0 for r in priv_records)
                     total_plan_price = sum(r['Total Plan Price'] or 0 for r in priv_records)
