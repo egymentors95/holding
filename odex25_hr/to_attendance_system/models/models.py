@@ -117,6 +117,7 @@ class BiotimeAPI(models.Model):
     @api.model
     def _calc_urls(self):
         serverIP = self.serverUrl + ":" + self.port
+        print('serverIP', serverIP)
         loginUrl = serverIP + "/jwt-api-token-auth/"
         refreshUrl = serverIP + "/jwt-api-token-refresh/"
         employeeUrl = serverIP + "/personnel/api/employee/"

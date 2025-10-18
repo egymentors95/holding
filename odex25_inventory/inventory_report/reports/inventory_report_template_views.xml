@@ -46,8 +46,8 @@
                             <th style="border: 1px solid black;">Product</th>
                             <th style="border: 1px solid black;">Lot</th>
                             <th style="border: 1px solid black;">Expiry Date</th>
-                            <th style="border: 1px solid black;">QTY</th>
                             <th style="border: 1px solid black;">Total Dos</th>
+                            <th style="border: 1px solid black;">QTY</th>
                             <th style="border: 1px solid black;">QTY Last 6M</th>
                             <th style="border: 1px solid black;">QTY Avg</th>
                             <th style="border: 1px solid black;">Equ/Month</th>
