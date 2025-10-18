@@ -10,6 +10,7 @@
 
             <xpath expr="//field[@name='categ_id']" position="after">
                 <field name="dos"/>
+                <field name="private_category_id"/>
             </xpath>
 
         </field>

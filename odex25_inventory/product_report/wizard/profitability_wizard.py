@@ -76,6 +76,8 @@ class ProfitabilityWizard(models.TransientModel):
             product_category = product.categ_id.name
             product_name = product.name
             default_code = product.default_code or ''
+            dos = product.dos
+            private_category = product.private_category_id.name if product.private_category_id else ''
 
             if self.is_sales_person:
                 if self.sales_person_ids:
@@ -154,6 +156,8 @@ class ProfitabilityWizard(models.TransientModel):
                 combined_data.append({
                     'Product Category ID': product.categ_id.product_category,
                     'Product Order': product.product_category,
+                    'Dos': dos,
+                    'private_category': private_category,
 
                     'Product Category': product_category,
                     'Product': product_name,
