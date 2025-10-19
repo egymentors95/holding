@@ -239,21 +239,21 @@
                                             Subtotal (<t t-esc="priv_cat"/>)
                                         </td>
                                         <td style="border: 1px solid black; text-align:center; padding: 6px;">
-                                            <t t-esc="'{:,.2f}'.format(private_totals['last_year_qty_dos'])"/>
+                                            <t t-esc="'{:,.2f}'.format(private_totals['last_year_qty_dos']/1000000)"/>
                                         </td>
                                         <td style="border: 1px solid black; text-align:center; padding: 6px;">
                                             <t t-esc="'{:,.2f}'.format(private_totals['last_year_price'])"/>
                                         </td>
                                         <td style="border: 1px solid black; padding: 6px;"></td>
                                         <td style="border: 1px solid black; text-align:center; padding: 6px;">
-                                            <t t-esc="'{:,.2f}'.format(private_totals['total_qty_dos'])"/>
+                                            <t t-esc="'{:,.2f}'.format(private_totals['total_qty_dos']/1000000)"/>
                                         </td>
                                         <td style="border: 1px solid black; text-align:center; padding: 6px;">
                                             <t t-esc="'{:,.2f}'.format(private_totals['total_price'])"/>
                                         </td>
                                         <td style="border: 1px solid black; padding: 6px;"></td>
                                         <td style="border: 1px solid black; text-align:center; padding: 6px;">
-                                            <t t-esc="'{:,.2f}'.format(private_totals['total_plan_qty_dos'])"/>
+                                            <t t-esc="'{:,.2f}'.format(private_totals['total_plan_qty_dos']/1000000)"/>
                                         </td>
                                         <td style="border: 1px solid black; text-align:center; padding: 6px;">
                                             <t t-esc="'{:,.2f}'.format(private_totals['total_plan_price'])"/>
