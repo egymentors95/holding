@@ -26,7 +26,11 @@
     <record id="contact_user_global_rule" model="ir.rule">
         <field name="name">Contacts User</field>
         <field name="model_id" ref="stock.model_res_partner"/>
-        <field name="domain_force">['|', ('user_id', '=', user.id), ('user_ids', '!=', False)]</field>
+        <field name="domain_force">['&amp;','&amp;',
+    '|', ('type', '!=', 'private'), ('type', '=', False),
+                   '|',('company_id', 'in', company_ids),('partner_share', '=', False),
+                ('user_id', '=', user.id),
+                ]</field>
         <field name="groups" eval="[(4, ref('access_partner_id.group_contacts_user_global'))]"/>
     </record>
 
@@ -35,7 +39,10 @@
     <record id="contact_admin_global_rule" model="ir.rule">
         <field name="name">Contacts Admin</field>
         <field name="model_id" ref="stock.model_res_partner"/>
-        <field name="domain_force">['|',('company_id', 'in', company_ids), ('company_id', '=', False)]</field>
+        <field name="domain_force">['&amp;',
+    '|', ('type', '!=', 'private'), ('type', '=', False),
+                '|',('company_id', 'in', company_ids + [False]),('partner_share', '=', False),
+            ] </field>
         <field name="groups" eval="[(4, ref('access_partner_id.group_contacts_admin_global'))]"/>
     </record>
 

@@ -9,7 +9,10 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@name='vat']" position="attributes">
-                <attribute name="required">1</attribute>
+                <attribute name="attrs">{'required' : [('company_type', '=', 'company')]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="company_registration" attrs="{'required' : [('company_type', '=', 'company')]}"/>
             </xpath>
 
         </field>

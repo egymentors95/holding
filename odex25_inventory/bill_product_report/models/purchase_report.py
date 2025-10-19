@@ -86,7 +86,7 @@ class InvoiceBillReport(models.AbstractModel):
         # هيدر السنة اللي فاتت
         worksheet.merge_range(
             row, col + 3, row, col + 6,
-            f"QTY",
+            f"Received QTY",
             header_format2
         )
 

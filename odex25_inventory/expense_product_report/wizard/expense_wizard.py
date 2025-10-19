@@ -45,8 +45,7 @@ class ExpenseWizard(models.TransientModel):
             sales_team = expense.move_id.team_id.name
             account = expense.account_id.name
             debit = expense.debit
-            employee = expense.partner_id.user_ids[0].employee_id.name if expense.partner_id.user_ids else 'N/A'
-
+            employee = expense.move_id.invoice_user_id.employee_id.name if expense.move_id.invoice_user_id else 'N/A'
 
 
             # -------- Append --------
@@ -57,6 +56,31 @@ class ExpenseWizard(models.TransientModel):
                 'employee': employee,
 
             })
+
+            # -------------------------------
+            # 2- Income lines
+            income_domain = [
+                ('date', '>=', self.date_from),
+                ('date', '<=', self.date_to),
+                ('company_id', 'in', self.env.companies.ids),
+                ('move_id.state', '=', 'posted'),
+                ('account_id.internal_group', '=', 'income'),
+                ('move_id.move_type', 'in', ['out_invoice', 'out_refund']),
+            ]
+            if self.team_ids:
+                income_domain.append(('move_id.team_id', 'in', self.team_ids.ids))
+            if self.account_ids:
+                income_domain.append(('account_id', 'in', self.account_ids.ids))
+
+            income_lines = self.env['account.move.line'].search(income_domain)
+
+            for line in income_lines:
+                combined_data.append({
+                    'sales_team': line.move_id.team_id.name if line.move_id.team_id else 'No Team',
+                    'account': line.account_id.name,
+                    'debit': line.credit - line.debit,  # صافي الإيرادات
+                    'employee': line.move_id.invoice_user_id.employee_id.name if line.move_id.invoice_user_id else 'N/A',
+                })
 
         return {'combined_data': combined_data}
 
