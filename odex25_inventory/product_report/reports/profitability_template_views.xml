@@ -40,12 +40,12 @@
 
             <t t-foreach="sales_persons" t-as="sp">
                 <div class="page">
-                    <h3 style="margin:10px 0; background-color: #27F53C;">Sales Person:
-                        <t t-esc="sp"/>
+                    <h3 style="margin:10px 0; background-color: #27F53C; padding: 10px;">
+                        Sales Person: <t t-esc="sp"/>
                     </h3>
 
                     <table class="table table-sm table-bordered"
-                           style="width:100%; border: 1px solid black; text-align: center;">
+                           style="width:100%; border: 1px solid black; text-align: center; border-collapse: collapse;">
                         <thead style="background-color: #f0f0f0; font-weight: bold; text-align: center;">
                             <tr style="border: 1px solid black;">
                                 <th style="border: 1px solid black;" rowspan="2">Product Category</th>
@@ -73,8 +73,7 @@
                                     →<t t-esc="report_data and report_data.get('date_to')"/>)
                                 </th>
 
-                                <th style="border: 1px solid black; background-color: #E6376F;" colspan="3">Achived %
-                                </th>
+                                <th style="border: 1px solid black; background-color: #E6376F;" colspan="3">Achieved %</th>
                             </tr>
                             <tr style="border: 1px solid black;">
                                 <!-- Sub headers Last -->
@@ -86,7 +85,6 @@
                                 <th style="border: 1px solid black; background-color: #27F5C1;">Total QTY</th>
                                 <th style="border: 1px solid black; background-color: #27F5C1;">Total Value</th>
                                 <th style="border: 1px solid black; background-color: #27F5C1;">NASP</th>
-                                <!--                                <th style="border: 1px solid black; background-color: #27F5C1;">Sales Person</th>-->
 
                                 <!-- Sub headers YTD Plan -->
                                 <th style="border: 1px solid black; background-color: #C8DA44;">Plan QTY</th>
@@ -96,241 +94,256 @@
                                 <th style="border: 1px solid black; background-color: #E6376F;">Qty %</th>
                                 <th style="border: 1px solid black; background-color: #E6376F;">Value %</th>
                                 <th style="border: 1px solid black; background-color: #E6376F;">NASP %</th>
-
-
                             </tr>
                         </thead>
 
                         <tbody>
+                            <!-- متغيرات للتجميع -->
                             <t t-set="last_category" t-value="None"/>
-                            <!-- متغير لجمع subtotal لكل كاتيجوري -->
-                            <t t-set="totals" t-value="{
-        'Last Year Total Price': 0,
-        'Total Price': 0,
-        'Total Plan Price': 0,
-        'QTY': 0,
-        'Value': 0
-    }"/>
 
-                            <!-- متغير لجمع Grand Total لكل الأعمدة -->
+                            <!-- Grand totals -->
                             <t t-set="grand_totals" t-value="{
-        'Last Year Total Price': 0,
-        'Total Price': 0,
-        'Total Plan Price': 0,
-        'QTY': 0,
-        'Value': 0
-    }"/>
+                                'Last Year Total Price': 0,
+                                'Total Price': 0,
+                                'Total Plan Price': 0,
+                                'QTY': 0,
+                                'Value': 0
+                            }"/>
 
+                            <!-- تجميع البيانات حسب الفئة والprivate category -->
+                            <t t-set="grouped_data" t-value="{}"/>
+
+                            <!-- أولاً: تجميع كل البيانات في هيكل منظم -->
                             <t t-foreach="(report_data or {}).get('product_ids', [])" t-as="line">
                                 <t t-if="(line['Sales Person'] or 'No Sales Person') == sp">
+                                    <t t-set="product_cat" t-value="line['Product Category']"/>
+                                    <t t-set="priv_cat" t-value="line.get('private_category') or 'No Private Category'"/>
 
-
-                                    <!-- لو الكاتيجوري اتغيرت -->
-                                    <t t-if="last_category and line['Product Category'] != last_category">
-                                        <!-- Subtotal -->
-                                        <tr style="background-color:#EEE; font-weight:bold; border: 1px solid black;">
-                                            <td colspan="3" style="text-align:center; border: 1px solid black;">Total
-                                            </td>
-                                            <td style="border: 1px solid black;">
-
-                                            </td>
-                                            <td style="border: 1px solid black;">
-                                                <t t-esc="'{:,.2f}'.format(totals['Last Year Total Price'])"/>
-                                            </td>
-                                            <td style="border: 1px solid black;">
-                                            </td>
-                                            <td style="border: 1px solid black;">
-                                            </td>
-                                            <td style="border: 1px solid black;">
-                                                <t t-esc="'{:,.2f}'.format(totals['Total Price'])"/>
-                                            </td>
-                                            <td style="border: 1px solid black;">
-                                            </td>
-                                            <td style="border: 1px solid black;"></td>
-                                            <td style="border: 1px solid black;">
-                                                <t t-esc="'{:,.2f}'.format(totals['Total Plan Price'])"/>
-                                            </td>
-                                            <td style="border: 1px solid black;">
-                                            </td>
-                                            <td style="border: 1px solid black;">
-                                                <t t-esc="'{:,.2f}'.format(totals['QTY'])"/>
-                                            </td>
-                                            <td style="border: 1px solid black;">
-                                                <t t-esc="'{:,.2f}'.format(totals['Value'])"/>
-                                            </td>
-                                            <td style="border: 1px solid black;"></td>
-
-
-                                        </tr>
-
-
-                                        <!-- اضف subtotal للـ Grand Total -->
-                                        <t t-set="grand_totals" t-value="{
-                'Last Year Total Price': grand_totals['Last Year Total Price'] + totals['Last Year Total Price'],
-                'Total Price': grand_totals['Total Price'] + totals['Total Price'],
-                'Total Plan Price': grand_totals['Total Plan Price'] + totals['Total Plan Price'],
-                'QTY': grand_totals['QTY'] + totals['QTY'],
-                'Value': grand_totals['Value'] + totals['Value']
-            }"/>
-
-                                        <!-- Reset totals -->
-                                        <t t-set="totals" t-value="{
-                'Last Year Total Price': 0,
-                'Total Price': 0,
-                'Total Plan Price': 0,
-                'QTY': 0,
-                'Value': 0
-            }"/>
+                                    <!-- تأكد من وجود الفئة الرئيسية -->
+                                    <t t-if="not grouped_data.get(product_cat)">
+                                        <t t-set="grouped_data" t-value="dict(grouped_data, **{product_cat: {}})"/>
                                     </t>
 
-                                    <!-- كاتيجوري جديدة -->
-                                    <t t-if="line['Product Category'] != last_category">
-                                        <tr style="background-color:#F0EBEB; font-weight:bold; border: 1px solid black;">
-                                            <td colspan="15" style="text-align:left; border: 1px solid black;">
-                                                <t t-esc="line['Product Category']"/>
-                                            </td>
-                                        </tr>
-                                        <t t-set="last_category" t-value="line['Product Category']"/>
+                                    <!-- تأكد من وجود الفئة الخاصة -->
+                                    <t t-if="not grouped_data[product_cat].get(priv_cat)">
+                                        <t t-set="grouped_data" t-value="dict(grouped_data, **{product_cat: dict(grouped_data[product_cat], **{priv_cat: []})})"/>
                                     </t>
 
-                                    <!-- بيانات المنتج -->
-                                    <tr style="border: 1px solid black;">
-                                        <td></td>
-                                        <td style="border: 1px solid black;">
-                                            <t t-esc="line['Default Code']"/>
-                                        </td>
-                                        <td style="border: 1px solid black;">
-                                            <t t-esc="line['Product']"/>
-                                        </td>
-                                        <td style="border: 1px solid black; text-align:center;">
-                                            <t t-esc="'{:,.2f}'.format(line['Last Year Total Quantity'])"/>
-                                        </td>
-                                        <td style="border: 1px solid black; text-align:center;">
-                                            <t t-esc="'{:,.2f}'.format(line['Last Year Total Price'])"/>
-                                        </td>
-                                        <td style="border: 1px solid black; text-align:center;">
-                                            <t t-esc="'{:,.2f}'.format(line['Last Year Nsap'])"/>
-                                        </td>
-                                        <td style="border: 1px solid black; text-align:center;">
-                                            <t t-esc="'{:,.2f}'.format(line['Total Quantity'])"/>
-                                        </td>
-                                        <td style="border: 1px solid black; text-align:center;">
-                                            <t t-esc="'{:,.2f}'.format(line['Total Price'])"/>
-                                        </td>
-                                        <td style="border: 1px solid black; text-align:center;">
-                                            <t t-esc="'{:,.2f}'.format(line['Nsap'])"/>
-                                        </td>
-
-                                        <!--                                    <td style="border: 1px solid black; text-align:center;">-->
-                                        <!--                                        <t t-esc="line['Sales Person']"/>-->
-                                        <!--                                    </td>-->
-                                        <td style="border: 1px solid black; text-align:center;">
-                                            <t t-esc="'{:,.2f}'.format(line['Total Plan Quantity'])"/>
-                                        </td>
-                                        <td style="border: 1px solid black; text-align:center;">
-                                            <t t-esc="'{:,.2f}'.format(line['Total Plan Price'])"/>
-                                        </td>
-                                        <td style="border: 1px solid black; text-align:center;">
-                                            <t t-esc="'{:,.2f}'.format(line['Plan Nsap'])"/>
-                                        </td>
-                                        <td style="border: 1px solid black; text-align:center;">
-                                            <t t-esc="'{:,.2f}'.format(line['QTY'])"/>
-                                        </td>
-                                        <td style="border: 1px solid black; text-align:center;">
-                                            <t t-esc="'{:,.2f}'.format(line['Value'])"/>
-                                        </td>
-                                        <td style="border: 1px solid black; text-align:center;">
-                                            <t t-esc="'{:,.2f}'.format(line['achieved_nasp'])"/>
-                                        </td>
-
-                                    </tr>
-
-                                    <!-- تحديث totals -->
-                                    <t t-set="totals" t-value="{
-            'Last Year Total Price': totals['Last Year Total Price'] + (line['Last Year Total Price'] or 0),
-            'Total Price': totals['Total Price'] + (line['Total Price'] or 0),
-            'Total Plan Price': totals['Total Plan Price'] + (line['Total Plan Price'] or 0),
-            'QTY': totals['QTY'] + (line['QTY'] or 0),
-            'Value': totals['Value'] + (line['Value'] or 0)
-        }"/>
+                                    <!-- إضافة الخط للفئة الخاصة -->
+                                    <t t-set="grouped_data" t-value="dict(grouped_data, **{
+                                        product_cat: dict(grouped_data[product_cat], **{
+                                            priv_cat: grouped_data[product_cat][priv_cat] + [line]
+                                        })
+                                    })"/>
                                 </t>
                             </t>
 
+                            <!-- عرض البيانات -->
+                            <t t-foreach="grouped_data.items()" t-as="category_data">
+                                <t t-set="category" t-value="category_data[0]"/>
+                                <t t-set="private_categories" t-value="category_data[1]"/>
 
-                            <!-- Subtotal آخر كاتيجوري -->
-                            <t t-if="last_category">
-                                <tr style="background-color:#EEE; font-weight:bold; border: 1px solid black;">
-                                    <td colspan="3" style="text-align:center; border: 1px solid black;">Total</td>
-                                    <td style="border: 1px solid black;">
+                                <!-- Category Header -->
+                                <tr style="background-color:#F0EBEB; font-weight:bold; border: 1px solid black;">
+                                    <td colspan="15" style="text-align:left; border: 1px solid black; padding: 8px;">
+                                        <t t-esc="category"/>
                                     </td>
-                                    <td style="border: 1px solid black;">
-                                        <t t-esc="'{:,.2f}'.format(totals['Last Year Total Price'])"/>
-                                    </td>
-                                    <td style="border: 1px solid black;">
-                                    </td>
-                                    <td style="border: 1px solid black;">
-                                    </td>
-                                    <td style="border: 1px solid black;">
-                                        <t t-esc="'{:,.2f}'.format(totals['Total Price'])"/>
-                                    </td>
-                                    <td style="border: 1px solid black;">
-                                    </td>
-                                    <td style="border: 1px solid black;"></td>
-                                    <td style="border: 1px solid black;">
-                                        <t t-esc="'{:,.2f}'.format(totals['Total Plan Price'])"/>
-                                    </td>
-                                    <td style="border: 1px solid black;">
-                                    </td>
-                                    <td style="border: 1px solid black;">
-                                        <t t-esc="'{:,.2f}'.format(totals['QTY'])"/>
-                                    </td>
-                                    <td style="border: 1px solid black;">
-                                        <t t-esc="'{:,.2f}'.format(totals['Value'])"/>
-                                    </td>
-                                    <td style="border: 1px solid black;"></td>
-
-
                                 </tr>
+
+                                <!-- Reset category totals -->
+                                <t t-set="category_totals" t-value="{
+                                    'Last Year Total Price': 0,
+                                    'Total Price': 0,
+                                    'Total Plan Price': 0,
+                                    'QTY': 0,
+                                    'Value': 0
+                                }"/>
+
+                                <t t-foreach="private_categories.items()" t-as="private_data">
+                                    <t t-set="priv_cat" t-value="private_data[0]"/>
+                                    <t t-set="priv_lines" t-value="private_data[1]"/>
+
+                                    <!-- Reset private totals -->
+                                    <t t-set="private_totals" t-value="{
+                                        'last_year_qty_dos': 0,
+                                        'last_year_price': 0,
+                                        'total_qty_dos': 0,
+                                        'total_price': 0,
+                                        'total_plan_qty_dos': 0,
+                                        'total_plan_price': 0
+                                    }"/>
+
+                                    <!-- عرض منتجات private category -->
+                                    <t t-foreach="priv_lines" t-as="line">
+                                        <tr style="border: 1px solid black;">
+                                            <td style="border: 1px solid black;"></td>
+                                            <td style="border: 1px solid black; padding: 4px;">
+                                                <t t-esc="line['Default Code']"/>
+                                            </td>
+                                            <td style="border: 1px solid black; padding: 4px;">
+                                                <t t-esc="line['Product']"/>
+                                            </td>
+                                            <td style="border: 1px solid black; text-align:center; padding: 4px;">
+                                                <t t-esc="'{:,.2f}'.format(line['Last Year Total Quantity'])"/>
+                                            </td>
+                                            <td style="border: 1px solid black; text-align:center; padding: 4px;">
+                                                <t t-esc="'{:,.2f}'.format(line['Last Year Total Price'])"/>
+                                            </td>
+                                            <td style="border: 1px solid black; text-align:center; padding: 4px;">
+                                                <t t-esc="'{:,.2f}'.format(line['Last Year Nsap'])"/>
+                                            </td>
+                                            <td style="border: 1px solid black; text-align:center; padding: 4px;">
+                                                <t t-esc="'{:,.2f}'.format(line['Total Quantity'])"/>
+                                            </td>
+                                            <td style="border: 1px solid black; text-align:center; padding: 4px;">
+                                                <t t-esc="'{:,.2f}'.format(line['Total Price'])"/>
+                                            </td>
+                                            <td style="border: 1px solid black; text-align:center; padding: 4px;">
+                                                <t t-esc="'{:,.2f}'.format(line['Nsap'])"/>
+                                            </td>
+                                            <td style="border: 1px solid black; text-align:center; padding: 4px;">
+                                                <t t-esc="'{:,.2f}'.format(line['Total Plan Quantity'])"/>
+                                            </td>
+                                            <td style="border: 1px solid black; text-align:center; padding: 4px;">
+                                                <t t-esc="'{:,.2f}'.format(line['Total Plan Price'])"/>
+                                            </td>
+                                            <td style="border: 1px solid black; text-align:center; padding: 4px;">
+                                                <t t-esc="'{:,.2f}'.format(line['Plan Nsap'])"/>
+                                            </td>
+                                            <td style="border: 1px solid black; text-align:center; padding: 4px;">
+                                                <t t-esc="'{:,.2f}'.format(line['QTY'])"/>
+                                            </td>
+                                            <td style="border: 1px solid black; text-align:center; padding: 4px;">
+                                                <t t-esc="'{:,.2f}'.format(line['Value'])"/>
+                                            </td>
+                                            <td style="border: 1px solid black; text-align:center; padding: 4px;">
+                                                <t t-esc="'{:,.2f}'.format(line['achieved_nasp'])"/>
+                                            </td>
+                                        </tr>
+
+                                        <!-- تحديث private totals -->
+                                        <t t-set="dos_value" t-value="line.get('Dos') or 0"/>
+                                        <t t-set="private_totals" t-value="{
+                                            'last_year_qty_dos': private_totals['last_year_qty_dos'] + ((line['Last Year Total Quantity'] or 0) * dos_value),
+                                            'last_year_price': private_totals['last_year_price'] + (line['Last Year Total Price'] or 0),
+                                            'total_qty_dos': private_totals['total_qty_dos'] + ((line['Total Quantity'] or 0) * dos_value),
+                                            'total_price': private_totals['total_price'] + (line['Total Price'] or 0),
+                                            'total_plan_qty_dos': private_totals['total_plan_qty_dos'] + ((line['Total Plan Quantity'] or 0) * dos_value),
+                                            'total_plan_price': private_totals['total_plan_price'] + (line['Total Plan Price'] or 0)
+                                        }"/>
+                                    </t>
+
+                                    <!-- Private Category Subtotal -->
+                                    <tr style="background-color:#27F5C1; font-weight:bold; border: 1px solid black;">
+                                        <td colspan="3" style="text-align:center; border: 1px solid black; padding: 6px;">
+                                            Subtotal (<t t-esc="priv_cat"/>)
+                                        </td>
+                                        <td style="border: 1px solid black; text-align:center; padding: 6px;">
+                                            <t t-esc="'{:,.2f}'.format(private_totals['last_year_qty_dos'])"/>
+                                        </td>
+                                        <td style="border: 1px solid black; text-align:center; padding: 6px;">
+                                            <t t-esc="'{:,.2f}'.format(private_totals['last_year_price'])"/>
+                                        </td>
+                                        <td style="border: 1px solid black; padding: 6px;"></td>
+                                        <td style="border: 1px solid black; text-align:center; padding: 6px;">
+                                            <t t-esc="'{:,.2f}'.format(private_totals['total_qty_dos'])"/>
+                                        </td>
+                                        <td style="border: 1px solid black; text-align:center; padding: 6px;">
+                                            <t t-esc="'{:,.2f}'.format(private_totals['total_price'])"/>
+                                        </td>
+                                        <td style="border: 1px solid black; padding: 6px;"></td>
+                                        <td style="border: 1px solid black; text-align:center; padding: 6px;">
+                                            <t t-esc="'{:,.2f}'.format(private_totals['total_plan_qty_dos'])"/>
+                                        </td>
+                                        <td style="border: 1px solid black; text-align:center; padding: 6px;">
+                                            <t t-esc="'{:,.2f}'.format(private_totals['total_plan_price'])"/>
+                                        </td>
+                                        <td style="border: 1px solid black; padding: 6px;"></td>
+                                        <td style="border: 1px solid black; padding: 6px;"></td>
+                                        <td style="border: 1px solid black; padding: 6px;"></td>
+                                        <td style="border: 1px solid black; padding: 6px;"></td>
+                                    </tr>
+
+                                    <!-- تحديث category totals -->
+                                    <t t-set="qty_sum" t-value="sum(line.get('QTY', 0) for line in priv_lines)"/>
+                                    <t t-set="value_sum" t-value="sum(line.get('Value', 0) for line in priv_lines)"/>
+                                    <t t-set="category_totals" t-value="{
+                                        'Last Year Total Price': category_totals['Last Year Total Price'] + private_totals['last_year_price'],
+                                        'Total Price': category_totals['Total Price'] + private_totals['total_price'],
+                                        'Total Plan Price': category_totals['Total Plan Price'] + private_totals['total_plan_price'],
+                                        'QTY': category_totals['QTY'] + qty_sum,
+                                        'Value': category_totals['Value'] + value_sum
+                                    }"/>
+                                </t>
+
+                                <!-- Category Total -->
+                                <tr style="background-color:#E6376F; font-weight:bold; border: 1px solid black;">
+                                    <td colspan="3" style="text-align:center; border: 1px solid black; padding: 6px;">
+                                        Total
+                                    </td>
+                                    <td style="border: 1px solid black; padding: 6px;"></td>
+                                    <td style="border: 1px solid black; text-align:center; padding: 6px;">
+                                        <t t-esc="'{:,.2f}'.format(category_totals['Last Year Total Price'])"/>
+                                    </td>
+                                    <td style="border: 1px solid black; padding: 6px;"></td>
+                                    <td style="border: 1px solid black; padding: 6px;"></td>
+                                    <td style="border: 1px solid black; text-align:center; padding: 6px;">
+                                        <t t-esc="'{:,.2f}'.format(category_totals['Total Price'])"/>
+                                    </td>
+                                    <td style="border: 1px solid black; padding: 6px;"></td>
+                                    <td style="border: 1px solid black; padding: 6px;"></td>
+                                    <td style="border: 1px solid black; text-align:center; padding: 6px;">
+                                        <t t-esc="'{:,.2f}'.format(category_totals['Total Plan Price'])"/>
+                                    </td>
+                                    <td style="border: 1px solid black; padding: 6px;"></td>
+                                    <td style="border: 1px solid black; text-align:center; padding: 6px;">
+                                        <t t-esc="'{:,.2f}'.format(category_totals['QTY'])"/>
+                                    </td>
+                                    <td style="border: 1px solid black; text-align:center; padding: 6px;">
+                                        <t t-esc="'{:,.2f}'.format(category_totals['Value'])"/>
+                                    </td>
+                                    <td style="border: 1px solid black; padding: 6px;"></td>
+                                </tr>
+
+                                <!-- تحديث grand totals -->
+                                <t t-set="grand_totals" t-value="{
+                                    'Last Year Total Price': grand_totals['Last Year Total Price'] + category_totals['Last Year Total Price'],
+                                    'Total Price': grand_totals['Total Price'] + category_totals['Total Price'],
+                                    'Total Plan Price': grand_totals['Total Plan Price'] + category_totals['Total Plan Price'],
+                                    'QTY': grand_totals['QTY'] + category_totals['QTY'],
+                                    'Value': grand_totals['Value'] + category_totals['Value']
+                                }"/>
                             </t>
-                            <!-- ضيف آخر subtotal على الـ Grand Total -->
-                            <t t-set="grand_totals" t-value="{
-            'Last Year Total Price': grand_totals['Last Year Total Price'] + totals['Last Year Total Price'],
-            'Total Price': grand_totals['Total Price'] + totals['Total Price'],
-            'Total Plan Price': grand_totals['Total Plan Price'] + totals['Total Plan Price'],
-            'QTY': grand_totals['QTY'] + totals['QTY'],
-            'Value': grand_totals['Value'] + totals['Value']
-        }"/>
 
                             <!-- Grand Total -->
                             <tr style="background-color:#D6EAF8; font-weight:bold; border: 2px solid black;">
-                                <td colspan="3" style="text-align:center; border: 2px solid black;">Grand Total</td>
-                                <td style="border: 1px solid black;"></td>
-                                <td style="border: 1px solid black;">
+                                <td colspan="3" style="text-align:center; border: 2px solid black; padding: 8px;">
+                                    Grand Total
+                                </td>
+                                <td style="border: 1px solid black; padding: 8px;"></td>
+                                <td style="border: 1px solid black; text-align:center; padding: 8px;">
                                     <t t-esc="'{:,.2f}'.format(grand_totals['Last Year Total Price'])"/>
                                 </td>
-                                <td style="border: 1px solid black;"></td>
-                                <td style="border: 1px solid black;"></td>
-                                <td style="border: 1px solid black;">
+                                <td style="border: 1px solid black; padding: 8px;"></td>
+                                <td style="border: 1px solid black; padding: 8px;"></td>
+                                <td style="border: 1px solid black; text-align:center; padding: 8px;">
                                     <t t-esc="'{:,.2f}'.format(grand_totals['Total Price'])"/>
                                 </td>
-                                <td style="border: 1px solid black;"></td>
-                                <td style="border: 1px solid black;"></td>
-                                <td style="border: 1px solid black;">
+                                <td style="border: 1px solid black; padding: 8px;"></td>
+                                <td style="border: 1px solid black; padding: 8px;"></td>
+                                <td style="border: 1px solid black; text-align:center; padding: 8px;">
                                     <t t-esc="'{:,.2f}'.format(grand_totals['Total Plan Price'])"/>
                                 </td>
-                                <td style="border: 1px solid black;"></td>
-                                <td style="border: 1px solid black;">
+                                <td style="border: 1px solid black; padding: 8px;"></td>
+                                <td style="border: 1px solid black; text-align:center; padding: 8px;">
                                     <t t-esc="'{:,.2f}'.format(grand_totals['QTY'])"/>
                                 </td>
-                                <td style="border: 1px solid black;">
+                                <td style="border: 1px solid black; text-align:center; padding: 8px;">
                                     <t t-esc="'{:,.2f}'.format(grand_totals['Value'])"/>
                                 </td>
-                                <td style="border: 1px solid black;"></td>
-
+                                <td style="border: 1px solid black; padding: 8px;"></td>
                             </tr>
-
                         </tbody>
-
                     </table>
                 </div>
             </t>
