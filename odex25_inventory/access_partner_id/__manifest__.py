@@ -6,7 +6,7 @@
     "author": "Elaraby",
     "website": "https://www.ibs-na.com",
     "license": "AGPL-3",
-    "depends": ['base','account', 'sale', 'purchase'],
+    "depends": ['base','account', 'sale', 'purchase', 'contacts'],
     "data": [
         "security/security_views.xml",
         "views/sale_order_views.xml",

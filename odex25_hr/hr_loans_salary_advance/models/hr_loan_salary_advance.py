@@ -50,9 +50,8 @@ class HrSalaryAdvance(models.Model):
     department_id = fields.Many2one(related='employee_id.department_id', readonly=True, store=True)
     deduction_lines = fields.One2many('loan.installment.line', 'deduction_line')
     moves_ids = fields.One2many('hr.account.moves', 'moves_id')
-    employee_id = fields.Many2one('hr.employee', 'Employee',default=lambda item: item.get_user_id(),
-               )
-                                  # default=lambda item: item.get_user_id(), index=True, domain=[('state', '=', 'open')])
+    employee_id = fields.Many2one('hr.employee', 'Employee',
+                                  default=lambda item: item.get_user_id(), index=True, domain=[('state', '=', 'open')])
     employee_no = fields.Char(related='employee_id.emp_no', readonly=True,string='Employee Number', store=True)
     request_type = fields.Many2one('loan.request.type')
     emp_hiring_date = fields.Date(related='employee_id.contract_id.hiring_date')
@@ -61,13 +60,13 @@ class HrSalaryAdvance(models.Model):
 
     # change state to piad
 
-    # @api.onchange('employee_id', 'request_type')
-    # def check_hiring_date(self):
-    #     if self.employee_id:
-    #         if not self.employee_id.first_hiring_date:
-    #             raise exceptions.Warning(
-    #                 _('You can not Request Loans The Employee %s have Not First Hiring Date')
-    #                 % self.employee_id.name)
+    @api.onchange('employee_id', 'request_type')
+    def check_hiring_date(self):
+        if self.employee_id:
+            if not self.employee_id.first_hiring_date:
+                raise exceptions.Warning(
+                    _('You can not Request Loans The Employee %s have Not First Hiring Date')
+                    % self.employee_id.name)
 
     def name_get(self):
         return [(loan.id, '%s  %s' % (loan.code, loan.request_type.name)) for loan in self]
@@ -268,30 +267,30 @@ class HrSalaryAdvance(models.Model):
             if item.gm_propos_amount > 0.0 and item.months > 0:
                 item.installment_amount = item.gm_propos_amount / float(item.months)
 
-    # @api.depends('contract_duration_date', 'end_date')
-    # def _get_month_no(self):
-    #     for item in self:
-    #         if item.employee_id.contract_id:
-    #             hiring = item.employee_id.contract_id.hiring_date
-    #             if hiring:
-    #                 start_contract_date = datetime.strptime(str(hiring), "%Y-%m-%d")
-    #             else:
-    #                 start_contract_date = datetime.strptime(str(item.contract_duration_date), "%Y-%m-%d")
-    #
-    #             if item.contract_duration_date and item.end_date:
-    #                 end_contract_date = datetime.strptime(str(item.end_date), "%Y-%m-%d")
-    #                 relative_months = relativedelta.relativedelta(end_contract_date, start_contract_date).months +1
-    #                 relative_years = relativedelta.relativedelta(end_contract_date, start_contract_date).years
-    #                 item.months_employeed = relative_months + (relative_years * 12)
-    #
-    #             else:
-    #
-    #                 current_date = date.today()
-    #                 relative_months = relativedelta.relativedelta(current_date, start_contract_date).months +1
-    #                 relative_years = relativedelta.relativedelta(current_date, start_contract_date).years
-    #                 item.months_employeed = relative_months + (relative_years * 12)
-            # else:
-            #     raise exceptions.Warning(_('Employee %s has no contract') % item.employee_id.name)
+    @api.depends('contract_duration_date', 'end_date')
+    def _get_month_no(self):
+        for item in self:
+            if item.employee_id.contract_id:
+                hiring = item.employee_id.contract_id.hiring_date
+                if hiring:
+                    start_contract_date = datetime.strptime(str(hiring), "%Y-%m-%d")
+                else:
+                    start_contract_date = datetime.strptime(str(item.contract_duration_date), "%Y-%m-%d")
+
+                if item.contract_duration_date and item.end_date:
+                    end_contract_date = datetime.strptime(str(item.end_date), "%Y-%m-%d")
+                    relative_months = relativedelta.relativedelta(end_contract_date, start_contract_date).months +1
+                    relative_years = relativedelta.relativedelta(end_contract_date, start_contract_date).years
+                    item.months_employeed = relative_months + (relative_years * 12)
+
+                else:
+
+                    current_date = date.today()
+                    relative_months = relativedelta.relativedelta(current_date, start_contract_date).months +1
+                    relative_years = relativedelta.relativedelta(current_date, start_contract_date).years
+                    item.months_employeed = relative_months + (relative_years * 12)
+            else:
+                raise exceptions.Warning(_('Employee %s has no contract') % item.employee_id.name)
 
     @api.depends('deduction_lines','deduction_lines.paid')
     def get_total_paid_installment(self):
@@ -393,21 +392,21 @@ class HrSalaryAdvance(models.Model):
             self.basic_amount = self.request_type.amount
             self.emp_expect_amount = self.request_type.amount
 
-    # @api.onchange('emp_expect_amount','gm_propos_amount','months')
-    # def _onchange_emp_expect_amount(self):
-    #     if self.exception_loan==False :
-    #        if self.emp_expect_amount > self.basic_amount >0:
-    #           raise exceptions.Warning(_("Sorry, Request Employee Amount Exceeds The Basic Amount"))
-    #        if self.gm_propos_amount > self.basic_amount >0:
-    #           raise exceptions.Warning(_("Sorry, Approved Amount Exceeds The Basic Amount"))
-    #        if self.months > self.request_type.installment_number >0:
-    #           raise exceptions.Warning(_("Sorry, The Number Of installments Must Not Exceed '%s' Installments")% self.request_type.installment_number)
-    #
-    #     if self.request_type.refund_from == 'bonus':
-    #         if not self.employee_id.contract_id:
-    #             raise exceptions.Warning(_("Employee '%s' has no contract") % self.employee_id.name)
-    #         if self.emp_expect_amount > self._compute_rule(self.request_type.bonus_id, self.employee_id.contract_id):
-    #             raise exceptions.Warning(_("Sorry loan amount for %s exceeds the bonus amount") % self.employee_id.name)
+    @api.onchange('emp_expect_amount','gm_propos_amount','months')
+    def _onchange_emp_expect_amount(self):
+        if self.exception_loan==False :
+           if self.emp_expect_amount > self.basic_amount >0:
+              raise exceptions.Warning(_("Sorry, Request Employee Amount Exceeds The Basic Amount"))
+           if self.gm_propos_amount > self.basic_amount >0:
+              raise exceptions.Warning(_("Sorry, Approved Amount Exceeds The Basic Amount"))
+           if self.months > self.request_type.installment_number >0:
+              raise exceptions.Warning(_("Sorry, The Number Of installments Must Not Exceed '%s' Installments")% self.request_type.installment_number)
+
+        if self.request_type.refund_from == 'bonus':
+            if not self.employee_id.contract_id:
+                raise exceptions.Warning(_("Employee '%s' has no contract") % self.employee_id.name)
+            if self.emp_expect_amount > self._compute_rule(self.request_type.bonus_id, self.employee_id.contract_id):
+                raise exceptions.Warning(_("Sorry loan amount for %s exceeds the bonus amount") % self.employee_id.name)
 
     # Compute salary rules
 
