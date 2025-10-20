@@ -7,6 +7,7 @@ class ExpenseReportHtml(models.AbstractModel):
     @api.model
     def _get_report_values(self, docids, data=None):
         lots_data = data.get('product_ids', [])
+        sales_data = data.get('sales_data', {})  # جلب بيانات المبيعات
         date_from = data.get('date_from')
         date_to = data.get('date_to')
 
@@ -27,6 +28,11 @@ class ExpenseReportHtml(models.AbstractModel):
                 grouped_data[team][account]['employees'].get(employee, 0.0) + debit
             )
             grouped_data[team][account]['total'] += debit
+
+        # إضافة الموظفين من بيانات المبيعات
+        sales_by_employee = sales_data.get('by_employee', {})
+        for employee in sales_by_employee.keys():
+            employees.add(employee)
 
         employees = sorted(list(employees))
 
@@ -50,7 +56,7 @@ class ExpenseReportHtml(models.AbstractModel):
             team_totals['total'] = team_total_sum
             team_summaries[team] = team_totals
 
-        # --- حساب Achieve كنسبة من Grand Total (وليس من كل موظف) ---
+        # --- حساب Achieve كنسبة من Grand Total ---
         total_val = grand_totals.get('total', 0.0)
         for team, team_totals in team_summaries.items():
             team_achieve = {}
@@ -66,4 +72,5 @@ class ExpenseReportHtml(models.AbstractModel):
             'employees': employees,
             'grand_totals': grand_totals,
             'team_summaries': team_summaries,
+            'sales_data': sales_data,  # إضافة بيانات المبيعات
         }

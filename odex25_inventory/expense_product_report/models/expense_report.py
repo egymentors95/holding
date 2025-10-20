@@ -11,6 +11,7 @@ class ExpenseReport(models.AbstractModel):
 
     def generate_xlsx_report(self, workbook, data, records):
         lots_data = data.get('product_ids', [])
+        sales_data = data.get('sales_data', {})  # جلب بيانات المبيعات
         date_from = data.get('date_from')
         date_to = data.get('date_to')
 
@@ -21,11 +22,18 @@ class ExpenseReport(models.AbstractModel):
 
         # ======= تنسيقات =======
         bold = workbook.add_format({'bold': True, 'align': 'center', 'valign': 'vcenter', 'border': 1})
-        header_format = workbook.add_format({'bold': True, 'bg_color': '#D9E1F2', 'align': 'center', 'valign': 'vcenter', 'border': 1})
+        header_format = workbook.add_format(
+            {'bold': True, 'bg_color': '#D9E1F2', 'align': 'center', 'valign': 'vcenter', 'border': 1})
         cell_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'border': 1})
-        subtotal_format = workbook.add_format({'bold': True, 'bg_color': '#FCE4D6', 'align': 'center', 'valign': 'vcenter', 'border': 1})
-        grand_total_format = workbook.add_format({'bold': True, 'bg_color': '#C6E0B4', 'align': 'center', 'valign': 'vcenter', 'border': 1})
-        percent_format = workbook.add_format({'num_format': '0.00%', 'align': 'center', 'valign': 'vcenter', 'border': 1})
+        subtotal_format = workbook.add_format(
+            {'bold': True, 'bg_color': '#FCE4D6', 'align': 'center', 'valign': 'vcenter', 'border': 1})
+        grand_total_format = workbook.add_format(
+            {'bold': True, 'bg_color': '#C6E0B4', 'align': 'center', 'valign': 'vcenter', 'border': 1})
+        sales_total_format = workbook.add_format(
+            {'bold': True, 'bg_color': '#FFE699', 'align': 'center', 'valign': 'vcenter',
+             'border': 1})  # تنسيق جديد للمبيعات
+        percent_format = workbook.add_format(
+            {'num_format': '0.00%', 'align': 'center', 'valign': 'vcenter', 'border': 1})
 
         # ======= اللوجو =======
         logo_path = get_module_resource('expense_product_report', 'static/img', 'logo.png')
@@ -61,6 +69,11 @@ class ExpenseReport(models.AbstractModel):
             grouped_data[team][account]['employees'][employee] = grouped_data[team][account]['employees'].get(employee,
                                                                                                               0.0) + debit
             grouped_data[team][account]['total'] += debit
+
+        # إضافة الموظفين من بيانات المبيعات أيضاً
+        sales_by_employee = sales_data.get('by_employee', {})
+        for employee in sales_by_employee.keys():
+            employees.add(employee)
 
         employees = sorted(list(employees))
         emp_col_map = {emp: idx + 2 for idx, emp in enumerate(employees)}
@@ -106,7 +119,7 @@ class ExpenseReport(models.AbstractModel):
                 row += 1
 
             # subtotal
-            worksheet.write(row, 0, f"Subtotal {team}", subtotal_format)
+            worksheet.write(row, 0, f"Subtotal", subtotal_format)
             worksheet.write(row, 1, '', subtotal_format)
             for emp in employees:
                 worksheet.write_number(row, emp_col_map[emp], team_totals[emp], subtotal_format)
@@ -129,6 +142,20 @@ class ExpenseReport(models.AbstractModel):
         grand_total_val = grand_totals['total']
         row += 1
 
+        # ======= Total Sales =======
+        worksheet.write(row, 0, 'Total Sales', sales_total_format)
+        worksheet.write(row, 1, '', sales_total_format)
+
+        total_sales = 0.0
+        for emp in employees:
+            sales_val = sales_by_employee.get(emp, 0.0)
+            worksheet.write_number(row, emp_col_map[emp], sales_val, sales_total_format)
+            total_sales += sales_val
+
+        worksheet.write_number(row, total_col, total_sales, sales_total_format)
+        worksheet.write(row, percent_col, '', sales_total_format)
+        row += 1
+
         # ======= حساب Achieve % للصفوف =======
         current_row = 6  # أول صف فعلي بعد العناوين
         for team, accounts in grouped_data.items():
@@ -142,7 +169,7 @@ class ExpenseReport(models.AbstractModel):
 
         # ======= حساب صف Achieve لكل Team =======
         for team_row, team_name, team_totals in teams_summary:
-            worksheet.write(team_row, 0, f"Achieve {team_name}", subtotal_format)
+            worksheet.write(team_row, 0, f"Achieve %", subtotal_format)
             worksheet.write(team_row, 1, '', subtotal_format)
             for emp in employees:
                 emp_team_val = team_totals.get(emp, 0.0)
