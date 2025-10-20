@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+   <record id="action_partner_category" model="ir.actions.act_window">
+       <field name="name">Partner Categories</field>
+       <field name="res_model">partner.category</field>
+       <field name="view_mode">tree,form</field>
+       <field name="help" type="html">
+           <p class="oe_view_nocontent_create">
+               Click to create a new Partner Category.
+           </p>
+       </field>
+   </record>
+
+    <menuitem id="menu_partner_category_root" name="Partner Categories" parent="contacts.menu_contacts" action="action_partner_category"
+              sequence="100" />
+
+</odoo>
