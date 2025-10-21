@@ -41,8 +41,8 @@ class ExpenseWizard(models.TransientModel):
             sales_team = expense.move_id.team_id.name
             account = expense.account_id.name
             debit = expense.debit
-            # employee = expense.move_id.invoice_user_id.employee_id.name if expense.move_id.invoice_user_id else 'N/A'
-            employee = expense.partner_id.user_ids[0].employee_id.name if expense.partner_id.user_ids else 'N/A'
+            employee = expense.move_id.invoice_user_id.employee_id.name if expense.move_id.invoice_user_id else 'N/A'
+            # employee = expense.partner_id.user_ids[0].employee_id.name if expense.partner_id.user_ids else 'N/A'
 
 
             # -------- Append --------
@@ -83,8 +83,8 @@ class ExpenseWizard(models.TransientModel):
         total_sales = 0.0
 
         for line in sales_lines:
-            # employee = line.move_id.invoice_user_id.employee_id.name if line.move_id.invoice_user_id else 'N/A'
-            employee = line.partner_id.user_ids[0].employee_id.name if line.partner_id.user_ids else 'N/A'
+            employee = line.move_id.invoice_user_id.employee_id.name if line.move_id.invoice_user_id else 'N/A'
+            # employee = line.partner_id.user_ids[0].employee_id.name if line.partner_id.user_ids else 'N/A'
 
             # حساب صافي المبيعات (الإيراد)
             amount = line.credit - line.debit
