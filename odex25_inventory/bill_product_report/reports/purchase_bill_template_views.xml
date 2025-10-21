@@ -37,6 +37,15 @@
             <t t-call="bill_product_report.custom_header"/>
 
             <div class="page">
+<!--                        &lt;!&ndash; 🔹 زر طباعة PDF &ndash;&gt;-->
+<!--        <div style="text-align: right; margin-bottom: 20px;">-->
+<!--          <a t-att-href="'/report/pdf/bill_product_report.purchase_bill_html_report/%s' % (docs and docs[0].id or 0)"-->
+<!--             target="_blank"-->
+<!--             class="btn btn-primary">-->
+<!--            🖨️ طباعة PDF-->
+<!--          </a>-->
+<!--        </div>-->
+
                 <table class="table table-sm table-bordered"
                        style="width:100%; border: 1px solid black; text-align: center;">
                     <thead style="background-color: #f0f0f0; font-weight: bold;">

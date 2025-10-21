@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import json
+from datetime import date, datetime
+
 from odoo import api, fields, models
 from odoo.exceptions import UserError
 from dateutil.relativedelta import relativedelta
@@ -202,7 +205,20 @@ class PurchaseBillWizard(models.TransientModel):
             'date_to': self.date_to,
             'product_ids': self.get_report_data()['combined_data'],
         }
-        return self.env.ref('bill_product_report.report_action_invoice_bill_html').report_action(self, data=data)
+
+        def default_converter(o):
+            if isinstance(o, (datetime, date)):
+                return o.strftime("%Y-%m-%d")
+            raise TypeError(f"Type {type(o)} not serializable")
+
+        context_json = json.dumps({'data': data}, default=default_converter)
+
+        return {
+            'type': 'ir.actions.act_url',
+            'url': '/bill_product_report/html?docids=%s&context=%s' % (
+                self.id, context_json),
+            'target': 'new',
+        }
 
     def action_view_report(self):
         self.ensure_one()
