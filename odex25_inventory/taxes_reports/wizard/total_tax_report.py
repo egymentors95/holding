@@ -26,8 +26,8 @@ class TotalTaxReport(models.TransientModel):
         sales_lines_15 = lines_15.filtered(lambda l: l.move_id.move_type == 'out_invoice')
         refund_lines_15 = lines_15.filtered(lambda l: l.move_id.move_type == 'out_refund')
 
-        total_sales_untaxed_15 = abs(sum_credit(sales_lines_15) - sum_debit(sales_lines_15)) / 1.15
-        total_refund_untaxed_15 = abs(sum_debit(refund_lines_15) - sum_credit(refund_lines_15)) / 1.15
+        total_sales_untaxed_15 = abs(sum_credit(sales_lines_15) - sum_debit(sales_lines_15))
+        total_refund_untaxed_15 = abs(sum_debit(refund_lines_15) - sum_credit(refund_lines_15))
         vat_sales_15 = (total_sales_untaxed_15 - total_refund_untaxed_15) * 0.15
 
         # ============= المبيعات 0% =============
@@ -58,8 +58,8 @@ class TotalTaxReport(models.TransientModel):
         purchase_lines_15 = lines_purch_15.filtered(lambda l: l.move_id.move_type == 'in_invoice')
         refund_purchase_lines_15 = lines_purch_15.filtered(lambda l: l.move_id.move_type == 'in_refund')
 
-        total_purchase_untaxed_15 = abs(sum_debit(purchase_lines_15) - sum_credit(purchase_lines_15)) / 1.15
-        total_refund_purchase_untaxed_15 = abs(sum_credit(refund_purchase_lines_15) - sum_debit(refund_purchase_lines_15)) / 1.15
+        total_purchase_untaxed_15 = abs(sum_debit(purchase_lines_15) - sum_credit(purchase_lines_15))
+        total_refund_purchase_untaxed_15 = abs(sum_credit(refund_purchase_lines_15) - sum_debit(refund_purchase_lines_15))
         vat_purchase_15 = (total_purchase_untaxed_15 - total_refund_purchase_untaxed_15) * 0.15
 
         # ============= المشتريات 0% =============
