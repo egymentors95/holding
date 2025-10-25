@@ -23,16 +23,18 @@ class TaxReportWizard(models.TransientModel):
             ('date', '<=', self.date_to),
             ('company_id', 'in', self.env.companies.ids),
             ('state', '=', 'posted'),
+
         ]
         invoices = self.env['account.move'].search(domain)
+
 
         # -----------------------------------
         for invoice in invoices:
             tax_flag = invoice.tax_flag
             source = invoice.type_tax_use
-            tax_value = invoice.amount_tax
+            tax_value = invoice.amount_tax if invoice.move_type in ['out_invoice','out_refund','in_invoice','in_refund'] else invoice.tax_value
             tax_name = invoice.tax_name
-            value = invoice.amount_total
+            value = invoice.amount_untaxed if invoice.move_type in ['out_invoice','out_refund','in_invoice','in_refund'] else invoice.amount_untaxed_entry
             invoice_name = invoice.name
             date = invoice.date
             description_note = invoice.description_note
