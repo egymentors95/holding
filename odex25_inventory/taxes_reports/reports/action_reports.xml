@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="report_action_tax" model="ir.actions.report">
+        <field name="name">Taxes XLS Report</field>
+        <field name="model">tax.report.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">taxes_reports.tax_report_xlsx</field>
+        <field name="report_file">taxes_reports.tax_report_xlsx</field>
+        <field name="binding_type">report</field>
+    </record>
+
+
+</odoo>
