@@ -86,9 +86,10 @@ class TotalTaxReport(models.TransientModel):
         result = [
             # ==== SALES ====
             {'description': 'المبيعات الخاضعة للنسبة الأساسية 15%', 'price': total_sales_untaxed_15, 'refund': total_refund_untaxed_15, 'vat': vat_sales_15},
-            {'description': 'المبيعات الخاضعة للنسبة الأساسية 5%', 'price': 0, 'refund': 0, 'vat': 0},
+            # {'description': 'المبيعات الخاضعة للنسبة الأساسية 5%', 'price': 0, 'refund': 0, 'vat': 0},
+            {'description': 'المبيعات الخاضعة للنسبة الأساسية 0%', 'price': total_sales_untaxed_0, 'refund': total_refund_untaxed_0, 'vat': vat_sales_0},
             {'description': 'المبيعات للمواطنين (خدمات صحية / تعليم أهلي)', 'price': 0, 'refund': 0, 'vat': 0},
-            {'description': 'مبيعات محلية خاضعة للنسبة الصفرية', 'price': total_sales_untaxed_0, 'refund': total_refund_untaxed_0, 'vat': vat_sales_0},
+            # {'description': 'مبيعات محلية خاضعة للنسبة الصفرية', 'price': total_sales_untaxed_0, 'refund': total_refund_untaxed_0, 'vat': vat_sales_0},
             {'description': 'صادرات', 'price': 0, 'refund': 0, 'vat': 0},
             {'description': 'مبيعات معفاة', 'price': 0, 'refund': 0, 'vat': 0},
             {'description': 'الإجمالي (المبيعات)', 'price': total_sales_untaxed_15 + total_sales_untaxed_0, 'refund': total_refund_untaxed_15 + total_refund_untaxed_0, 'vat': total_sales_vat},
@@ -97,7 +98,7 @@ class TotalTaxReport(models.TransientModel):
             {'description': 'المشتريات الخاضعة للنسبة الأساسية 15%', 'price': total_purchase_untaxed_15, 'refund': total_refund_purchase_untaxed_15, 'vat': vat_purchase_15},
             {'description': 'المشتريات الخاضعة للنسبة الأساسية 5%', 'price': 0, 'refund': 0, 'vat': 0},
             {'description': 'الإستيرادات الخاضعة للنسبة الأساسية وتدفع بالجمارك 15%', 'price': 0, 'refund': 0, 'vat': 0},
-            {'description': 'الإستيرادات الخاضعة للنسبة الأساسية وتدفع بالجمارك 5%', 'price': 0, 'refund': 0, 'vat': 0},
+            # {'description': 'الإستيرادات الخاضعة للنسبة الأساسية وتدفع بالجمارك 5%', 'price': 0, 'refund': 0, 'vat': 0},
             {'description': 'الإستيرادات الخاضعة للنسبة الأساسية والتي تطبق عليها آلية الإحتساب العكسي', 'price': 0, 'refund': 0, 'vat': 0},
             {'description': 'المشتريات الخاضعة للنسبة الصفرية', 'price': total_purchase_untaxed_0, 'refund': total_refund_purchase_untaxed_0, 'vat': vat_purchase_0},
             {'description': 'المشتريات المعفاة', 'price': 0, 'refund': 0, 'vat': 0},
