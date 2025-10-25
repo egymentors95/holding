@@ -19,7 +19,7 @@ class TotalTaxReport(models.TransientModel):
             ('date', '>=', date_start), ('date', '<=', date_end),
             ('parent_state', '=', 'posted'),
             ('tax_ids.amount', '=', 15),
-            ('company_id', 'in', self.env.companies.ids)
+            ('company_id', 'in', self.env.companies.ids),
             ('move_id.move_type', 'in', ['out_invoice', 'out_refund']),
         ]
         lines_15 = AccountMoveLine.search(domain_sales_15)
