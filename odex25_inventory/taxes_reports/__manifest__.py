@@ -13,6 +13,7 @@
         "views/account_tax_views.xml",
         "views/description_note_views.xml",
         "wizard/tax_report_wizard.xml",
+        "wizard/total_tax_report.xml",
         "reports/action_reports.xml",
     ],
     "installable": True,

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="total_tax_report_view_form" model="ir.ui.view">
+            <field name="name">total.tax.report.view.form</field>
+            <field name="model">total.tax.report</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="date_start"/>
+                            </group>
+                            <group>
+                                <field name="date_end"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Export Xlsx" name="action_print_report_xlsx" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="total_tax_report_action" model="ir.actions.act_window">
+            <field name="name">Total Tax Report</field>
+            <field name="res_model">total.tax.report</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                </p>
+            </field>
+        </record>
+
+         <menuitem id="total_tax_report_menu_item" name="Total Tax Report"
+                  parent="taxes_reports.tax_report_menu_root"
+                   action="taxes_reports.total_tax_report_action"
+                  sequence="200"/>
+
+
+    </data>
+</odoo>
