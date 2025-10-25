@@ -6,6 +6,7 @@ class AccountMove(models.Model):
 
     tax_name = fields.Char(string="Tax Description", compute='_compute_vat_info', store=True)
     tax_flag = fields.Char(string="Tax Type", compute='_compute_vat_info', store=True)
+    e_amount_tax = fields.Char(string="E Amount Tax", compute='_compute_vat_info', store=True)
     type_tax_use = fields.Selection([
         ('sale', 'Sales'),
         ('purchase', 'Purchases'),
@@ -25,11 +26,13 @@ class AccountMove(models.Model):
                 if taxes:
                     first_tax = taxes[0]
                     move.tax_name = first_tax.description or first_tax.name or ''
+                    move.e_amount_tax = first_tax.amount  or ''
                     move.tax_flag = getattr(first_tax, 'tax_flag', '')
                     move.type_tax_use = getattr(first_tax, 'type_tax_use', 'none')
                 else:
                     move.tax_name = ''
                     move.tax_flag = ''
+                    move.e_amount_tax = ''
                     move.type_tax_use = 'none'
 
             # -------------------------------
@@ -42,11 +45,13 @@ class AccountMove(models.Model):
                 if tax_line:
                     first_tax = tax_line.tax_ids[0]
                     move.tax_name = first_tax.description or first_tax.name or ''
+                    move.e_amount_tax = first_tax.amount  or ''
                     move.tax_flag = getattr(first_tax, 'tax_flag', '')
                     move.type_tax_use = getattr(first_tax, 'type_tax_use', 'none')
                 else:
                     move.tax_name = ''
                     move.tax_flag = ''
+                    move.e_amount_tax = ''
                     move.type_tax_use = 'none'
 
     @api.depends('line_ids.debit', 'line_ids.credit', 'line_ids.tax_ids')

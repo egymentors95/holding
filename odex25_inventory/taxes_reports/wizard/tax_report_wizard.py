@@ -33,7 +33,7 @@ class TaxReportWizard(models.TransientModel):
             tax_flag = invoice.tax_flag
             source = invoice.type_tax_use
             tax_value = invoice.amount_tax if invoice.move_type in ['out_invoice','out_refund','in_invoice','in_refund'] else invoice.tax_value
-            tax_name = invoice.tax_name
+            tax_name = invoice.e_amount_tax
             value = invoice.amount_untaxed if invoice.move_type in ['out_invoice','out_refund','in_invoice','in_refund'] else invoice.amount_untaxed_entry
             invoice_name = invoice.name
             date = invoice.date
@@ -58,7 +58,7 @@ class TaxReportWizard(models.TransientModel):
 
             })
 
-        return {'combined_data': sorted(combined_data, key=lambda inv: inv['date'] or '')}
+        return {'combined_data': sorted(combined_data, key=lambda inv: inv['source'] or '')}
 
     def action_print_report_xlsx(self):
         self.ensure_one()

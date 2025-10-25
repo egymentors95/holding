@@ -78,64 +78,38 @@ class TotalTaxReport(models.TransientModel):
         total_refund_purchase_untaxed_0 = abs(sum_credit(refund_purchase_lines_0) - sum_debit(refund_purchase_lines_0))
         vat_purchase_0 = 0.0
 
-        # ============= الإجماليات =============
-        total_sales = total_sales_untaxed_15 + total_sales_untaxed_0
-        total_sales_refund = total_refund_untaxed_15 + total_refund_untaxed_0
+        # ============= إجماليات المبيعات والمشتريات =============
         total_sales_vat = vat_sales_15 + vat_sales_0
-
-        total_purchases = total_purchase_untaxed_15 + total_purchase_untaxed_0
-        total_purchases_refund = total_refund_purchase_untaxed_15 + total_refund_purchase_untaxed_0
-        total_purchases_vat = vat_purchase_15 + vat_purchase_0
+        total_purchase_vat = vat_purchase_15 + vat_purchase_0
+        net_vat = total_sales_vat - total_purchase_vat
 
         result = [
             # ==== SALES ====
-            {
-                'description': 'المبيعات الخاضعة للنسبة الأساسية 15%',
-                'price': round(total_sales_untaxed_15, 2),
-                'refund': round(total_refund_untaxed_15, 2),
-                'vat': round(vat_sales_15, 2),
-            },
-            {
-                'description': 'مبيعات محلية خاضعة للنسبة الصفرية',
-                'price': round(total_sales_untaxed_0, 2),
-                'refund': round(total_refund_untaxed_0, 2),
-                'vat': round(vat_sales_0, 2),
-            },
-            {
-                'description': 'الإجمالي (المبيعات)',
-                'price': round(total_sales, 2),
-                'refund': round(total_sales_refund, 2),
-                'vat': round(total_sales_vat, 2),
-            },
-            # ==== PURCHASES ====
-            {
-                'description': 'المشتريات الخاضعة للنسبة الأساسية 15%',
-                'price': round(total_purchase_untaxed_15, 2),
-                'refund': round(total_refund_purchase_untaxed_15, 2),
-                'vat': round(vat_purchase_15, 2),
-            },
-            {
-                'description': 'مشتريات محلية خاضعة للنسبة الصفرية',
-                'price': round(total_purchase_untaxed_0, 2),
-                'refund': round(total_refund_purchase_untaxed_0, 2),
-                'vat': round(vat_purchase_0, 2),
-            },
-            {
-                'description': 'الإجمالي (المشتريات)',
-                'price': round(total_purchases, 2),
-                'refund': round(total_purchases_refund, 2),
-                'vat': round(total_purchases_vat, 2),
-            },
-        ]
+            {'description': 'المبيعات الخاضعة للنسبة الأساسية 15%', 'price': total_sales_untaxed_15, 'refund': total_refund_untaxed_15, 'vat': vat_sales_15},
+            {'description': 'المبيعات الخاضعة للنسبة الأساسية 5%', 'price': 0, 'refund': 0, 'vat': 0},
+            {'description': 'المبيعات للمواطنين (خدمات صحية / تعليم أهلي)', 'price': 0, 'refund': 0, 'vat': 0},
+            {'description': 'مبيعات محلية خاضعة للنسبة الصفرية', 'price': total_sales_untaxed_0, 'refund': total_refund_untaxed_0, 'vat': vat_sales_0},
+            {'description': 'صادرات', 'price': 0, 'refund': 0, 'vat': 0},
+            {'description': 'مبيعات معفاة', 'price': 0, 'refund': 0, 'vat': 0},
+            {'description': 'الإجمالي (المبيعات)', 'price': total_sales_untaxed_15 + total_sales_untaxed_0, 'refund': total_refund_untaxed_15 + total_refund_untaxed_0, 'vat': total_sales_vat},
 
+            # ==== PURCHASES ====
+            {'description': 'المشتريات الخاضعة للنسبة الأساسية 15%', 'price': total_purchase_untaxed_15, 'refund': total_refund_purchase_untaxed_15, 'vat': vat_purchase_15},
+            {'description': 'المشتريات الخاضعة للنسبة الأساسية 5%', 'price': 0, 'refund': 0, 'vat': 0},
+            {'description': 'الإستيرادات الخاضعة للنسبة الأساسية وتدفع بالجمارك 15%', 'price': 0, 'refund': 0, 'vat': 0},
+            {'description': 'الإستيرادات الخاضعة للنسبة الأساسية وتدفع بالجمارك 5%', 'price': 0, 'refund': 0, 'vat': 0},
+            {'description': 'الإستيرادات الخاضعة للنسبة الأساسية والتي تطبق عليها آلية الإحتساب العكسي', 'price': 0, 'refund': 0, 'vat': 0},
+            {'description': 'المشتريات الخاضعة للنسبة الصفرية', 'price': total_purchase_untaxed_0, 'refund': total_refund_purchase_untaxed_0, 'vat': vat_purchase_0},
+            {'description': 'المشتريات المعفاة', 'price': 0, 'refund': 0, 'vat': 0},
+            {'description': 'الإجمالي (المشتريات)', 'price': total_purchase_untaxed_15 + total_purchase_untaxed_0, 'refund': total_refund_purchase_untaxed_15 + total_refund_purchase_untaxed_0, 'vat': total_purchase_vat},
+
+            # ==== SUMMARY ====
+            {'description': 'ضريبة المخرجات', 'price': '', 'refund': '', 'vat': total_sales_vat},
+            {'description': 'ضريبة المدخلات', 'price': '', 'refund': '', 'vat': total_purchase_vat},
+            {'description': 'صافي الضريبة المستحقة', 'price': '', 'refund': '', 'vat': net_vat},
+        ]
         return result
 
-
     def action_print_report_xlsx(self):
-        self.ensure_one()
-        data = {
-            'date_start': self.date_start,
-            'date_end': self.date_end,
-            'lines': self.get_data(),
-        }
+        data = {'date_start': self.date_start, 'date_end': self.date_end, 'lines': self.get_data()}
         return self.env.ref('taxes_reports.report_action_total_tax').report_action(self, data=data)

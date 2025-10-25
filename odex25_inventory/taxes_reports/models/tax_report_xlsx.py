@@ -35,15 +35,15 @@ class TaxReportXlsx(models.AbstractModel):
         headers = [
             'Tax Flag Name',
             'Source',
-            'Tax Value',
-            'Tax Name',
+            'Tax',
+            'PER',
             'Value',
-            'Invoice',
+            'INV_NO',
             'Date',
+            'Description_A',
             'Partner Code',
             'Partner Name',
             'Partner VAT',
-            'Description',
         ]
 
         # كتابة العناوين في الصف الأول
@@ -59,14 +59,14 @@ class TaxReportXlsx(models.AbstractModel):
             sheet.write(row, 0, inv.get('tax_flag'), text_format)
             sheet.write(row, 1, inv.get('source'), text_format)
             sheet.write(row, 2, str(inv.get('tax_value') or ''), text_format)
-            sheet.write(row, 3, inv.get('tax_name') or '', text_format)
+            sheet.write(row, 3, f"{inv.get('tax_name')}%" or '', text_format)
             sheet.write(row, 4, inv.get('value') or 0.0, number_format)
             sheet.write(row, 5, inv.get('invoice_name') or '', text_format)
             sheet.write(row, 6, str(inv.get('date') or ''), text_format)
-            sheet.write(row, 7, inv.get('code') or '', text_format)
-            sheet.write(row, 8, inv.get('partner_name') or '', text_format)
-            sheet.write(row, 9, inv.get('partner_vat') or '', text_format)
-            sheet.write(row, 10, inv.get('description_note') or '', text_format)
+            sheet.write(row, 7, inv.get('description_note') or '', text_format)
+            sheet.write(row, 8, inv.get('code') or '', text_format)
+            sheet.write(row, 9, inv.get('partner_name') or '', text_format)
+            sheet.write(row, 10, inv.get('partner_vat') or '', text_format)
             row += 1
 
         # عرض الأعمدة تلقائيًا
