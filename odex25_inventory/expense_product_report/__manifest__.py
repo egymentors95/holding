@@ -12,6 +12,7 @@
         # "views/account_move_line2_views.xml",
         "views/account_account_views.xml",
         "views/account_move_views.xml",
+        "views/account_tax_views.xml",
         "wizard/expense_wizard_views.xml",
         "reports/expense_template_views.xml",
         "reports/action_reports.xml",

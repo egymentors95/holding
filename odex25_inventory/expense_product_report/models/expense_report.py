@@ -142,17 +142,18 @@ class ExpenseReport(models.AbstractModel):
         grand_total_val = grand_totals['total']
         row += 1
 
-        # ======= Total Sales =======
-        worksheet.write(row, 0, 'Total Sales', sales_total_format)
+        # ======= Total Sales (Net Profit) =======
+        worksheet.write(row, 0, 'Total Gross Profit', sales_total_format)
         worksheet.write(row, 1, '', sales_total_format)
 
-        total_sales = 0.0
+        total_net_profit = 0.0
         for emp in employees:
-            sales_val = sales_by_employee.get(emp, 0.0)
-            worksheet.write_number(row, emp_col_map[emp], sales_val, sales_total_format)
-            total_sales += sales_val
+            # استخدام net_profit بدل sales_val
+            net_profit_val = sales_by_employee.get(emp, {}).get('net_profit', 0.0)
+            worksheet.write_number(row, emp_col_map[emp], net_profit_val, sales_total_format)
+            total_net_profit += net_profit_val
 
-        worksheet.write_number(row, total_col, total_sales, sales_total_format)
+        worksheet.write_number(row, total_col, total_net_profit, sales_total_format)
         worksheet.write(row, percent_col, '', sales_total_format)
         row += 1
 

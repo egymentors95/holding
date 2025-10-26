@@ -79,28 +79,43 @@ class ExpenseWizard(models.TransientModel):
         print('sales_lines', sales_lines)
 
         # تجميع بيانات المبيعات لكل موظف
-        sales_by_employee = {}
+        data_by_employee = {}
         total_sales = 0.0
+        total_cost = 0.0
 
         for line in sales_lines:
-            # employee = line.move_id.invoice_user_id.employee_id.name if line.move_id.invoice_user_id else 'N/A'
-            employee = line.partner_id.user_ids[0].employee_id.name if line.partner_id.user_ids else 'N/A'
+            employee = line.move_id.invoice_user_id.employee_id.name if line.move_id.invoice_user_id else 'N/A'
+            # employee = line.partner_id.user_ids[0].employee_id.name if line.partner_id.user_ids else 'N/A'
 
             # حساب صافي المبيعات (الإيراد)
-            amount = line.credit - line.debit
-            print('amount', amount)
+            qty = line.quantity or 0.0
+            sales_amount = line.price_subtotal or 0.0
+            cost_amount = line.product_id.standard_price * qty  # تكلفة المنتج
 
-            if employee not in sales_by_employee:
-                sales_by_employee[employee] = 0.0
-            sales_by_employee[employee] += amount
-            total_sales += amount
-            print('total_sales', total_sales)
+            if employee not in data_by_employee:
+                data_by_employee[employee] = {
+                    'sales': 0.0,
+                    'cost': 0.0,
+                    'net_profit': 0.0,
+                }
+
+            data_by_employee[employee]['sales'] += sales_amount
+            data_by_employee[employee]['cost'] += cost_amount
+            data_by_employee[employee]['net_profit'] = (
+                    data_by_employee[employee]['sales'] - data_by_employee[employee]['cost']
+            )
+
+            total_sales += sales_amount
+            total_cost += cost_amount
+
+        total_net_profit = total_sales - total_cost
 
         return {
-            'by_employee': sales_by_employee,
-            'total': total_sales
+            'by_employee': data_by_employee,
+            'total_sales': total_sales,
+            'total_cost': total_cost,
+            'total_net_profit': total_net_profit,
         }
-
     def action_print_report_xlsx(self):
         self.ensure_one()
         report_data = self.get_report_data()

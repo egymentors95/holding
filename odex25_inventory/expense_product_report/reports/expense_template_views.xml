@@ -154,17 +154,18 @@
 
                         <!-- Total Sales -->
                         <tr style="background-color: #FFE699;">
-                            <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Total Sales</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Total Gross Profit</td>
                             <td style="border: 1px solid #ddd; padding: 8px;"></td>
 
                             <t t-foreach="employees" t-as="emp">
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">
-                                    <t t-esc="'%.2f' % sales_data.get('by_employee', {}).get(emp, 0.0)"/>
+                                    <t t-esc="'%.2f' % sales_data.get('by_employee', {}).get(emp, {}).get('net_profit', 0.0)"/>
+
                                 </td>
                             </t>
 
                             <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">
-                                <t t-esc="'%.2f' % sales_data.get('total', 0.0)"/>
+                                <t t-esc="'%.2f' % sales_data.get('total_net_profit', 0.0)"/>
                             </td>
                             <td style="border: 1px solid #ddd; padding: 8px;"></td>
                         </tr>
