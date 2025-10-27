@@ -18,7 +18,9 @@
                                 <field name="product_ids" widget="many2many_tags"/>
 <!--                                <field name="sales_person_ids" widget="many2many_tags"/>-->
                                 <field name="product_category_ids" widget="many2many_tags"/>
-                                <field name="is_partner" />
+                                <field name="groub_by_partner"/>
+                                <field name="partner_ids" widget="many2many_tags" attrs="{'invisible': [('groub_by_partner', '!=', 'partners')]}"/>
+                                <field name="partner_category_ids" widget="many2many_tags" attrs="{'invisible': [('groub_by_partner', '!=', 'category')]}"/>
                             </group>
                         </group>
                     </sheet>

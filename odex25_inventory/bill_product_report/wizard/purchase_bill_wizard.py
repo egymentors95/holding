@@ -226,6 +226,7 @@ class PurchaseBillWizard(models.TransientModel):
         data = {
             'date_from': self.date_from,
             'date_to': self.date_to,
+            'currency_name': self.currency_id.name,
             'product_ids': self.get_report_data()['combined_data'],
         }
 

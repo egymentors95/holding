@@ -12,7 +12,14 @@ class ProfitReportWizard(models.TransientModel):
     date_from = fields.Date(string='Date From')
     date_to = fields.Date(string='Date To')
     product_category_ids = fields.Many2many(string='Product Categories', comodel_name='product.category')
-    is_partner = fields.Boolean(string='Is Partner', default=False)
+    # is_partner = fields.Boolean(string='Is Partner', default=False)
+    groub_by_partner = fields.Selection([
+        ('partners', 'Partners'),
+        ('category', 'Category'),
+    ], string='Group by Partner', default='partners')
+    partner_ids = fields.Many2many(string='Partners', comodel_name='res.partner')
+    partner_category_ids = fields.Many2many(string='Partner Categories', comodel_name='partner.category')
+
 
     def get_report_data(self):
         combined_data = []
@@ -64,20 +71,21 @@ class ProfitReportWizard(models.TransientModel):
             product_name = product.name
             default_code = product.default_code or ''
 
-            # ✅ لو خيار is_partner مفعّل → نقسم حسب البارتنر
-            if self.is_partner:
-                partners = product_lines.mapped('move_id.partner_id')
+            partner_category_ids = False
+            if self.groub_by_partner == 'partners':
+                partner_category_ids = product_lines.mapped('move_id.partner_id')
             else:
-                partners = [False]  # يعني هنجمع كلهم سوا
+                partner_category_ids = product_lines.mapped('move_id.partner_category_id')
 
-            for partner in partners:
-                if partner:
+            for partner in partner_category_ids:
+                if self.groub_by_partner == 'partners':
                     current_lines = product_lines.filtered(lambda l: l.move_id.partner_id == partner)
                     last_year_partner_lines = last_year_lines.filtered(
                         lambda l: l.product_id == product and l.move_id.partner_id == partner)
                 else:
-                    current_lines = product_lines
-                    last_year_partner_lines = last_year_lines.filtered(lambda l: l.product_id == product)
+                    current_lines = product_lines.filtered(lambda l: l.move_id.partner_category_id == partner)
+                    last_year_partner_lines = last_year_lines.filtered(
+                        lambda l: l.product_id == product and l.move_id.partner_category_id == partner)
 
                 # -------- المبيعات الحالية --------
                 qty_out_invoice = sum(current_lines.filtered(
@@ -156,6 +164,9 @@ class ProfitReportWizard(models.TransientModel):
 
                 # -------- Append --------
                 combined_data.append({
+                    'Product Category ID': product.categ_id.product_category,
+                    'Product Order': product.product_category,
+
                     'Partner': partner.name if partner else '',
                     'Product Category': product_category,
                     'Product': product_name,
@@ -173,6 +184,13 @@ class ProfitReportWizard(models.TransientModel):
                     'Last Profit Value': last_profit_value,
                     'Last Margin': last_margin,
                 })
+            combined_data = sorted(
+                combined_data,
+                key=lambda x: (
+                    x['Product Category ID'] or 999999,
+                    x['Product Order'] or 999999
+                )
+            )
 
         return {'combined_data': combined_data}
 
