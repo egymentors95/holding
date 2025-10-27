@@ -216,6 +216,7 @@ class PurchaseBillWizard(models.TransientModel):
         data = {
             'date_from': self.date_from,
             'date_to': self.date_to,
+            'currency_name': self.currency_id.name,
             'product_ids': self.get_report_data()['combined_data'],
         }
         return self.env.ref('bill_product_report.report_action_invoice_bill').report_action(self, data=data)
