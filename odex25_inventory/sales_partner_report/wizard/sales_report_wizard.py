@@ -85,6 +85,10 @@ class SalesReportWizard(models.TransientModel):
             product_category = product.categ_id.name
             product_name = product.name
             default_code = product.default_code or ''
+            dos = product.dos
+            private_category = product.private_category_id.name if product.private_category_id else ''
+
+
 
             partner_category_ids = False
             if self.groub_by_partner == 'partners':
@@ -163,6 +167,8 @@ class SalesReportWizard(models.TransientModel):
                 combined_data.append({
                     'Product Category ID': product.categ_id.product_category,
                     'Product Order': product.product_category,
+                    'Dos': dos,
+                    'private_category': private_category,
 
                     'Product Category': product_category,
                     'Product': product_name,
