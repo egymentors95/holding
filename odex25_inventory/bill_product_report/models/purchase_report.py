@@ -13,16 +13,6 @@ class InvoiceBillReport(models.AbstractModel):
         date_from = data.get('date_from')
         date_to = data.get('date_to')
 
-        # if date_from:
-        #     date_from_last_year = datetime.strptime(date_from, "%Y-%m-%d").replace(
-        #         year=datetime.strptime(date_from, "%Y-%m-%d").year - 1)
-        # else:
-        #     date_from_last_year = None
-        # if date_to:
-        #     date_to_last_year = datetime.strptime(date_to, "%Y-%m-%d").replace(
-        #         year=datetime.strptime(date_to, "%Y-%m-%d").year - 1)
-        # else:
-        #     date_to_last_year = None
 
         worksheet = workbook.add_worksheet('Purchase Report')
         row = 0
@@ -48,10 +38,10 @@ class InvoiceBillReport(models.AbstractModel):
                                               'align': 'center', 'valign': 'vcenter', 'border': 2})
         header_format3 = workbook.add_format({'bold': True, 'bg_color': '#27F5C1',
                                               'align': 'center', 'valign': 'vcenter', 'border': 2})
-        header_format4 = workbook.add_format({'bold': True, 'bg_color': '#E6376F',
+        header_format4 = workbook.add_format({'bold': True, 'bg_color': '#f0f0f0', 'num_format': '#,##0.00',
                                              'align': 'center', 'valign': 'vcenter', 'border': 2})
 
-        cell_format = workbook.add_format({'align': 'center', 'valign': 'vcenter',
+        cell_format = workbook.add_format({'align': 'center', 'valign': 'vcenter','num_format': '#,##0.00',
                                            'border': 0, 'left': 2, 'right': 2, 'top': 1,  'bottom': 1})
 
         logo_path = get_module_resource('bill_product_report', 'static/img', 'logo.png')
@@ -60,7 +50,7 @@ class InvoiceBillReport(models.AbstractModel):
                 'x_scale': .92,
                 'y_scale': 0.190,
             })
-
+        currency_name = data.get('currency_name') or 'SR'
         # ---------------- Header with dates ----------------
         worksheet.merge_range(row, col+2, row+4, col+6, "")
 
@@ -75,7 +65,7 @@ class InvoiceBillReport(models.AbstractModel):
         worksheet.write(row, col + 1, f"{date_to}", header_format0)
         row += 1
         worksheet.write(row, col, f"Currency", header_format0)
-        worksheet.write(row, col + 1, f"SR or USD", header_format0)
+        worksheet.write(row, col + 1, currency_name, header_format0)
         row += 2
 
         # ---------------- Table Headers ----------------
@@ -85,7 +75,7 @@ class InvoiceBillReport(models.AbstractModel):
 
         # هيدر السنة اللي فاتت
         worksheet.merge_range(
-            row, col + 3, row, col + 6,
+            row, col + 3, row, col + 8,
             f"Received QTY",
             header_format2
         )
@@ -93,20 +83,22 @@ class InvoiceBillReport(models.AbstractModel):
         # الهيدر الفرعي للسنة اللي فاتت
         worksheet.write(row + 1, col + 3, "Main Qty", header_format2)
         worksheet.write(row + 1, col + 4, "Foc", header_format2)
-        worksheet.write(row + 1, col + 5, "Value", header_format2)
-        worksheet.write(row + 1, col + 6, "NAAP", header_format2)
+        worksheet.write(row + 1, col + 5, "Total Qty", header_format2)
+        worksheet.write(row + 1, col + 6, "Percentage", header_format2)
+        worksheet.write(row + 1, col + 7, "Value", header_format2)
+        worksheet.write(row + 1, col + 8, "NAAP", header_format2)
 
 
         # الهيدر الفرعي للفترة الحالية
         worksheet.merge_range(
-            row, col + 7, row, col + 9,
+            row, col + 9, row, col + 11,
             f"Full Year Plan",
             header_format3
         )
         # worksheet.write(row + 1, col + 7, "Vendor", header_format3)
-        worksheet.write(row + 1, col + 7, "QTY", header_format3)
-        worksheet.write(row + 1, col + 8, "Value", header_format3)
-        worksheet.write(row + 1, col + 9, "Ach.%", header_format3)
+        worksheet.write(row + 1, col + 9, "QTY", header_format3)
+        worksheet.write(row + 1, col + 10, "Value", header_format3)
+        worksheet.write(row + 1, col + 11, "Ach.%", header_format3)
         row += 2
 
         # ---------------- Data Rows ----------------
@@ -119,6 +111,8 @@ class InvoiceBillReport(models.AbstractModel):
             'Plan Quantity': 0,
             'Plan Value': 0,
             'Achive': 0,
+            'Percentage': 0,
+            'Grand Total Qty': 0,
         }
 
         for record in lots_data:
@@ -127,14 +121,16 @@ class InvoiceBillReport(models.AbstractModel):
                 # Subtotal Row
                 worksheet.write(row, col + 1, "Total", header_format)
                 worksheet.write(row, col + 2, "", header_format)
-                worksheet.write_number(row, col + 3, category_totals['Total Quantity'], header_format)
-                worksheet.write_number(row, col + 4, category_totals['Foc'], header_format)
-                worksheet.write_number(row, col + 5, category_totals['Total Price'], header_format)
-                worksheet.write_number(row, col + 6, category_totals['Nsap'], header_format)
+                worksheet.write_number(row, col + 3, category_totals['Total Quantity'], header_format4)
+                worksheet.write_number(row, col + 4, category_totals['Foc'], header_format4)
+                worksheet.write_number(row, col + 5, category_totals['Grand Total Qty'], header_format4)
+                worksheet.write_number(row, col + 6, category_totals['Percentage'], header_format4)
+                worksheet.write_number(row, col + 7, category_totals['Total Price'], header_format4)
+                worksheet.write_number(row, col + 8, category_totals['Nsap'], header_format4)
                 # worksheet.write(row, col + 7, "", header_format)
-                worksheet.write_number(row, col + 7, category_totals['Plan Quantity'], header_format)
-                worksheet.write_number(row, col + 8, category_totals['Plan Value'], header_format)
-                worksheet.write_number(row, col + 9, category_totals['Achive'], header_format)
+                worksheet.write_number(row, col + 9, category_totals['Plan Quantity'], header_format4)
+                worksheet.write_number(row, col + 10, category_totals['Plan Value'], header_format4)
+                worksheet.write_number(row, col + 11, category_totals['Achive'], header_format4)
                 row += 2  # نسيب سطر فاصل بعد الـ Subtotal
 
                 # Reset totals
@@ -151,12 +147,14 @@ class InvoiceBillReport(models.AbstractModel):
             worksheet.write(row, col + 2, record['Product'] or '', cell_format)
             worksheet.write_number(row, col + 3, record['Total Quantity'], cell_format)
             worksheet.write_number(row, col + 4, record['Foc'], cell_format)
-            worksheet.write_number(row, col + 5, record['Total Price'], cell_format)
-            worksheet.write_number(row, col + 6, record['Nsap'], cell_format)
+            worksheet.write_number(row, col + 5, record['Grand Total Qty'], cell_format)
+            worksheet.write_number(row, col + 6, record['Percentage'], cell_format)
+            worksheet.write_number(row, col + 7, record['Total Price'], cell_format)
+            worksheet.write_number(row, col + 8, record['Nsap'], cell_format)
             # worksheet.write(row, col + 7, record['Vendor'], cell_format)
-            worksheet.write_number(row, col + 7, record['Plan Quantity'], cell_format)
-            worksheet.write_number(row, col + 8, record['Plan Value'], cell_format)
-            worksheet.write_number(row, col + 9, record['Achive'], cell_format)
+            worksheet.write_number(row, col + 9, record['Plan Quantity'], cell_format)
+            worksheet.write_number(row, col + 10, record['Plan Value'], cell_format)
+            worksheet.write_number(row, col + 11, record['Achive'], cell_format)
 
             # نجمع القيم عشان subtotal
             category_totals['Total Quantity'] += record['Total Quantity']
@@ -166,6 +164,8 @@ class InvoiceBillReport(models.AbstractModel):
             category_totals['Plan Quantity'] += record['Plan Quantity']
             category_totals['Plan Value'] += record['Plan Value']
             category_totals['Achive'] += record['Achive']
+            category_totals['Grand Total Qty'] += record['Grand Total Qty']
+            category_totals['Percentage'] += record['Percentage']
 
             row += 1
 
@@ -174,13 +174,15 @@ class InvoiceBillReport(models.AbstractModel):
             worksheet.write(row, col + 1, "Total", header_format)
             worksheet.write(row, col + 2, "", header_format)
 
-            worksheet.write_number(row, col + 3, category_totals['Total Quantity'], header_format)
-            worksheet.write_number(row, col + 4, category_totals['Foc'], header_format)
-            worksheet.write_number(row, col + 5, category_totals['Total Price'], header_format)
-            worksheet.write_number(row, col + 6, category_totals['Nsap'], header_format)
+            worksheet.write_number(row, col + 3, category_totals['Total Quantity'], header_format4)
+            worksheet.write_number(row, col + 4, category_totals['Foc'], header_format4)
+            worksheet.write_number(row, col + 5, category_totals['Grand Total Qty'], header_format4)
+            worksheet.write_number(row, col + 6, category_totals['Percentage'], header_format4)
+            worksheet.write_number(row, col + 7, category_totals['Total Price'], header_format4)
+            worksheet.write_number(row, col + 8, category_totals['Nsap'], header_format4)
             # worksheet.write(row, col + 7, "", header_format)
 
-            worksheet.write_number(row, col + 7, category_totals['Plan Quantity'], header_format)
-            worksheet.write_number(row, col + 8, category_totals['Plan Value'], header_format)
-            worksheet.write_number(row, col + 9, category_totals['Achive'], header_format)
+            worksheet.write_number(row, col + 9, category_totals['Plan Quantity'], header_format4)
+            worksheet.write_number(row, col + 10, category_totals['Plan Value'], header_format4)
+            worksheet.write_number(row, col + 11, category_totals['Achive'], header_format4)
 
