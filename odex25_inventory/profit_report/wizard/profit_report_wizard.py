@@ -57,14 +57,14 @@ class ProfitReportWizard(models.TransientModel):
         # -------------------------------
         # جلب خطوط السنة اللي فاتت مرة واحدة
         # -------------------------------
-        domain2 = self.env['account.move.line'].search([
+        domain2 = [
             ('date', '>=', date_from_last_year),
             ('date', '<=', date_to_last_year),
             ('company_id', 'in', self.env.companies.ids),
             ('move_id.state', '=', 'posted'),
             ('account_id.internal_group', '=', 'income'),
 
-        ])
+        ]
         if self.product_ids:
             domain2.append(('product_id', 'in', self.product_ids.ids))
         if self.product_category_ids:
