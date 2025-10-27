@@ -46,13 +46,18 @@ class ProfitReportWizard(models.TransientModel):
             domain.append(('product_id', 'in', self.product_ids.ids))
         if self.product_category_ids:
             domain.append(('product_id.categ_id', 'in', self.product_category_ids.ids))
+        if self.partner_ids:
+            domain.append(('move_id.partner_id', 'in', self.partner_ids.ids))
+        if self.partner_category_ids:
+            domain.append(('move_id.partner_category_id', 'in', self.partner_category_ids.ids))
+
 
         lines = self.env['account.move.line'].search(domain)
 
         # -------------------------------
         # جلب خطوط السنة اللي فاتت مرة واحدة
         # -------------------------------
-        last_year_lines = self.env['account.move.line'].search([
+        domain2 = self.env['account.move.line'].search([
             ('date', '>=', date_from_last_year),
             ('date', '<=', date_to_last_year),
             ('company_id', 'in', self.env.companies.ids),
@@ -60,6 +65,17 @@ class ProfitReportWizard(models.TransientModel):
             ('account_id.internal_group', '=', 'income'),
 
         ])
+        if self.product_ids:
+            domain2.append(('product_id', 'in', self.product_ids.ids))
+        if self.product_category_ids:
+            domain2.append(('product_id.categ_id', 'in', self.product_category_ids.ids))
+        if self.partner_ids:
+            domain2.append(('move_id.partner_id', 'in', self.partner_ids.ids))
+        if self.partner_category_ids:
+            domain2.append(('move_id.partner_category_id', 'in', self.partner_category_ids.ids))
+
+        last_year_lines = self.env['account.move.line'].search(domain2)
+
 
 
         # -------------------------------
