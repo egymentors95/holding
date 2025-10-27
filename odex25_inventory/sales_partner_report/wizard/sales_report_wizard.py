@@ -132,9 +132,15 @@ class SalesReportWizard(models.TransientModel):
 
 
                 # -------- السنة اللي فاتت --------
-                last_year_sales = last_year_lines.filtered(
-                    lambda l: l.product_id == product and
-                              l.move_id.partner_category_id == partner)
+                last_year_sales = False
+                if self.groub_by_partner == 'partners':
+                    last_year_sales = last_year_lines.filtered(
+                        lambda l: l.product_id == product and
+                                  l.move_id.partner_id == partner)
+                else:
+                    last_year_sales = last_year_lines.filtered(
+                        lambda l: l.product_id == product and
+                                  l.move_id.partner_category_id == partner)
 
                 last_qty_out_invoice = sum(
                     last_year_sales.filtered(lambda l: l.move_id.move_type == 'out_invoice').mapped('quantity'))

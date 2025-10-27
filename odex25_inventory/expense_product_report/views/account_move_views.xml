@@ -30,7 +30,7 @@
         <field name="model_id" ref="account.model_account_move"/>
         <field name="binding_model_id" ref="account.model_account_move"/>
         <field name="state">code</field>
-        <field name="code">action = record.server_action_partner_category()</field>
+        <field name="code">action = records.server_action_partner_category()</field>
     </record>
 
 </odoo>
