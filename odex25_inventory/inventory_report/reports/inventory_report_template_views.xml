@@ -32,203 +32,63 @@
         </div>
     </template>
 
-    <template id="inventory_report_html">
-        <t t-call="web.html_container">
-            <t t-call="inventory_report.custom_header"/>
+<template id="inventory_report_html">
+    <t t-call="web.html_container">
+        <t t-call="inventory_report.custom_header"/>
 
-            <div class="page">
-                <table class="table table-sm table-bordered"
-                       style="width:100%; border: 1px solid black; text-align: center;">
-                    <thead style="background-color: #f0f0f0; font-weight: bold;">
-                        <tr>
-                            <th>Product Category</th>
-                            <th>Code</th>
-                            <th>Product</th>
-                            <th>Lot</th>
-                            <th>Expiry Date</th>
-                            <th>QTY</th>
-                            <th>Total Dos</th>
-                            <th>QTY Last 6M</th>
-                            <th>QTY Avg</th>
-                            <th>Equ/Month</th>
-                            <th>NAAP</th>
-                            <th>Value</th>
+        <div class="page">
+            <table class="table table-sm table-bordered"
+                   style="width:100%; border: 1px solid black; text-align: center;">
+                <thead style="background-color: #f0f0f0; font-weight: bold;">
+                    <tr>
+                        <th>Product Category</th>
+                        <th>Code</th>
+                        <th>Product</th>
+                        <th>Lot</th>
+                        <th>Expiry Date</th>
+                        <th>QTY</th>
+                        <th>Total Dos</th>
+                        <th>QTY Last 6M</th>
+                        <th>QTY Avg</th>
+                        <th>Equ/Month</th>
+                        <th>NAAP</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <t t-foreach="(report_data or {}).get('product_ids_grouped', [])" t-as="cat_group">
+                        <t t-set="category_name" t-value="cat_group[0]"/>
+                        <t t-set="products" t-value="cat_group[1]"/>
+
+                        <!-- Print Category once -->
+                        <tr style="background-color:#F0EBEB;font-weight:bold;">
+                            <td colspan="12" style="text-align:left;">
+                                <t t-esc="category_name"/>
+                            </td>
                         </tr>
-                    </thead>
 
-                    <tbody>
-                        <t t-set="last_category" t-value="None"/>
-                        <t t-set="last_private" t-value="None"/>
                         <t t-set="cat_totals" t-value="{'qty':0,'dos':0,'qty6m':0,'avg':0,'equ':0,'naap':0,'val':0}"/>
                         <t t-set="priv_totals" t-value="{'qty':0,'dos':0,'qty6m':0,'avg':0,'equ':0,'naap':0,'val':0}"/>
 
-                        <t t-foreach="(report_data or {}).get('product_ids', [])" t-as="line">
-
-                            <!-- Product Category change -->
-                            <t t-if="last_category and line['Product Category'] != last_category">
-                                <!-- Subtotal for last Private Category -->
-                                <tr style="background-color:#EEE;font-weight:bold;">
-                                    <td colspan="5" style="text-align:left;">Subtotal</td>
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(priv_totals['qty'])"/>
-                                    </td>
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(priv_totals['dos']/1000000)"/>
-
-                                    </td>
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(priv_totals['qty6m'])"/>
-
-                                    </td>
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(priv_totals['avg'])"/>
-
-
-                                    </td>
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(priv_totals['equ'])"/>
-
-                                    </td>
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(priv_totals['naap'])"/>
-
-                                    </td>
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(priv_totals['val'])"/>
-
-                                    </td>
-                                </tr>
-                                <t t-set="priv_totals"
-                                   t-value="{'qty':0,'dos':0,'qty6m':0,'avg':0,'equ':0,'naap':0,'val':0}"/>
-
-                                <!-- Total for last Product Category -->
-                                <tr style="background-color:#DCDCDC;font-weight:bold;">
-                                    <td colspan="5" style="text-align:left;">Total (<t t-esc="last_category"/>)
-                                    </td>
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(cat_totals['qty'])"/>
-
-                                    </td>
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(cat_totals['dos']/1000000)"/>
-
-                                    </td>
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(cat_totals['qty6m'])"/>
-
-                                    </td>
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(cat_totals['avg'])"/>
-
-                                    </td>
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(cat_totals['equ'])"/>
-
-                                    </td>
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(cat_totals['naap'])"/>
-
-                                    </td>
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(cat_totals['val'])"/>
-
-                                    </td>
-                                </tr>
-
-                                <t t-set="cat_totals"
-                                   t-value="{'qty':0,'dos':0,'qty6m':0,'avg':0,'equ':0,'naap':0,'val':0}"/>
-                                <t t-set="last_private" t-value="None"/>
-                            </t>
-
-                            <!-- Private Category change -->
-                            <t t-if="last_private and line.get('private_category') != last_private">
-                                <tr style="background-color:#EEE;font-weight:bold;">
-                                    <td colspan="5" style="text-align:left;">Subtotal</td>
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(priv_totals['qty'])"/>
-
-                                    </td>
-
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(priv_totals['dos']/1000000)"/>
-
-                                    </td>
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(priv_totals['qty6m'])"/>
-
-                                    </td>
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(priv_totals['avg'])"/>
-
-                                    </td>
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(priv_totals['equ'])"/>
-
-                                    </td>
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(priv_totals['naap'])"/>
-
-                                    </td>
-                                    <td>
-                                        <t t-esc="'{:,.2f}'.format(priv_totals['val'])"/>
-
-                                    </td>
-                                </tr>
-                                <t t-set="priv_totals"
-                                   t-value="{'qty':0,'dos':0,'qty6m':0,'avg':0,'equ':0,'naap':0,'val':0}"/>
-                            </t>
-
-                            <!-- New Product Category -->
-                            <t t-if="line['Product Category'] != last_category">
-                                <tr style="background-color:#F0EBEB;font-weight:bold;">
-                                    <td colspan="12" style="text-align:left;">
-                                        <t t-esc="line['Product Category']"/>
-                                    </td>
-                                </tr>
-                                <t t-set="last_category" t-value="line['Product Category']"/>
-                                <t t-set="last_private" t-value="None"/>
-                            </t>
-
-                            <!-- Product row -->
+                        <!-- Print products under this category -->
+                        <t t-foreach="products" t-as="line">
                             <tr>
                                 <td></td>
-                                <td>
-                                    <t t-esc="line['Default Code']"/>
-                                </td>
-                                <td>
-                                    <t t-esc="line['Product']"/>
-                                </td>
-                                <td>
-                                    <t t-esc="line['Lots']"/>
-                                </td>
-                                <td>
-                                    <t t-esc="line['expiry_date']"/>
-                                </td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(line['on_hand_qty'])"/>
-
-                                </td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(line['Total Dos'])"/>
-                                </td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(line['sold_last_6_months'])"/>
-                                </td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(line['avg_sold_last_6_months'])"/>
-                                </td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(line['equ_month'])"/>
-                                </td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(line['naap'])"/>
-                                </td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(line['value'])"/>
-                                </td>
+                                <td><t t-esc="line['Default Code']"/></td>
+                                <td><t t-esc="line['Product']"/></td>
+                                <td><t t-esc="line['Lots']"/></td>
+                                <td><t t-esc="line['expiry_date']"/></td>
+                                <td><t t-esc="'{:,.2f}'.format(line['on_hand_qty'])"/></td>
+                                <td><t t-esc="'{:,.2f}'.format(line['Total Dos'])"/></td>
+                                <td><t t-esc="'{:,.2f}'.format(line['sold_last_6_months'])"/></td>
+                                <td><t t-esc="'{:,.2f}'.format(line['avg_sold_last_6_months'])"/></td>
+                                <td><t t-esc="'{:,.2f}'.format(line['equ_month'])"/></td>
+                                <td><t t-esc="'{:,.2f}'.format(line['naap'])"/></td>
+                                <td><t t-esc="'{:,.2f}'.format(line['value'])"/></td>
                             </tr>
 
-                            <!-- update totals -->
+                            <!-- Update totals -->
                             <t t-set="priv_totals" t-value="{
                                 'qty': priv_totals['qty'] + (line['on_hand_qty'] or 0),
                                 'dos': priv_totals['dos'] + (line['Total Dos'] or 0),
@@ -247,70 +107,35 @@
                                 'naap': cat_totals['naap'] + (line['naap'] or 0),
                                 'val': cat_totals['val'] + (line['value'] or 0)
                             }"/>
-
-                            <t t-set="last_private" t-value="line.get('private_category')"/>
                         </t>
 
-                        <!-- Final subtotals after loop -->
-                        <t t-if="last_private">
-                            <tr style="background-color:#EEE;font-weight:bold;">
-                                <td colspan="5" style="text-align:left;">Subtotal</td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(priv_totals['qty'])"/>
+                        <!-- Print subtotal and total per category -->
+                        <tr style="background-color:#EEE;font-weight:bold;">
+                            <td colspan="5" style="text-align:left;">Subtotal</td>
+                            <td><t t-esc="'{:,.2f}'.format(priv_totals['qty'])"/></td>
+                            <td><t t-esc="'{:,.2f}'.format(priv_totals['dos']/1000000)"/></td>
+                            <td><t t-esc="'{:,.2f}'.format(priv_totals['qty6m'])"/></td>
+                            <td><t t-esc="'{:,.2f}'.format(priv_totals['avg'])"/></td>
+                            <td><t t-esc="'{:,.2f}'.format(priv_totals['equ'])"/></td>
+                            <td><t t-esc="'{:,.2f}'.format(priv_totals['naap'])"/></td>
+                            <td><t t-esc="'{:,.2f}'.format(priv_totals['val'])"/></td>
+                        </tr>
 
-                                </td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(priv_totals['dos']/1000000)"/>
-                                </td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(priv_totals['qty6m'])"/>
-                                </td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(priv_totals['avg'])"/>
-                                </td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(priv_totals['equ'])"/>
-                                </td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(priv_totals['naap'])"/>
-                                </td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(priv_totals['val'])"/>
-                                </td>
-                            </tr>
-                        </t>
+                        <tr style="background-color:#DCDCDC;font-weight:bold;">
+                            <td colspan="5" style="text-align:left;">Total (<t t-esc="category_name"/>)</td>
+                            <td><t t-esc="'{:,.2f}'.format(cat_totals['qty'])"/></td>
+                            <td><t t-esc="'{:,.2f}'.format(cat_totals['dos']/1000000)"/></td>
+                            <td><t t-esc="'{:,.2f}'.format(cat_totals['qty6m'])"/></td>
+                            <td><t t-esc="'{:,.2f}'.format(cat_totals['avg'])"/></td>
+                            <td><t t-esc="'{:,.2f}'.format(cat_totals['equ'])"/></td>
+                            <td><t t-esc="'{:,.2f}'.format(cat_totals['naap'])"/></td>
+                            <td><t t-esc="'{:,.2f}'.format(cat_totals['val'])"/></td>
+                        </tr>
 
-                        <t t-if="last_category">
-                            <tr style="background-color:#DCDCDC;font-weight:bold;">
-                                <td colspan="5" style="text-align:left;">Total (<t t-esc="last_category"/>)
-                                </td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(cat_totals['qty'])"/>
-
-                                </td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(cat_totals['dos']/1000000)"/>
-                                </td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(cat_totals['qty6m'])"/>
-                                </td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(cat_totals['avg'])"/>
-                                </td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(cat_totals['equ'])"/>
-                                </td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(cat_totals['naap'])"/>
-                                </td>
-                                <td>
-                                    <t t-esc="'{:,.2f}'.format(cat_totals['val'])"/>
-                                </td>
-                            </tr>
-                        </t>
-                    </tbody>
-                </table>
-            </div>
-        </t>
-    </template>
+                    </t>
+                </tbody>
+            </table>
+        </div>
+    </t>
+</template>
 </odoo>

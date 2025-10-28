@@ -127,6 +127,9 @@ class InventoryReportWizard(models.TransientModel):
             total_dos = product.qty_available * product.dos
 
             combined_data.append({
+                'Product Category ID': product.categ_id.product_category,
+                'Product Order': product.product_category,
+
                 'Product': product.name,
                 'Default Code': product.default_code or '',
                 'Product Category': product.categ_id.name,
@@ -149,6 +152,13 @@ class InventoryReportWizard(models.TransientModel):
                 'naap': naap,  # متوسط الشراء
                 'value': value,
             })
+        combined_data = sorted(
+            combined_data,
+            key=lambda x: (
+                x['Product Category ID'] or 999999,
+                x['Product Order'] or 999999
+            )
+        )
 
         return {'combined_data': combined_data}
 
