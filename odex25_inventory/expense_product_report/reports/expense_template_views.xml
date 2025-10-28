@@ -71,16 +71,17 @@
 
                                     <t t-foreach="employees" t-as="emp">
                                         <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
-                                            <t t-esc="'%.2f' % grouped[team][account]['employees'].get(emp, 0.0)"/>
+                                            <t t-esc="'{:,.2f}'.format(grouped[team][account]['employees'].get(emp, 0.0))"/>
+
                                         </td>
                                     </t>
 
                                     <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">
-                                        <t t-esc="'%.2f' % grouped[team][account]['total']"/>
+                                        <t t-esc="'{:,.2f}'.format(grouped[team][account]['total'])"/>
                                     </td>
                                     <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
                                         <t t-if="grand_total_val > 0">
-                                            <t t-esc="'%.2f' % (grouped[team][account]['total'] / grand_total_val * 100)"/>%
+                                            <t t-esc="'{:,.2f}'.format((grouped[team][account]['total'] / grand_total_val * 100))"/>%
                                         </t>
                                         <t t-else="">0.00%</t>
                                     </td>
@@ -94,12 +95,12 @@
 
                                 <t t-foreach="employees" t-as="emp">
                                     <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">
-                                        <t t-esc="'%.2f' % team_summaries[team].get(emp, 0.0)"/>
+                                        <t t-esc="'{:,.2f}'.format(team_summaries[team].get(emp, 0.0))"/>
                                     </td>
                                 </t>
 
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">
-                                    <t t-esc="'%.2f' % team_summaries[team]['total']"/>
+                                    <t t-esc="'{:,.2f}'.format(team_summaries[team]['total'])"/>
                                 </td>
                                 <td style="border: 1px solid #ddd; padding: 8px;"></td>
                             </tr>
@@ -112,7 +113,7 @@
                                 <t t-foreach="employees" t-as="emp">
                                     <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
                                         <t t-if="grand_total_val > 0">
-                                            <t t-esc="'%.2f' % team_summaries[team]['achieve'].get(emp, 0)"/>%
+                                            <t t-esc="'{:,.2f}'.format(team_summaries[team]['achieve'].get(emp, 0))"/>%
                                         </t>
                                         <t t-else="">0.00%</t>
                                     </td>
@@ -120,7 +121,7 @@
 
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">
                                     <t t-if="grand_total_val > 0">
-                                        <t t-esc="'%.2f' % team_summaries[team]['achieve']['total']"/>%
+                                        <t t-esc="'{:,.2f}'.format(team_summaries[team]['achieve']['total'])"/>%
                                     </t>
                                     <t t-else="">0.00%</t>
                                 </td>
@@ -140,12 +141,12 @@
 
                             <t t-foreach="employees" t-as="emp">
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">
-                                    <t t-esc="'%.2f' % grand_totals.get(emp, 0.0)"/>
+                                    <t t-esc="'{:,.2f}'.format(grand_totals.get(emp, 0.0))"/>
                                 </td>
                             </t>
 
                             <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">
-                                <t t-esc="'%.2f' % grand_totals['total']"/>
+                                <t t-esc="'{:,.2f}'.format(grand_totals['total'])"/>
                             </td>
                             <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">
                                 100.00%
@@ -159,13 +160,13 @@
 
                             <t t-foreach="employees" t-as="emp">
                                 <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">
-                                    <t t-esc="'%.2f' % sales_data.get('by_employee', {}).get(emp, {}).get('net_profit', 0.0)"/>
+                                    <t t-esc="'{:,.2f}'.format(sales_data.get('by_employee', {}).get(emp, {}).get('net_profit', 0.0))"/>
 
                                 </td>
                             </t>
 
                             <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">
-                                <t t-esc="'%.2f' % sales_data.get('total_net_profit', 0.0)"/>
+                                <t t-esc="'{:,.2f}'.format(sales_data.get('total_net_profit', 0.0))"/>
                             </td>
                             <td style="border: 1px solid #ddd; padding: 8px;"></td>
                         </tr>

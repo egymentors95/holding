@@ -90,6 +90,9 @@ class InventoryReportWizard(models.TransientModel):
             # مبيعات الفترة
             period_lines = sales_lines_period.filtered(lambda l: l.product_id == product)
             move_qty = sum(period_lines.mapped("qty_done"))
+            dos = product.dos
+            private_category = product.private_category_id.name if product.private_category_id else ''
+
 
             # مبيعات آخر 6 شهور
             sales_6m_lines = sales_lines_6m.filtered(lambda l: l.product_id == product)
@@ -132,6 +135,8 @@ class InventoryReportWizard(models.TransientModel):
                 'expiry_date': ", ".join([
                     d.strftime('%d/%m/%Y') if d else '' for d in period_lines.mapped("lot_id.expiration_date")
                 ]),
+                'Dos': dos,
+                'private_category': private_category,
                 'Total Dos': total_dos,
 
                 'on_hand_qty': product.qty_available,  # الكمية الحالية

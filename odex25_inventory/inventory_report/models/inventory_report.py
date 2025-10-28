@@ -30,16 +30,10 @@ class InvoiceBillReport(models.AbstractModel):
         # Formats
         header_format0 = workbook.add_format({'bold': True,
                                               'align': 'center', 'valign': 'vcenter', 'border': 1})
-        header_format = workbook.add_format({'bold': True, 'bg_color': '#f0f0f0',
+        header_format = workbook.add_format({'bold': True, 'bg_color': '#f0f0f0', 'num_format': '#,##0.00',
                                              'align': 'center', 'valign': 'vcenter', 'border': 2})
-        header_format2 = workbook.add_format({'bold': True, 'bg_color': '#27C2F5',
-                                              'align': 'center', 'valign': 'vcenter', 'border': 2})
-        header_format3 = workbook.add_format({'bold': True, 'bg_color': '#27F5C1',
-                                              'align': 'center', 'valign': 'vcenter', 'border': 2})
-        header_format4 = workbook.add_format({'bold': True, 'bg_color': '#E6376F',
-                                              'align': 'center', 'valign': 'vcenter', 'border': 2})
 
-        cell_format = workbook.add_format({'align': 'center', 'valign': 'vcenter',
+        cell_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format': '#,##0.00',
                                            'border': 0, 'left': 2, 'right': 2, 'top': 1, 'bottom': 1})
 
         logo_path = get_module_resource('inventory_report', 'static/img', 'logo.png')
@@ -82,6 +76,8 @@ class InvoiceBillReport(models.AbstractModel):
 
         # ---------------- Data Rows ----------------
         last_category = None
+        last_private_category = None
+
         category_totals = {
             'Total QTY': 0,
             'Total QTY Last 6M': 0,
@@ -90,70 +86,113 @@ class InvoiceBillReport(models.AbstractModel):
             'Total NAAP': 0,
             'Total Value': 0,
             'Total_dos': 0,
-
         }
 
+        private_totals = {k: 0 for k in category_totals}
+
         for record in lots_data:
-            # لو الكاتيجوري اتغيرت -> اطبع Total للأخيرة وابدأ الجديدة
-            if last_category and record['Product Category'] != last_category:
-                # Subtotal Row
-                worksheet.write(row, col + 1, "Total", header_format)
-                worksheet.write(row, col + 2, "", header_format)
-                worksheet.write(row, col + 3, "", header_format)
-                worksheet.write(row, col + 4, "", header_format)
+            product_cat = record.get('Product Category') or 'Other Category'
+            private_cat = record.get('private_category') or 'Other Products'
+
+            # --- لو Product Category اتغيرت ---
+            if last_category and product_cat != last_category:
+                # Subtotal لآخر Private Category
+                worksheet.merge_range(row, col + 1, row, col+4, "Subtotal", header_format)
+                worksheet.write_number(row, col + 5, private_totals['Total QTY'], header_format)
+                worksheet.write_number(row, col + 6, private_totals['Total_dos'] / 1000000, header_format)
+                worksheet.write_number(row, col + 7, private_totals['Total QTY Last 6M'], header_format)
+                worksheet.write_number(row, col + 8, private_totals['Total QTY Avg'], header_format)
+                worksheet.write_number(row, col + 9, private_totals['Total Equ/Month'], header_format)
+                worksheet.write_number(row, col + 10, private_totals['Total NAAP'], header_format)
+                worksheet.write_number(row, col + 11, private_totals['Total Value'], header_format)
+                row += 2
+
+                # Subtotal للـ Product Category كله
+                worksheet.merge_range(row, col + 1, row, col+4, f"Total ({last_category})", header_format)
                 worksheet.write_number(row, col + 5, category_totals['Total QTY'], header_format)
-                worksheet.write_number(row, col + 6, category_totals['Total_dos'], header_format)
+                worksheet.write_number(row, col + 6, category_totals['Total_dos'] / 1000000, header_format)
                 worksheet.write_number(row, col + 7, category_totals['Total QTY Last 6M'], header_format)
                 worksheet.write_number(row, col + 8, category_totals['Total QTY Avg'], header_format)
                 worksheet.write_number(row, col + 9, category_totals['Total Equ/Month'], header_format)
                 worksheet.write_number(row, col + 10, category_totals['Total NAAP'], header_format)
                 worksheet.write_number(row, col + 11, category_totals['Total Value'], header_format)
-                row += 2  # نسيب سطر فاصل بعد الـ Subtotal
+                row += 3
 
                 # Reset totals
                 category_totals = {k: 0 for k in category_totals}
+                private_totals = {k: 0 for k in private_totals}
 
-            # لو كاتيجوري جديدة نطبعها في صف كامل لوحدها
-            if record['Product Category'] != last_category:
-                worksheet.merge_range(row, col, row, col + 11, record['Product Category'], header_format)
-                last_category = record['Product Category']
-                row += 1  # ننزل سطر بعد الكاتيجوري
+                worksheet.merge_range(row, col, row, col + 11, product_cat, header_format)
+                row += 1
+                last_private_category = None
+                last_category = product_cat
 
-            # كتابة بيانات المنتج
-            worksheet.write(row, col + 1, record['Default Code'] or '', cell_format)
-            worksheet.write(row, col + 2, record['Product'] or '', cell_format)
-            worksheet.write(row, col + 3, record['Lots'] or '', cell_format)
-            worksheet.write(row, col + 4, record['expiry_date'] or '', cell_format)
-            worksheet.write_number(row, col + 5, record['on_hand_qty'], cell_format)
-            worksheet.write_number(row, col + 6, record['Total Dos'], cell_format)
-            worksheet.write_number(row, col + 7, record['sold_last_6_months'], cell_format)
-            worksheet.write_number(row, col + 8, record['avg_sold_last_6_months'], cell_format)
-            worksheet.write_number(row, col + 9, record['equ_month'], cell_format)
-            worksheet.write_number(row, col + 10, record['naap'], cell_format)
-            worksheet.write_number(row, col + 11, record['value'], cell_format)
+            # --- لو Private Category اتغيرت ---
+            if last_private_category and private_cat != last_private_category:
+                worksheet.merge_range(row, col + 1, row, col+4, "Subtotal", header_format)
+                worksheet.write_number(row, col + 5, private_totals['Total QTY'], header_format)
+                worksheet.write_number(row, col + 6, private_totals['Total_dos'] / 1000000, header_format)
+                worksheet.write_number(row, col + 7, private_totals['Total QTY Last 6M'], header_format)
+                worksheet.write_number(row, col + 8, private_totals['Total QTY Avg'], header_format)
+                worksheet.write_number(row, col + 9, private_totals['Total Equ/Month'], header_format)
+                worksheet.write_number(row, col + 10, private_totals['Total NAAP'], header_format)
+                worksheet.write_number(row, col + 11, private_totals['Total Value'], header_format)
+                row += 2
 
-            # نجمع القيم عشان subtotal
-            category_totals['Total QTY'] += record['on_hand_qty']
-            category_totals['Total QTY Last 6M'] += record['sold_last_6_months']
-            category_totals['Total QTY Avg'] += record['avg_sold_last_6_months']
-            category_totals['Total Equ/Month'] += record['equ_month']
-            category_totals['Total NAAP'] += record['naap']
-            category_totals['Total Value'] += record['value']
-            category_totals['Total_dos'] += record['Total Dos']
+                private_totals = {k: 0 for k in private_totals}
 
+            # --- لو Product Category جديدة ---
+            if product_cat != last_category:
+                worksheet.merge_range(row, col, row, col + 11, product_cat, header_format)
+                last_category = product_cat
+                last_private_category = None
+                row += 1
+
+            # --- كتابة بيانات المنتج ---
+            worksheet.write(row, col + 1, record.get('Default Code') or '', cell_format)
+            worksheet.write(row, col + 2, record.get('Product') or '', cell_format)
+            worksheet.write(row, col + 3, record.get('Lots') or '', cell_format)
+            worksheet.write(row, col + 4, record.get('expiry_date') or '', cell_format)
+            worksheet.write_number(row, col + 5, record.get('on_hand_qty', 0), cell_format)
+            worksheet.write_number(row, col + 6, record.get('Total Dos', 0), cell_format)
+            worksheet.write_number(row, col + 7, record.get('sold_last_6_months', 0), cell_format)
+            worksheet.write_number(row, col + 8, record.get('avg_sold_last_6_months', 0), cell_format)
+            worksheet.write_number(row, col + 9, record.get('equ_month', 0), cell_format)
+            worksheet.write_number(row, col + 10, record.get('naap', 0), cell_format)
+            worksheet.write_number(row, col + 11, record.get('value', 0), cell_format)
+
+            # --- تجميع القيم ---
+            for totals_dict in (category_totals, private_totals):
+                totals_dict['Total QTY'] += record.get('on_hand_qty', 0)
+                totals_dict['Total_dos'] += record.get('Total Dos', 0)
+                totals_dict['Total QTY Last 6M'] += record.get('sold_last_6_months', 0)
+                totals_dict['Total QTY Avg'] += record.get('avg_sold_last_6_months', 0)
+                totals_dict['Total Equ/Month'] += record.get('equ_month', 0)
+                totals_dict['Total NAAP'] += record.get('naap', 0)
+                totals_dict['Total Value'] += record.get('value', 0)
+
+            last_private_category = private_cat
             row += 1
 
-        # بعد آخر كاتيجوري لازم نطبع subtotal
-        if last_category:
-            worksheet.write(row, col + 1, "Total", header_format)
-            worksheet.write(row, col + 2, "", header_format)
-            worksheet.write(row, col + 3, "", header_format)
-            worksheet.write(row, col + 4, "", header_format)
+        # --- بعد آخر Private Category / Product Category ---
+        if last_private_category:
+            worksheet.merge_range(row, col + 1, row, col + 4, "Subtotal", header_format)
+            worksheet.write_number(row, col + 5, private_totals['Total QTY'], header_format)
+            worksheet.write_number(row, col + 6, private_totals['Total_dos'] / 1000000, header_format)
+            worksheet.write_number(row, col + 7, private_totals['Total QTY Last 6M'], header_format)
+            worksheet.write_number(row, col + 8, private_totals['Total QTY Avg'], header_format)
+            worksheet.write_number(row, col + 9, private_totals['Total Equ/Month'], header_format)
+            worksheet.write_number(row, col + 10, private_totals['Total NAAP'], header_format)
+            worksheet.write_number(row, col + 11, private_totals['Total Value'], header_format)
+            row += 2
 
+        if last_category:
+            worksheet.merge_range(row, col + 1, row, col + 4, f"Total ({last_category})", header_format)
             worksheet.write_number(row, col + 5, category_totals['Total QTY'], header_format)
-            worksheet.write_number(row, col + 6, category_totals['Total_dos'], header_format)
+            worksheet.write_number(row, col + 6, category_totals['Total_dos'] / 1000000, header_format)
             worksheet.write_number(row, col + 7, category_totals['Total QTY Last 6M'], header_format)
             worksheet.write_number(row, col + 8, category_totals['Total QTY Avg'], header_format)
             worksheet.write_number(row, col + 9, category_totals['Total Equ/Month'], header_format)
             worksheet.write_number(row, col + 10, category_totals['Total NAAP'], header_format)
             worksheet.write_number(row, col + 11, category_totals['Total Value'], header_format)
+

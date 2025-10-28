@@ -49,9 +49,9 @@ class ProfitReport(models.AbstractModel):
                                               'align': 'center', 'valign': 'vcenter', 'border': 2})
         header_format3 = workbook.add_format({'bold': True, 'bg_color': '#27F5C1',
                                               'align': 'center', 'valign': 'vcenter', 'border': 2})
-        cell_format = workbook.add_format({'align': 'center', 'valign': 'vcenter',
+        cell_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format': '#,##0.00',
                                            'border': 0, 'left': 2, 'right': 2, 'top': 1, 'bottom': 1})
-        cell_format_light = workbook.add_format({'align': 'center', 'valign': 'vcenter',
+        cell_format_light = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format': '#,##0.00',
                                            'border': 0, 'left': 1, 'right': 1, 'top': 1, 'bottom': 1})
         cell_format_light_right = workbook.add_format({'align': 'center', 'valign': 'vcenter',
                                                  'border': 0, 'left': 1, 'right': 2, 'top': 1, 'bottom': 1})

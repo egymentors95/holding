@@ -24,16 +24,16 @@ class ExpenseReport(models.AbstractModel):
         bold = workbook.add_format({'bold': True, 'align': 'center', 'valign': 'vcenter', 'border': 1})
         header_format = workbook.add_format(
             {'bold': True, 'bg_color': '#D9E1F2', 'align': 'center', 'valign': 'vcenter', 'border': 1})
-        cell_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'border': 1})
+        cell_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'border': 1, 'num_format': '#,##0.00',})
         subtotal_format = workbook.add_format(
-            {'bold': True, 'bg_color': '#FCE4D6', 'align': 'center', 'valign': 'vcenter', 'border': 1})
+            {'bold': True, 'bg_color': '#FCE4D6', 'align': 'center', 'valign': 'vcenter', 'border': 1,'num_format': '#,##0.00',})
         grand_total_format = workbook.add_format(
-            {'bold': True, 'bg_color': '#C6E0B4', 'align': 'center', 'valign': 'vcenter', 'border': 1})
+            {'bold': True, 'bg_color': '#C6E0B4', 'align': 'center', 'valign': 'vcenter', 'border': 1,'num_format': '#,##0.00',})
         sales_total_format = workbook.add_format(
-            {'bold': True, 'bg_color': '#FFE699', 'align': 'center', 'valign': 'vcenter',
+            {'bold': True, 'bg_color': '#FFE699', 'align': 'center', 'valign': 'vcenter', 'num_format': '#,##0.00',
              'border': 1})  # تنسيق جديد للمبيعات
         percent_format = workbook.add_format(
-            {'num_format': '0.00%', 'align': 'center', 'valign': 'vcenter', 'border': 1})
+            {'num_format': '0.00%', 'align': 'center', 'valign': 'vcenter', 'border': 1,'num_format': '#,##0.00',})
 
         # ======= اللوجو =======
         logo_path = get_module_resource('expense_product_report', 'static/img', 'logo.png')
