@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="salary_bank_wizard_view_form" model="ir.ui.view">
+            <field name="name">salary.bank.wizard.view</field>
+            <field name="model">salary.bank.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="date_from"/>
+                            </group>
+                            <group>
+                                <field name="date_to"/>
+                            </group>
+                            <group>
+                                <field name="earn_date"/>
+                                <field name="pay_date" />
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Print Text" name="action_print_report_text" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="salary_bank_wizard_view_action" model="ir.actions.act_window">
+            <field name="name">Salary Bank</field>
+            <field name="res_model">salary.bank.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="salary_bank_report_menu_item" name="Salary Bank Report"
+                  parent="sale.menu_sale_report" action="reports_salary_bank.salary_bank_wizard_view_action"
+                  sequence="300"/>
+
+
+    </data>
+</odoo>

@@ -141,3 +141,4 @@ class InvoiceBillReport(models.AbstractModel):
             worksheet.write_number(row, col + 10, product_cat_totals['Total NAAP'], header_format)
             worksheet.write_number(row, col + 11, product_cat_totals['Total Value'], header_format)
             row += 3
+
