@@ -92,6 +92,7 @@ class HrPayslipRunText(models.AbstractModel):
                 report_lines.append(second_line)
 
         report_text = "\n".join(report_lines).lstrip()
+        print('teeeeeest',repr(report_text))
 
         return {
             'doc_ids': docids,
