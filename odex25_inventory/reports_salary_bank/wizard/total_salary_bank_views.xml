@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="total_salary_bank_view_form" model="ir.ui.view">
+            <field name="name">total.salary.bank.view</field>
+            <field name="model">total.salary.bank</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="date_from"/>
+                            </group>
+                            <group>
+                                <field name="date_to"/>
+                                <field name="sponsor_name_ids" required="1" widget="many2many_tags"/>
+                                <field name="payment_method"/>
+                            </group>
+                            <group>
+                                <field name="earn_date"/>
+                                <field name="pay_date" />
+                                <field name="is_overtime" />
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Print Text" name="action_print_report_text" type="object" class="btn-primary" attrs="{'invisible': [('payment_method', '!=', 'bank')]}"/>
+                        <button string="Print Text" name="action_print_report_text_itqan" type="object" class="btn-primary" attrs="{'invisible': [('payment_method', '!=', 'itqan')]}"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+
+        <record id="total_salary_bank_action" model="ir.actions.act_window">
+            <field name="name">Total Salary Bank</field>
+            <field name="res_model">total.salary.bank</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="total_salary_bank_wizard_menu_item" name="Total Salary Report"
+                  parent="exp_payroll_custom.menu_hr_payroll_report" action="reports_salary_bank.total_salary_bank_action"
+                  sequence="350"/>
+
+
+    </data>
+</odoo>

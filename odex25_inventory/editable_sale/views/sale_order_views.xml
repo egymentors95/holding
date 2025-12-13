@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <!-- Inherit Form View to Modify it -->
+    <record id="editable_view_order_form" model="ir.ui.view">
+        <field name="name">editable.view.order.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='order_line']" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done','cancel', 'sale'))]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done','cancel', 'sale'))]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='team_id']" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done','cancel', 'sale'))]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='company_id']" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done','cancel', 'sale'))]}</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='require_signature']" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done','cancel', 'sale'))]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='require_payment']" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done','cancel', 'sale'))]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='client_order_ref']" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done','cancel', 'sale'))]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='warehouse_id']" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done','cancel', 'sale'))]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='picking_policy']" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done','cancel', 'sale'))]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='fiscal_position_id']" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done','cancel', 'sale'))]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='origin']" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done','cancel', 'sale'))]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='opportunity_id']" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done','cancel', 'sale'))]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='campaign_id']" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done','cancel', 'sale'))]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='medium_id']" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done','cancel', 'sale'))]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='source_id']" position="attributes">
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done','cancel', 'sale'))]}</attribute>
+            </xpath>
+
+
+            <xpath expr="//label[@for='pricelist_id']" position="replace">
+                <label for="pricelist_id" groups="editable_sale.group_editable_sale_order"/>
+
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="action_create_invoice_direct"
+                        string="Create Invoice (Direct)"
+                        type="object"
+                        class="btn-primary"
+                        groups="editable_sale.group_editable_sale_order_user"
+                        attrs="{'invisible': [('invoice_status', '!=', 'to invoice')]}"/>
+                <button name="action_create_invoice_direct"
+                        string="Create Invoice"
+                        type="object"
+                        class="btn-primary"
+                        groups="editable_sale.group_editable_sale_order"
+                        attrs="{'invisible': [('invoice_status', '!=', 'to invoice')]}"/>
+            </xpath>
+
+            <!-- تعديل الجروب في العنصر div -->
+            <xpath expr="//div[@class='o_row']" position="replace">
+                <div class="o_row" groups="editable_sale.group_editable_sale_order">
+                    <field name="pricelist_id" options="{'no_open':True,'no_create': True}"/>
+                    <button name="update_prices" type="object" string=" Update Prices"
+                            help="Recompute all prices based on this pricelist" class="btn-link mb-1 px-0"
+                            icon="fa-refresh"
+                            confirm="This will update all unit prices based on the currently set pricelist."
+                            attrs="{'invisible': ['|', ('show_update_pricelist', '=', False), ('state', 'in', ['sale', 'done','cancel'])]}"/>
+                </div>
+            </xpath>
+
+            <xpath expr="//field[@name='payment_term_id']" position="attributes">
+                <attribute name="groups">editable_sale.group_editable_sale_order</attribute>
+                <attribute name="attrs">{'readonly': [('state', 'in', ('done','cancel', 'sale'))]}</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='order_line']/tree/field[@name='customer_lead']" position="attributes">
+                <attribute name="groups">editable_sale.group_editable_sale_order</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='qty_invoiced']" position="attributes">
+                <attribute name="groups">editable_sale.group_editable_sale_order</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='qty_delivered']" position="attributes">
+                <attribute name="groups">editable_sale.group_editable_sale_order</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='analytic_tag_ids']" position="attributes">
+                <attribute name="groups">editable_sale.group_editable_sale_order</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='discount']" position="attributes">
+                <attribute name="groups">editable_sale.group_editable_sale_order</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='tax_id']" position="attributes">
+                <attribute name="groups">editable_sale.group_editable_sale_order</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom']" position="attributes">
+                <attribute name="groups">editable_sale.group_editable_sale_order</attribute>
+            </xpath>
+            <!--                            USER                       -->
+            <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom_qty']" position="after">
+                <field name="product_uom" readonly="1" groups="editable_sale.group_editable_sale_order_user"/>
+                <field name="tax_id" widget="many2many_tags" readonly="1"
+                       groups="editable_sale.group_editable_sale_order_user"/>
+            </xpath>
+
+
+        </field>
+    </record>
+
+    <record id="editable_sale_margin_sale_order_line_form" model="ir.ui.view">
+        <field name="name">editable.sale.margin.sale.order.line.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_margin.sale_margin_sale_order_line_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/tree/field[@name='purchase_price']" position="attributes">
+                <attribute name="groups">editable_sale.group_editable_sale_order</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='margin']" position="attributes">
+                <attribute name="groups">editable_sale.group_editable_sale_order</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='margin_percent']" position="attributes">
+                <attribute name="groups">editable_sale.group_editable_sale_order</attribute>
+            </xpath>
+
+
+        </field>
+    </record>
+
+    <record id="editable_view_order_form_inherit_sale_stock" model="ir.ui.view">
+        <field name="name">editable.view.order.form.inherit.sale.stock</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_stock.view_order_form_inherit_sale_stock"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/tree/field[@name='route_id']" position="attributes">
+                <attribute name="groups">editable_sale.group_editable_sale_order</attribute>
+            </xpath>
+            <xpath expr="//tree/field[@name='product_packaging']" position="attributes">
+                <attribute name="attrs">{'column_invisible': 1}</attribute>
+            </xpath>
+
+
+        </field>
+    </record>
+
+</odoo>

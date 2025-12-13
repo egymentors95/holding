@@ -164,10 +164,11 @@
                         </div>
                     </h3>
                     <table class="table table-sm table-bordered"
-                           style="width:100%; border: 1px solid black; font-size: 13px; table-layout:fixed; border-collapse:collapse;" dir="ltr">
+                           style="width:100%; border: 2px solid black; font-size: 13px; table-layout:fixed; border-collapse:collapse; padding:0; margin:0;"
+                           dir="ltr">
                         <tbody>
                             <tr>
-                                <td height="40px;" colspan="3" style="text-align: center; vertical-align: middle;">
+                                <td height="50px;" style="text-align: center; vertical-align: middle;">
                                     <div style="
                                                 border: 1px solid black;
                                                 border-radius: 10px;
@@ -175,21 +176,31 @@
                                                 text-align: center;
                                                 width: 70%;
                                                 margin: 0 auto;
+                                                height: 40px;
                                             ">
                                         <span t-field="o.invoice_user_id"/>
                                     </div>
                                 </td>
                             </tr>
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered"
+                           style="width:100%; border: 2px solid black; font-size: 13px; table-layout:fixed; border-collapse:collapse; padding:0; margin:0;"
+                           dir="ltr">
+                        <tbody>
                             <tr>
-                                <td width="15%" style="text-align: left; border-right: 1px solid white;">
+                                <td width="20%"
+                                    style="text-align: left; border-right: 1px solid white; border-bottom: 2px solid black;">
                                     <span>رقم الفاتورة</span>
                                     <br/>
                                     <span>Invoice No.</span>
                                 </td>
-                                <td width="15%" style="text-align: right;">
+                                <td width="20%"
+                                    style="text-align: right; vertical-align: middle; border-bottom: 2px solid black; border-right: 2px solid black;">
                                     <span t-field="o.name"/>
                                 </td>
-                                <td width="70%" rowspan="3" dir="rtl">
+                                <td width="60%" rowspan="3" colspan="3" dir="rtl"
+                                    style="border-right: 2px solid black;">
                                     <div style="text-align: right;">
                                         <span>العميل:</span>
                                         <span t-field="o.partner_id.name"/>
@@ -197,8 +208,8 @@
                                     <br/>
                                     <div style="text-align: right;">
                                         <span>الرقم الضريبي:</span>
-                                        <span style="margin-right: 20px;" t-field="o.partner_id.vat"/>
-                                        <span>P.O.NO.</span>
+                                        <span t-field="o.partner_id.vat"/>
+                                        <span style="margin-right: 100px;">P.O.NO.</span>
                                         <span></span>
                                     </div>
                                     <br/>
@@ -216,22 +227,25 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td stlye="border-right: 1px solid white;">
+                                <td width="20%"
+                                    style="text-align: left; border-right: 1px solid white; border-bottom: 2px solid black; ">
                                     <span>التاريخ</span>
                                     <br/>
                                     <span>Date</span>
                                 </td>
-                                <td>
+                                <td width="20%"
+                                    style="text-align: right; vertical-align: middle; border-bottom: 2px solid black; border-right: 2px solid black;">
                                     <span t-field="o.invoice_date"/>
                                 </td>
                             </tr>
                             <tr>
-                                <td stlye="border-right: 1px solid white;">
+                                <td width="20%" style="text-align: left; border-right: 1px solid white;">
                                     <span>البائع</span>
                                     <br/>
                                     <span>Salesman</span>
                                 </td>
-                                <td>
+                                <td width="20%"
+                                    style="text-align: right; vertical-align: middle; border-right: 2px solid black;">
                                     <span t-field="o.invoice_user_id"/>
                                 </td>
                             </tr>
@@ -426,15 +440,14 @@
 
                     <div class="clearfix pt-4 pb-3">
                         <div id="total" class="row">
-                            <div class="col-6">
+                            <div class="col-8">
                                 <table class="table table-sm" style="page-break-inside: avoid;">
                                     <tr class="border-black o_subtotal">
                                         <td>
                                             <strong>
-                                                Subtotal
-                                                /
-                                                الإجمالي الفرعي
+                                                الإجمالي بدون ضريبة
                                             </strong>
+                                            <span>Total Without Vat</span>
                                         </td>
                                         <td>
                                             <span t-field="o.amount_untaxed"/>
@@ -466,10 +479,9 @@
                                     <tr class="border-black o_total">
                                         <td>
                                             <strong>
-                                                Total
-                                                /
-                                                المجموع
+                                                الاجمالي بضريبة القيمة المضافة
                                             </strong>
+                                            <span>Total With Vat</span>
                                         </td>
                                         <td>
                                             <span class="text-nowrap" t-field="o.amount_total"/>
@@ -518,27 +530,30 @@
                             </div>
                         </div>
                     </div>
+                    <div style="border: 1px solid black; padding: 10px; margin-top: 10px;">
+                        <span t-field="o.amount_total_in_words_ar"/>
+                    </div>
 
-                    <p t-if="o.move_type in ('out_invoice', 'in_refund') and o.payment_reference"
-                       name="payment_communication">
-                        <div class="row">
-                            <div class="col-6 text-left">
-                                Payment Reference :
-                                <b>
-                                    <span t-field="o.payment_reference"/>
-                                </b>
-                            </div>
-                            <div class="col-6 text-right">
-                                <p>
-                                    <b>
-                                        <span t-field="o.payment_reference"/>
-                                        :
-                                    </b>
-                                    رقم إشارة الدفعة
-                                </p>
-                            </div>
-                        </div>
-                    </p>
+                    <!--                    <p t-if="o.move_type in ('out_invoice', 'in_refund') and o.payment_reference"-->
+                    <!--                       name="payment_communication">-->
+                    <!--                        <div class="row">-->
+                    <!--                            <div class="col-6 text-left">-->
+                    <!--                                Payment Reference :-->
+                    <!--                                <b>-->
+                    <!--                                    <span t-field="o.payment_reference"/>-->
+                    <!--                                </b>-->
+                    <!--                            </div>-->
+                    <!--                            <div class="col-6 text-right">-->
+                    <!--                                <p>-->
+                    <!--                                    <b>-->
+                    <!--                                        <span t-field="o.payment_reference"/>-->
+                    <!--                                        :-->
+                    <!--                                    </b>-->
+                    <!--                                    رقم إشارة الدفعة-->
+                    <!--                                </p>-->
+                    <!--                            </div>-->
+                    <!--                        </div>-->
+                    <!--                    </p>-->
 
 
                     <p t-if="o.invoice_payment_term_id" name="payment_term">
@@ -594,6 +609,10 @@
                             </div>
                         </div>
                     </p>
+
+                    <div class="col-4" name="qr_code">
+
+                    </div>
 
                 </div>
             </t>

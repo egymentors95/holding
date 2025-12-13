@@ -8,6 +8,7 @@
     "license": "AGPL-3",
     "depends": ['base','stock', 'report_xlsx','account', 'partner_category', 'inventory_report'],
     "data": [
+        "security/security_views.xml",
         "security/ir.model.access.csv",
         "views/account_move_line2_views.xml",
         "views/sales_plan_views.xml",

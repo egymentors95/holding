@@ -1,2 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_salary_bank_wizard,access.salary.bank.wizard,model_salary_bank_wizard,,1,1,1,1
+access_total_payslip,access.total.payslip,model_total_payslip,,1,1,1,1
+access_total_salary_bank,access.total.salary.bank,model_total_salary_bank,,1,1,1,1

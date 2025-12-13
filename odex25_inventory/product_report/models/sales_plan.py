@@ -18,7 +18,22 @@ class SalesPlan(models.Model):
     ], string='Status', default='draft')
     sales_plan_line_ids = fields.One2many(comodel_name='sales.plan.lines', inverse_name='sales_plan_id', string='Sales Plan Lines')
     company_id = fields.Many2one(comodel_name='res.company', string='Company', default=lambda self: self.env.company)
+    total_value = fields.Float(string='Total Value', compute='_compute_total', store=True)
+    average = fields.Float(string='Average', compute='_compute_average', store=True)
 
+    @api.depends('total_value', 'number_of_months')
+    def _compute_average(self):
+        for record in self:
+            if record.number_of_months:
+                record.average = record.total_value / record.number_of_months
+            else:
+                record.average = 0.0
+
+    @api.depends('sales_plan_line_ids.price_total')
+    def _compute_total(self):
+        for record in self:
+            total = sum(line.price_total for line in record.sales_plan_line_ids)
+            record.total_value = total
 
     @api.depends('sales_person_id')
     def _compute_name(self):

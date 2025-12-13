@@ -9,9 +9,9 @@ class SalesPlanLines(models.Model):
     product_id = fields.Many2one(comodel_name='product.product', string='Product', required=True)
     quantity = fields.Float(string='Quantity')
     price = fields.Float(string='Price')
-    price_total = fields.Float(string='Total Price', compute='_compute_price_total', store=True)
-    quantity_per_month = fields.Float(string='Quantity per Month', compute='_compute_quantity_per_month', store=True)
-    price_total_per_month = fields.Float(string='Price Total per Month', compute='_compute_price_total_per_month', store=True)
+    price_total = fields.Float(string='Total Value', compute='_compute_price_total', store=True)
+    quantity_per_month = fields.Float(string='Qty / Month', compute='_compute_quantity_per_month', store=True)
+    price_total_per_month = fields.Float(string='Value + Month', compute='_compute_price_total_per_month', store=True)
 
     @api.depends('price_total', 'sales_plan_id.number_of_months')
     def _compute_price_total_per_month(self):

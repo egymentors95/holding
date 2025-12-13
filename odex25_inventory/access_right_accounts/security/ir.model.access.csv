@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_group_model_account_account_customer,access.group.model.account.account.customer,account.model_account_account,access_right_accounts.group_customer_sales_account,1,0,0,0
+access_group_model_account_account_vendor,access.group.model.account.account.vendor,account.model_account_account,access_right_accounts.group_vendor_purchase_account,1,0,0,0
+
+access_account_fiscal_year_vendor,access.account.fiscal.year.vendor,account_fiscal_year.model_account_fiscal_year,access_right_accounts.group_vendor_purchase_account,1,0,0,0
+access_account_fiscal_year_customer,access.account.fiscal.year.customer,account_fiscal_year.model_account_fiscal_year,access_right_accounts.group_customer_sales_account,1,0,0,0
+

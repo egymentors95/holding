@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="group_editable_sale_order" model="res.groups">
+        <field name="name">Editable Sale Order Manager</field>
+    </record>
+
+
+    <record id="group_editable_sale_order_user" model="res.groups">
+        <field name="name">Non-Editable Sale Order User</field>
+    </record>
+
+    <record id="group_editable_account_move_manager" model="res.groups">
+        <field name="name">Editable Account Move Manager</field>
+    </record>
+
+
+    <record id="group_editable_account_move_user" model="res.groups">
+        <field name="name">Non-Editable Account Move User</field>
+    </record>
+
+    <record id="group_confirm_account_move" model="res.groups">
+        <field name="name">Confirm Account Move</field>
+    </record>
+
+    <record id="group_confirm_manufacturing" model="res.groups">
+        <field name="name">Edit Confirm Manufacturing</field>
+    </record>
+
+
+</odoo>

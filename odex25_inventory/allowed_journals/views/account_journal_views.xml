@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="account.action_account_journal_form" model="ir.actions.act_window">
+        <field name="domain">[('allowed_user_ids', 'in', uid)]</field>
+    </record>
+
+
+</odoo>

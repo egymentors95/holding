@@ -6,7 +6,7 @@
     "author": "IBS",
     "website": "https://www.ibs-na.com",
     "license": "AGPL-3",
-    "depends": ['base','stock', 'report_xlsx','account', 'partner_category'],
+    "depends": ['base','stock', 'report_xlsx','account', 'partner_category', 'allowed_journals'],
     "data": [
         "security/ir.model.access.csv",
         # "views/account_move_line2_views.xml",

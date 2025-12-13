@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="contacts.menu_contacts" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('access_partner_id.menu_item_contacts')])]"/>
+    </record>
+    <record id="sale.res_partner_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('access_partner_id.menu_item_contacts')])]"/>
+    </record>
+    <record id="purchase.menu_procurement_management_supplier_name" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('access_partner_id.menu_item_contacts')])]"/>
+    </record>
+    <record id="account.menu_account_customer" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('access_partner_id.menu_item_contacts')])]"/>
+    </record>
+    <record id="account.menu_account_supplier" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('access_partner_id.menu_item_contacts')])]"/>
+    </record>
+
+    <!-- Inherit Form View to Modify it -->
+    <record id="view_res_partner_filter_cr_vat" model="ir.ui.view">
+        <field name="name">view.res.partner.filter.cr.vat</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="vat" string="Vat" filter_domain="[('vat', 'ilike', self)]"/>
+                <field name="company_registration" string="CR" filter_domain="[('company_registration', 'ilike', self)]"/>
+            </xpath>
+
+        </field>
+    </record>
+
+
+</odoo>

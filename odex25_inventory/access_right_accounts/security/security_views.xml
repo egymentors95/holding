@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+
+    <record id="group_customer_sales_account" model="res.groups">
+        <field name="name">Account Customer Sales</field>
+    </record>
+
+    <record id="group_vendor_purchase_account" model="res.groups">
+        <field name="name">Account Vendor Purchase</field>
+    </record>
+
+    <record id="group_budget_account" model="res.groups">
+        <field name="name">Budget Account</field>
+    </record>
+
+    <record id="group_manager_reporting_account" model="res.groups">
+        <field name="name">Manager: Account Reporting</field>
+    </record>
+
+
+
+
+</odoo>

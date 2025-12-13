@@ -9,4 +9,34 @@
         file="reports_salary_bank.salary_bank_text"
         print_report_name="'SalaryBank_' + (object.date_from or '')"
     />
+
+    <report
+        id="report_action_salary_bank_text_itqan"
+        model="salary.bank.wizard"
+        string="Salary Bank Text"
+        report_type="qweb-text"
+        name="reports_salary_bank.salary_bank_text_itqan"
+        file="reports_salary_bank.salary_bank_text_itqan"
+        print_report_name="'SalaryBank_' + (object.date_from or '')"
+    />
+
+      <report
+        id="report_action_total_salary_bank_text"
+        model="total.salary.bank"
+        string="Total Salary Bank Text"
+        report_type="qweb-text"
+        name="reports_salary_bank.total_salary_bank_text"
+        file="reports_salary_bank.total_salary_bank_text"
+        print_report_name="'SalaryBank_' + (object.date_from or '')"
+    />
+
+    <report
+        id="report_action_total_salary_bank_text_itqan"
+        model="total.salary.bank"
+        string="Total Salary Bank Text"
+        report_type="qweb-text"
+        name="reports_salary_bank.total_salary_bank_itqan_text"
+        file="reports_salary_bank.total_salary_bank_itqan_text"
+        print_report_name="'SalaryBank_' + (object.date_from or '')"
+    />
 </odoo>

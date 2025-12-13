@@ -56,6 +56,8 @@
                 <field name="sales_person_id"/>
                 <field name="date_from"/>
                 <field name="date_to"/>
+                <field name="total_value"/>
+                <field name="average"/>
                 <field name="number_of_months"/>
             </tree>
         </field>

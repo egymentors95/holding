@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
 from odoo.exceptions import AccessError, ValidationError, Warning, UserError
+import json
 
 
 class AccountMove(models.Model):
@@ -33,6 +34,16 @@ class AccountPayment(models.Model):
     state_history = fields.Char(string='State History', default='draft')
     analytic_account_id = fields.Many2one(comodel_name='account.analytic.account', string='Analytic Account', copy=True)
 
+    invoices_ids = fields.Many2many(
+        'account.move',
+        'account_payment_invoice_rel',  # اسم جدول وسيط جديد
+        'payment_id',  # العمود اللي بيشاور على account.payment
+        'invoice_id',  # العمود اللي بيشاور على account.move
+        string='Partner Invoices',
+        domain="[('partner_id', '=', partner_id), ('move_type', 'in', ('out_invoice','in_invoice')), ('state','=','posted'), ('payment_state','!=','paid')]"
+    )
+    pay_invoice = fields.Boolean(string="Payment Invoices")
+
     @api.model
     def create(self, vals):
         vals['state_history'] = 'draft'
@@ -48,45 +59,116 @@ class AccountPayment(models.Model):
             group_name = self.env.ref(group_xml_id).name
             raise AccessError(_("You do not have the necessary permissions (%s) to perform this action.") % group_name)
 
-    # def action_post(self):
-    #     if self.payment_type == 'outbound':
-    #         self._check_permission('odex25_account_payment_fix.group_posted')
-    #     res = super(AccountPayment, self).action_post()
-        
-        
-       
-
-    #     for payment in self:
-    #         payment.invalidate_cache()
-    #         payment.state = 'posted'
-    #         if payment.analytic_account_id and payment.move_id:
-                
-    #             for line in payment.move_id.line_ids:
-    #                 if line.account_id.id == payment.destination_account_id.id:
-    #                     line.analytic_account_id = payment.analytic_account_id.id
-    #     return res
     def action_post(self):
-      if self.payment_type == 'outbound':
-         self._check_permission('odex25_account_payment_fix.group_posted')
+        if self.payment_type == 'outbound':
+            self._check_permission('odex25_account_payment_fix.group_posted')
 
-      res = super(AccountPayment, self).action_post()
+        res = super(AccountPayment, self).action_post()
 
-      for payment in self:
-          payment.state = 'posted'
+        for payment in self:
+            payment.state = 'posted'
 
-          if payment.analytic_account_id and payment.move_id:
+            # -----------------------------
+            # 1) analytic account
+            # -----------------------------
+            if payment.analytic_account_id and payment.move_id:
+                target_lines = payment.move_id.line_ids.filtered(
+                    lambda line: line.account_id.id == payment.destination_account_id.id
+                )
+                target_lines.write({'analytic_account_id': payment.analytic_account_id.id})
 
-            target_lines = payment.move_id.line_ids.filtered(
-                lambda line: line.account_id.id == payment.destination_account_id.id
-            )
+            # -----------------------------
+            # 2) only inbound payments
+            # -----------------------------
+            if payment.payment_type != 'inbound':
+                continue
 
-          
-            target_lines.write({'analytic_account_id': payment.analytic_account_id.id})
+            remaining = payment.amount
 
-            target_lines.invalidate_cache()
-            target_lines.read(['analytic_account_id'])
+            # -----------------------------
+            # 3) get invoices
+            # -----------------------------
+            if payment.pay_invoice:
+                invoices = self.env['account.move'].search([
+                    ('partner_id', '=', payment.partner_id.id),
+                    ('move_type', 'in', ('out_invoice', 'in_invoice')),
+                    ('state', '=', 'posted'),
+                    ('payment_state', '!=', 'paid'),
+                ], order='invoice_date asc')
+            else:
+                invoices = payment.invoices_ids
 
-      return res
+            if not invoices:
+                continue
+
+            # -----------------------------
+            # 4) loop invoices oldest → latest
+            # -----------------------------
+            for inv in invoices:
+
+                if remaining <= 0:
+                    break
+
+                # -----------------------------
+                # Load widget safely
+                # -----------------------------
+                widget = inv.invoice_outstanding_credits_debits_widget
+
+                if not widget:
+                    continue
+
+                # Convert JSON string → dict
+                if isinstance(widget, str):
+                    widget = json.loads(widget)
+
+                if 'content' not in widget:
+                    continue
+
+                # find payment line inside widget
+                line_to_assign = None
+                for line in widget['content']:
+                    if line.get('move_id') == payment.move_id.id:
+                        line_to_assign = line
+                        break
+
+                if not line_to_assign:
+                    continue
+
+                residual = inv.amount_residual
+
+                # -----------------------------
+                # 5) Error if payment > invoice
+                # -----------------------------
+                if remaining > residual:
+                    # allowed → Odoo will reconcile and remainder goes to next invoice
+                    pass
+                elif remaining < residual:
+                    # allowed → partial reconcile
+                    pass
+                else:
+                    pass
+
+                # Do actual reconcile
+                inv.js_assign_outstanding_line(line_to_assign['id'])
+
+                # deduct remaining
+                if remaining >= residual:
+                    remaining -= residual
+                else:
+                    remaining = 0
+                    break
+
+            # -----------------------------
+            # 6) إذا لسه باقي جزء من المبلغ
+            # يعني الدفع أكبر من كل الفواتير
+            # -----------------------------
+            if remaining > 0:
+                raise UserError(
+                    "❌ المبلغ المدفوع أكبر من قيمة الفواتير.\n"
+                    f"المبلغ المتبقي بعد الدفع: {remaining}"
+                )
+
+        return res
 
     def action_cancel(self):
         payment_state = self.state

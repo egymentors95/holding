@@ -10,6 +10,16 @@
             <xpath expr="//group[@name='group_general']" position="inside">
                 <field name="product_category"/>
             </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="الوحدات البديلة">
+                    <field name="utm_line_ids">
+                        <tree editable="bottom">
+                            <field name="uom_id"/>
+                        </tree>
+                    </field>
+
+                </page>
+            </xpath>
         </field>
     </record>
 

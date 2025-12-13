@@ -6,6 +6,7 @@ class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
     product_category = fields.Integer(string='Product Category ID')
+    utm_line_ids = fields.One2many(comodel_name='utm.lines', inverse_name='product_template_id', string='UTM Lines')
 
 
 

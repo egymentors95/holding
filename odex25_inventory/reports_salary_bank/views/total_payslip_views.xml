@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="total_payslip_view_tree" model="ir.ui.view">
+        <field name="name">total.payslip.view.tree</field>
+        <field name="model">total.payslip</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="comp_emp_code"/>
+                <field name="emp_name"/>
+                <field name="mobile"/>
+                <field name="id_number"/>
+                <field name="company_id"/>
+                <field name="d_name" optional="hide"/>
+                <field name="payment_method"/>
+                <field name="account_number"/>
+                <field name="bic"/>
+                <field name="sponsor_name_id"/>
+                <field name="sponsor_number"/>
+                <field name="basic_salary"/>
+                <field name="transport_allowance"/>
+                <field name="housing_allowance"/>
+                <field name="net_salary"/>
+                <field name="food_allowance" optional="hide"/>
+                <field name="other_allowances" optional="hide"/>
+                <field name="natural" optional="hide"/>
+                <field name="bonus" optional="hide"/>
+                <field name="overtime" optional="hide"/>
+                <field name="overtime_vocation" optional="hide"/>
+                <field name="other_earnings" optional="hide"/>
+                <field name="other_deductions" optional="hide"/>
+                <field name="loan_installment" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="total_payslip_action" model="ir.actions.act_window">
+        <field name="name">Total Payslips</field>
+        <field name="res_model">total.payslip</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="total_payslip_view_tree"/>
+    </record>
+
+    <menuitem id="total_payslip_menu_item" name="Total Payslips"
+              parent="exp_payroll_custom.menu_hr_payroll_report"
+              action="reports_salary_bank.total_payslip_action"
+              sequence="400"/>
+
+
+</odoo>

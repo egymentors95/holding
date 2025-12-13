@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <template id="salary_bank_text"><t t-raw="report_text.strip()"/></template>
+    <template id="salary_bank_text"><t t-raw="(report_text or '').strip()"/></template>
+    <template id="salary_bank_text_itqan"><t t-raw="(report_text or '').strip()"/></template>
+
+    <template id="total_salary_bank_text"><t t-raw="(report_text or '')"/></template>
+    <template id="total_salary_bank_itqan_text"><t t-raw="(report_text or '').strip()"/></template>
+
 
 </odoo>
