@@ -127,6 +127,9 @@
                     </page>
                 </notebook>
             </xpath>
+            <xpath expr="//field[@name='is_internal_transfer']" position="attributes">
+                <attribute name="attrs">{'invisible': [('payment_type', '!=', 'outbound')]}</attribute>
+            </xpath>
 
         </field>
     </record>
