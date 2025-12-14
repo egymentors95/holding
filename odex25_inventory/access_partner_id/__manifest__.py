@@ -6,18 +6,19 @@
     "author": "Elaraby",
     "website": "https://www.ibs-na.com",
     "license": "AGPL-3",
-    "depends": ['base','account', 'sale', 'purchase', 'contacts', 'stock', 'mrp'],
+    "depends": ['base','account', 'sale', 'purchase', 'contacts', 'stock', 'mrp', 'inherit_chart_of_account'],
     "data": [
         "security/security_views.xml",
         "views/sale_order_views.xml",
         "views/purchase_order_views.xml",
         "views/account_move_views.xml",
         "views/res_partner_viwes.xml",
-        # "views/contact_views.xml",
+        "views/contact_views.xml",
+        "views/account_account_views.xml",
+        "views/res_users_views.xml",
         # "views/products_views.xml",
     ],
     "installable": True,
-
     "application": False,
     "auto_install": False,
 }

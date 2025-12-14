@@ -12,6 +12,31 @@
             <xpath expr="//field[@name='partner_id']" position="attributes">
                 <attribute name="options">{'no_create': True}</attribute>
             </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='account_id']" position="attributes">
+                <attribute name="domain">[
+                    ('deprecated', '=', False),
+                    ('user_type_id.type', 'not in', ('receivable', 'payable')),
+                    ('company_id', '=', parent.company_id),
+                    ('is_off_balance', '=', False),
+                    ('selection_type', '!=', 'view'),
+                    ]
+                </attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Inherit Form View to Modify it -->
+    <record id="product_category_view_account_invoice_filter" model="ir.ui.view">
+        <field name="name">product.category.view.account.invoice.filter</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="name" string="Product" filter_domain="[('invoice_line_ids.product_id', 'ilike', self)]"/>
+                <field name="name" string="Product Category" filter_domain="[('invoice_line_ids.product_category_id', 'ilike', self)]"/>
+            </xpath>
 
         </field>
     </record>

@@ -8,3 +8,4 @@ class AccountAccount(models.Model):
         string="أنظمة أخرى",
         help="If checked, this account cannot be selected in manual Journal Entries."
     )
+

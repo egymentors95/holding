@@ -11,17 +11,23 @@
 
             <xpath expr="//field[@name='partner_id']" position="attributes">
                 <attribute name="options">{'no_create': True}</attribute>
-<!--                <attribute name="groups">!access_partner_id.res_group_admin_partner_id</attribute>-->
+                <!--                <attribute name="groups">!access_partner_id.res_group_admin_partner_id</attribute>-->
             </xpath>
 
-<!--            <xpath expr="//field[@name='partner_id']" position="after">-->
-<!--                <field name="partner_id" widget="res_partner_many2one"-->
-<!--                       context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}"-->
-<!--                       options='{"always_reload": True}' groups="access_partner_id.res_group_admin_partner_id"/>-->
+            <!--            <xpath expr="//field[@name='partner_id']" position="after">-->
+            <!--                <field name="partner_id" widget="res_partner_many2one"-->
+            <!--                       context="{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}"-->
+            <!--                       options='{"always_reload": True}' groups="access_partner_id.res_group_admin_partner_id"/>-->
 
-<!--            </xpath>-->
+            <!--            </xpath>-->
 
         </field>
     </record>
+    <record id="sale.menu_product_pricelist_main" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('access_partner_id.menu_item_price_lists')])]"/>
+    </record>
+
+
+
 
 </odoo>
