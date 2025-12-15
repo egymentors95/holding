@@ -123,6 +123,9 @@
             <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='tax_ids']" position="attributes">
                 <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>
             </xpath>
+              <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='tax_ids']" position="before">
+                  <field name="lot_id"/>
+            </xpath>
 
 
             <xpath expr="//field[@name='line_ids']/tree/field[@name='tax_tag_ids']"

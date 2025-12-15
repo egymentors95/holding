@@ -116,6 +116,7 @@
             <!--                            USER                       -->
             <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom_qty']" position="after">
                 <field name="product_uom" readonly="1" groups="editable_sale.group_editable_sale_order_user"/>
+                <field name="lot_id" attrs="{'column_invisible': 1}"/>
                 <field name="tax_id" widget="many2many_tags" readonly="1"
                        groups="editable_sale.group_editable_sale_order_user"/>
             </xpath>

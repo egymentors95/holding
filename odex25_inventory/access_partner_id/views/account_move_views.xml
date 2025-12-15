@@ -22,6 +22,14 @@
                     ]
                 </attribute>
             </xpath>
+            <xpath expr="//field[@name='line_ids']/tree/field[@name='account_id']" position="attributes">
+                <attribute name="domain">[
+                    ('deprecated', '=', False),
+                    ('company_id', '=', parent.company_id),
+                    ('selection_type', '!=', 'view'),
+                    ]
+                </attribute>
+            </xpath>
 
         </field>
     </record>
