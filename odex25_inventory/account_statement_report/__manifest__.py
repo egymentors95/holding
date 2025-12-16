@@ -1,0 +1,19 @@
+{
+    "name": "Account Statement Report",
+    "version": "14.0.0.1.0",
+    "category": "Product",
+    "summary": "Account Statement Report",
+    "author": "Elaraby",
+    "website": "https://www.ibs-na.com",
+    "license": "AGPL-3",
+    "depends": ['base','stock', 'report_xlsx','account', 'partner_category', 'allowed_journals'],
+    "data": [
+        "security/ir.model.access.csv",
+        "wizard/account_statement_wizard_views.xml",
+        "reports/account_report_template.xml",
+        "reports/action_reports.xml",
+    ],
+    "installable": True,
+    "application": False,
+    "auto_install": False,
+}

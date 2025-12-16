@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="account_statement_template">
+        <t t-call="web.html_container">
+            <t t-set="company" t-value="docs[0].env.user.company_id"/>
+            <t t-call="web.external_layout_background">
+                <t t-set="o" t-value="docs[0]"/>
+                <t t-set="report_data" t-value="report_data_list[0]"/>
+
+                <div class="page" style="direction: rtl; font-size: 13px">
+
+                    <h3 style="text-align:center">كشف حساب عميل</h3>
+
+                    <table style="width:100%; margin-bottom:10px">
+                        <tr>
+                            <td>
+                                <strong>العميل:</strong>
+                                <t t-esc="report_data.get('partner_name','')"/>
+                            </td>
+                            <td>
+                                <strong>من:</strong>
+                                <t t-esc="report_data.get('date_from','')"/>
+                            </td>
+                            <td>
+                                <strong>إلى:</strong>
+                                <t t-esc="report_data.get('date_to','')"/>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table class="table table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th>التاريخ</th>
+                                <th>البيان</th>
+                                <th>المستند</th>
+                                <th>القيد</th>
+                                <th>مدين</th>
+                                <th>دائن</th>
+                                <th>الرصيد</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="report_data.get('lines',[])" t-as="l">
+                                <tr>
+                                    <td>
+                                        <t t-esc="l.get('date','')"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="l.get('description','')"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="l.get('document','')"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="l.get('sequence','')"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="l.get('debit',0.0)"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="l.get('credit',0.0)"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="l.get('balance',0.0)"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <table style="width:100%; margin-top:10px">
+                        <tr>
+                            <td>
+                                <strong>إجمالي المدين:</strong>
+                                <t t-esc="report_data.get('total_debit',0.0)"/>
+                            </td>
+                            <td>
+                                <strong>إجمالي الدائن:</strong>
+                                <t t-esc="report_data.get('total_credit',0.0)"/>
+                            </td>
+                            <td>
+                                <strong>الرصيد النهائي:</strong>
+                                <t t-esc="report_data.get('ending_balance',0.0)"/>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <h4 style="margin-top:20px">تحليل أعمار الديون</h4>
+                    <table class="table table-bordered table-sm">
+                        <tr>
+                            <th>0 - 30</th>
+                            <th>31 - 60</th>
+                            <th>61 - 90</th>
+                            <th>91 - 120</th>
+                            <th>121 - 150</th>
+                            <th>أكثر من 150</th>
+                                <th>الصافي</th>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <t t-esc="report_data.get('aging',{}).get('0_30',0.0)"/>
+                            </td>
+                            <td>
+                                <t t-esc="report_data.get('aging',{}).get('31_60',0.0)"/>
+                            </td>
+                            <td>
+                                <t t-esc="report_data.get('aging',{}).get('61_90',0.0)"/>
+                            </td>
+                            <td>
+                                <t t-esc="report_data.get('aging',{}).get('91_120',0.0)"/>
+                            </td>
+                            <td>
+                                <t t-esc="report_data.get('aging',{}).get('121_150',0.0)"/>
+                            </td>
+                            <td>
+                                <t t-esc="report_data.get('aging',{}).get('150_plus',0.0)"/>
+                            </td>
+                                <td><t t-esc="sum(report_data.get('aging',{}).values())"/></td>
+
+                        </tr>
+                    </table>
+
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

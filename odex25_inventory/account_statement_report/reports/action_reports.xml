@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="report_customer_statement" model="ir.actions.report">
+        <field name="name">Account Statement Report</field>
+        <field name="model">account.statement.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">account_statement_report.account_statement_template</field>
+        <field name="report_file">account_statement_report.account_statement_template</field>
+        <field name="binding_type">report</field>
+    </record>
+
+
+</odoo>

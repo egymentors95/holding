@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="account_statement_wizard_view_form" model="ir.ui.view">
+            <field name="name">account.statement.wizard</field>
+            <field name="model">account.statement.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="date_from"/>
+                            </group>
+                            <group>
+                                <field name="date_to"/>
+                            </group>
+                            <group>
+                                <field name="partner_id" />
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Print (PDF)" name="action_print_report_pdf" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_statement_wizard_view_action" model="ir.actions.act_window">
+            <field name="name">Account Statement Report</field>
+            <field name="res_model">account.statement.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="account_statement_wizard_view_menu" name="Account Statement Report"
+                  parent="account.menu_finance_reports"
+                  sequence="500"/>
+         <menuitem id="account_statement_wizard_view_menu_one" name="Account Statement Report"
+                  parent="account_statement_wizard_view_menu"
+                   action="account_statement_wizard_view_action"
+                  sequence="100"/>
+
+
+    </data>
+</odoo>
