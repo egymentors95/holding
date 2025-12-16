@@ -7,7 +7,6 @@ class ReportAccountStatement(models.AbstractModel):
 
     @api.model
     def _get_report_values(self, docids, data=None):
-        # نجيب السجلات الأصلية للـ wizard
         wizards = self.env['account.statement.wizard'].browse(docids)
         report_data_list = [w.get_report_data() for w in wizards]
 
