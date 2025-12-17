@@ -41,9 +41,11 @@ class TotalPayslip(models.Model):
     loan_installment = fields.Float(string='قسط السلف')
     raseed_installment = fields.Float(string='رصيد السلف')
     absence_days = fields.Float(string='أيام الغياب')
+    cost_absence_days = fields.Float(string='مبلغ أيام الغياب')
     insurance = fields.Float(string='تأمينات')
     total_due = fields.Float(string='Total Due', compute='_compute_total_due', store=True)
-
+    total_deductions = fields.Float(string='اجمالي الحسميات', compute='_get_total_deductions', store=True)
+    net_receivable = fields.Float(string='صافي المستحق', compute='_get_net_receivable', store=True)
 
     @api.depends('basic_salary', 'transport_allowance', 'housing_allowance', 'food_allowance', 'natural', 'bonus', 'overtime')
     def _compute_total_due(self):
@@ -57,6 +59,24 @@ class TotalPayslip(models.Model):
                 record.bonus +
                 record.overtime
             )
+
+    @api.depends('loan_installment', 'raseed_installment', 'other_deductions', 'deductions', 'insurance', 'cost_absence_days')
+    def _get_total_deductions(self):
+        for record in self:
+            record.total_deductions = (
+                record.loan_installment +
+                record.raseed_installment +
+                record.other_deductions +
+                record.deductions +
+                record.cost_absence_days +
+                record.insurance
+            )
+
+    @api.depends('total_deductions', 'total_due')
+    def _get_net_receivable(self):
+        for rec in self:
+            rec.net_receivable = rec.total_due - rec.total_deductions
+
 
 
 

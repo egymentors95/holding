@@ -11,12 +11,12 @@
             <xpath expr="//header" position="replace">
                 <header>
                     <!-- Post -->
-                    <button name="action_post" string="Post" class="oe_highlight" type="object"
-                            groups="editable_sale.group_confirm_account_move"
-                            attrs="{'invisible': ['|', '|', ('state', '!=', 'draft'), ('auto_post', '=', True), ('move_type', '!=', 'entry')]}"/>
-                    <button name="action_post" string="Confirm" class="oe_highlight" type="object"
-                            groups="editable_sale.group_confirm_account_move"
-                            attrs="{'invisible': ['|', '|', ('state', '!=', 'draft'), ('auto_post', '=', True), ('move_type', '=', 'entry')]}"/>
+<!--                    <button name="action_post" string="Post" class="oe_highlight" type="object"-->
+<!--                            groups="editable_sale.group_confirm_account_move"-->
+<!--                            attrs="{'invisible': ['|', '|', ('state', '!=', 'draft'), ('auto_post', '=', True), ('move_type', '!=', 'entry')]}"/>-->
+<!--                    <button name="action_post" string="Confirm" class="oe_highlight" type="object"-->
+<!--                            groups="editable_sale.group_confirm_account_move"-->
+<!--                            attrs="{'invisible': ['|', '|', ('state', '!=', 'draft'), ('auto_post', '=', True), ('move_type', '=', 'entry')]}"/>-->
                     <!-- Send (only invoices) -->
                     <button name="action_invoice_sent" type="object" string="Send &amp; Print" groups="editable_sale.group_confirm_account_move"
                             attrs="{'invisible':['|', '|', ('state', '!=', 'posted'), ('is_move_sent', '=', True), ('move_type', 'not in', ('out_invoice', 'out_refund'))]}"

@@ -84,7 +84,7 @@
 
 
                 <div class="page" style="direction: rtl; font-size: 14px;" dir="rtl">
-                    <div style="color: blue; font-size: 18px;  text-align: right;">
+                    <div style="color: black; font-size: 18px;  text-align: right;">
                         <strong>العميل:</strong>
                         <t t-esc="report_data.get('partner_name','')"/>
                     </div>
@@ -92,7 +92,7 @@
 
                     <table class="table table-bordered table-sm">
                         <thead>
-                            <tr style="color: blue; text-align: center; padding: 5px; background-color: #B2BEB5;">
+                            <tr style="color: black; text-align: center; padding: 5px; background-color: #B2BEB5;">
                                 <th>التاريخ</th>
                                 <th>القيد</th>
 
@@ -155,7 +155,7 @@
                     </table>
 
                     <table class="table table-bordered table-sm">
-                        <tr style="color: blue; text-align: center; padding: 5px; ">
+                        <tr style="color: black; text-align: center; padding: 5px; ">
                             <th>
                                 <span>0 - 30</span>
                                 <span>يوم</span>

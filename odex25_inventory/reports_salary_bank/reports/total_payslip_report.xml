@@ -157,10 +157,10 @@
                                             <t t-esc="emp.housing_allowance"/>
                                         </td>
                                         <td style="border: 2px solid black;">
-                                            <t t-esc="emp.food_allowance"/>
+                                            <t t-esc="emp.transport_allowance"/>
                                         </td>
                                         <td style="border: 2px solid black;">
-                                            <t t-esc="emp.transport_allowance"/>
+                                            <t t-esc="emp.food_allowance"/>
                                         </td>
                                         <td style="border: 2px solid black;">
                                             <t t-esc="emp.natural"/>
@@ -175,6 +175,9 @@
                                             <t t-esc="emp.total_due"/>
                                         </td>
                                         <td style="border: 2px solid black;">
+                                            <t t-esc="emp.loan_installment"/>
+                                        </td>
+                                        <td style="border: 2px solid black;">
                                             <t t-esc="emp.raseed_installment"/>
                                         </td>
                                         <td style="border: 2px solid black;">
@@ -187,19 +190,16 @@
                                             <t t-esc="emp.insurance"/>
                                         </td>
                                         <td style="border: 2px solid black;">
-                                            <span></span>
+                                            <t t-esc="emp.absence_days"/>
                                         </td>
                                         <td style="border: 2px solid black;">
-                                            <span></span>
+                                            <t t-esc="emp.cost_absence_days"/>
                                         </td>
                                         <td style="border: 2px solid black;">
-                                            <span></span>
+                                            <t t-esc="emp.total_deductions"/>
                                         </td>
                                         <td style="border: 2px solid black;">
-                                            <span></span>
-                                        </td>
-                                        <td style="border: 2px solid black;">
-                                            <t t-esc="emp.net_salary"/>
+                                            <t t-esc="emp.net_receivable"/>
                                         </td>
                                     </tr>
                                 </t>
@@ -217,6 +217,9 @@
                                     </td>
                                     <td>
                                         <t t-esc="sum(e.housing_allowance for e in dept[1])"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="sum(e.transport_allowance for e in dept[1])"/>
                                     </td>
                                     <td>
                                         <t t-esc="sum(e.transport_allowance for e in dept[1])"/>
@@ -258,9 +261,6 @@
                                         <span></span>
                                     </td>
                                     <td>
-                                        <span></span>
-                                    </td>
-                                      <td>
                                         <span></span>
                                     </td>
 

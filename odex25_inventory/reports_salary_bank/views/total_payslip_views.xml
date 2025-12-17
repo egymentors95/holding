@@ -43,6 +43,7 @@
                 <field name="other_deductions" optional="hide"/>
                 <field name="loan_installment" optional="hide"/>
                 <field name="absence_days" optional="hide"/>
+                <field name="cost_absence_days" optional="hide"/>
             </tree>
         </field>
     </record>
