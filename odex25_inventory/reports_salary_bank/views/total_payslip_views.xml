@@ -6,6 +6,13 @@
         <field name="model">total.payslip</field>
         <field name="arch" type="xml">
             <tree editable="bottom">
+                <header>
+                    <button
+                            name="%(reports_salary_bank.action_report_total_payslip)d"
+                            string="كشف الرواتب"
+                            type="action"
+                            class="btn-primary"/>
+                </header>
                 <field name="date_from"/>
                 <field name="date_to"/>
                 <field name="comp_emp_code"/>
@@ -28,10 +35,14 @@
                 <field name="natural" optional="hide"/>
                 <field name="bonus" optional="hide"/>
                 <field name="overtime" optional="hide"/>
+                <field name="total_due" optional="hide"/>
+                <field name="raseed_installment" optional="hide"/>
+                <field name="insurance" optional="hide"/>
                 <field name="overtime_vocation" optional="hide"/>
                 <field name="other_earnings" optional="hide"/>
                 <field name="other_deductions" optional="hide"/>
                 <field name="loan_installment" optional="hide"/>
+                <field name="absence_days" optional="hide"/>
             </tree>
         </field>
     </record>

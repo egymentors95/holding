@@ -1,5 +1,7 @@
-from odoo import models, fields, api
+from datetime import datetime
 
+from odoo import models, fields, api
+from collections import defaultdict
 
 class TotalPayslip(models.Model):
     _name = 'total.payslip'
@@ -34,9 +36,69 @@ class TotalPayslip(models.Model):
     overtime = fields.Float(string='Overtime')
     overtime_vocation = fields.Float(string='Overtime Vacation')
     other_earnings = fields.Float(string='مستحقات اخرى')
+    deductions = fields.Float(string='خصومات')
     other_deductions = fields.Float(string='Other Deductions')
     loan_installment = fields.Float(string='قسط السلف')
+    raseed_installment = fields.Float(string='رصيد السلف')
+    absence_days = fields.Float(string='أيام الغياب')
+    insurance = fields.Float(string='تأمينات')
+    total_due = fields.Float(string='Total Due', compute='_compute_total_due', store=True)
+
+
+    @api.depends('basic_salary', 'transport_allowance', 'housing_allowance', 'food_allowance', 'natural', 'bonus', 'overtime')
+    def _compute_total_due(self):
+        for record in self:
+            record.total_due = (
+                record.basic_salary +
+                record.transport_allowance +
+                record.housing_allowance +
+                record.food_allowance +
+                record.natural +
+                record.bonus +
+                record.overtime
+            )
 
 
 
+class ReportTotalPayslip(models.AbstractModel):
+    _name = 'report.reports_salary_bank.total_payslip_report'
+    _description = 'Total Payslip Report'
+
+    @api.model
+    def _get_report_values(self, docids, data=None):
+        records = self.env['total.payslip'].browse(docids)
+
+        # تجميع حسب القسم
+        departments = defaultdict(list)
+        for rec in records:
+            departments[rec.d_name or 'بدون قسم'].append(rec)
+
+        # أسماء الشهور بالعربي
+        arabic_months = {
+            1: 'يناير',
+            2: 'فبراير',
+            3: 'مارس',
+            4: 'أبريل',
+            5: 'مايو',
+            6: 'يونيو',
+            7: 'يوليو',
+            8: 'أغسطس',
+            9: 'سبتمبر',
+            10: 'أكتوبر',
+            11: 'نوفمبر',
+            12: 'ديسمبر'
+        }
+
+        today = datetime.now()
+
+        # اسم الشركة من أول سجل
+        company_name = records[0].company_id.name if records else ''
+
+        return {
+            'docs': records,
+            'departments': departments,
+            'month_name': arabic_months[today.month],
+            'year': today.year,
+            'company_name': company_name,
+        }
 

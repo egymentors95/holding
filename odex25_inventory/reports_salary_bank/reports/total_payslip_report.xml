@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <template id="total_payslip_report">
+        <t t-call="web.html_container">
+            <t t-call="web.basic_layout">
+                <div class="header">
+                    <div class="row">
+                        <div class="col-3">
+                            <div>
+                                <span t-esc="datetime.date.today()"/>
+                                <span>التاريخ</span>
+                            </div>
+                            <div>
+                                صفحة
+                                <span class="page"/>
+                                من
+                                <span class="topage"/>
+                            </div>
+
+                        </div>
+
+                        <div class="col-6"
+                             style="background-color: #C0C0C0; box-shadow: 0 4px 8px rgba(0,0,0,0.25); text-align:center; margin-bottom:20px; color: #155DFC;">
+                            <h3>
+                                كشف رواتب الموظفين لشهر
+                                <t t-esc="month_name"/>
+                                <t t-esc="year"/>
+                            </h3>
+                        </div>
+
+                        <div class="col-3"></div>
+
+                    </div>
+
+
+                </div>
+
+                <div class="page">
+
+
+                    <!-- لف على الأقسام -->
+                    <t t-foreach="departments.items()" t-as="dept">
+                        <h4 style="margin-top:20px; color: #155DFC">
+                            <div class="row" dir="rtl" style="text-align: right;">
+                                <div class="col-6">
+                                    <t t-esc="company_name"/>
+                                </div>
+                                <div class="col-6">
+                                    <!--                                    القسم :-->
+                                    <t t-esc="dept[0]"/>
+
+                                </div>
+                            </div>
+                        </h4>
+
+                        <table class="table table-sm table-bordered" dir="rtl"
+                               style="text-align: center; align-items: center; vertical-align: middle; font-size: 12px;  ">
+                            <thead>
+                                <tr style="border: 2px solid black;">
+                                    <th style="border: 2px solid black;" rowspan="3">
+                                        <span>م</span>
+                                    </th>
+                                    <th style="border: 2px solid black;" rowspan="3">
+                                        <span>كود</span>
+                                    </th>
+                                    <th style="border: 2px solid black;" rowspan="3">
+                                        <span>إسم الموظف</span>
+                                    </th>
+                                    <th style="border: 2px solid black;" rowspan="3">
+                                        <span>الراتب</span>
+                                    </th>
+                                    <th style="border: 2px solid black;" colspan="6">
+                                        <span>البدلات</span>
+                                    </th>
+                                    <th style="border: 2px solid black;" rowspan="3">
+                                        <span>إجمالي المستحق</span>
+                                    </th>
+                                    <th style="border: 2px solid black;" colspan="7">
+                                        <span>الخصومات والاستقطاعات</span>
+                                    </th>
+                                    <th style="border: 2px solid black;" rowspan="3">
+                                        <span>إجمالي الحسميات</span>
+                                    </th>
+                                    <th style="border: 2px solid black;" rowspan="3">
+                                        <span>صافي المستحق</span>
+                                    </th>
+                                </tr>
+                                <tr style="border: 2px solid black;">
+                                    <th style="border: 2px solid black;" rowspan="2">
+                                        <span>بدل السكن الشهري</span>
+                                    </th>
+                                    <th style="border: 2px solid black;" rowspan="2">
+                                        <span>تنقل</span>
+                                    </th>
+                                    <th style="border: 2px solid black;" rowspan="2">
+                                        <span>طعام</span>
+                                    </th>
+                                    <th style="border: 2px solid black;" rowspan="2">
+                                        <span>طبيعة مهنة</span>
+                                    </th>
+                                    <th style="border: 2px solid black;" rowspan="2">
+                                        <span>مكافات</span>
+                                    </th>
+                                    <th style="border: 2px solid black;" rowspan="2">
+                                        <span>إضافي</span>
+                                    </th>
+
+                                    <th style="border: 2px solid black;" rowspan="2">
+                                        <span>اقساط سلف</span>
+                                    </th>
+                                    <th style="border: 2px solid black;" rowspan="2">
+                                        <span>رصيد السلف الحالي</span>
+                                    </th>
+                                    <th style="border: 2px solid black;" rowspan="2">
+                                        <span>حسميات اخرى</span>
+                                    </th>
+                                    <th style="border: 2px solid black;" rowspan="2">
+                                        <span>خصومات</span>
+                                    </th>
+                                    <th style="border: 2px solid black;" rowspan="2">
+                                        <span>تأمينات</span>
+                                    </th>
+                                    <th style="border: 2px solid black;" colspan="2">
+                                        <span>غياب</span>
+                                    </th>
+                                </tr>
+                                <tr style="border: 2px solid black;">
+                                    <th style="border: 2px solid black;">
+                                        <span>أيام</span>
+                                    </th>
+                                    <th style="border: 2px solid black;">
+                                        <span>مبلغ</span>
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <!-- موظفين القسم -->
+                                <t t-set="sequence" t-value="1"/>
+                                <t t-foreach="dept[1]" t-as="emp">
+                                    <tr>
+                                        <td style="border: 2px solid black;">
+                                            <spam t-esc="sequence"/>
+                                            <t t-set="sequence" t-value="sequence + 1"/>
+                                        </td>
+                                        <td style="border: 2px solid black;">
+                                            <t t-esc="emp.comp_emp_code"/>
+                                        </td>
+                                        <td style="border: 2px solid black;">
+                                            <t t-esc="emp.emp_name"/>
+                                        </td>
+                                        <td style="border: 2px solid black;">
+                                            <t t-esc="emp.basic_salary"/>
+                                        </td>
+                                        <td style="border: 2px solid black;">
+                                            <t t-esc="emp.housing_allowance"/>
+                                        </td>
+                                        <td style="border: 2px solid black;">
+                                            <t t-esc="emp.food_allowance"/>
+                                        </td>
+                                        <td style="border: 2px solid black;">
+                                            <t t-esc="emp.transport_allowance"/>
+                                        </td>
+                                        <td style="border: 2px solid black;">
+                                            <t t-esc="emp.natural"/>
+                                        </td>
+                                        <td style="border: 2px solid black;">
+                                            <t t-esc="emp.bonus"/>
+                                        </td>
+                                        <td style="border: 2px solid black;">
+                                            <t t-esc="emp.overtime"/>
+                                        </td>
+                                        <td style="border: 2px solid black;">
+                                            <t t-esc="emp.total_due"/>
+                                        </td>
+                                        <td style="border: 2px solid black;">
+                                            <t t-esc="emp.raseed_installment"/>
+                                        </td>
+                                        <td style="border: 2px solid black;">
+                                            <t t-esc="emp.other_deductions"/>
+                                        </td>
+                                        <td style="border: 2px solid black;">
+                                            <t t-esc="emp.deductions"/>
+                                        </td>
+                                        <td style="border: 2px solid black;">
+                                            <t t-esc="emp.insurance"/>
+                                        </td>
+                                        <td style="border: 2px solid black;">
+                                            <span></span>
+                                        </td>
+                                        <td style="border: 2px solid black;">
+                                            <span></span>
+                                        </td>
+                                        <td style="border: 2px solid black;">
+                                            <span></span>
+                                        </td>
+                                        <td style="border: 2px solid black;">
+                                            <span></span>
+                                        </td>
+                                        <td style="border: 2px solid black;">
+                                            <t t-esc="emp.net_salary"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+
+                            <!-- إجمالي القسم -->
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3"
+                                        style="text-align: center; font-size: 15px; border-right: 2px solid white; border-bottom: 2px solid white;">
+                                        إجمالي القسم
+                                    </td>
+                                    <td>
+                                        <t t-esc="sum(e.basic_salary for e in dept[1])"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="sum(e.housing_allowance for e in dept[1])"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="sum(e.transport_allowance for e in dept[1])"/>
+                                    </td>
+                                    <td>
+                                        <span></span>
+                                    </td>
+                                    <td>
+                                        <span></span>
+                                    </td>
+                                    <td>
+                                        <span></span>
+                                    </td>
+                                    <td>
+                                        <span></span>
+                                    </td>
+                                    <td>
+                                        <span></span>
+                                    </td>
+                                    <td>
+                                        <span></span>
+                                    </td>
+                                    <td>
+                                        <span></span>
+                                    </td>
+                                    <td>
+                                        <span></span>
+                                    </td>
+                                    <td>
+                                        <span></span>
+                                    </td>
+                                    <td>
+                                        <span></span>
+                                    </td>
+                                    <td>
+                                        <span></span>
+                                    </td>
+                                    <td>
+                                        <span></span>
+                                    </td>
+                                    <td>
+                                        <span></span>
+                                    </td>
+                                      <td>
+                                        <span></span>
+                                    </td>
+
+
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <!-- صفحة جديدة لكل قسم -->
+                        <!--                        <div style="page-break-after: always;"/>-->
+
+                    </t>
+
+                </div>
+            </t>
+        </t>
+    </template>
+
+
+    <record id="paperformat_total_payslip_landscape" model="report.paperformat">
+        <field name="name">Total Payslip Landscape</field>
+        <field name="default" eval="False"/>
+        <field name="format">A4</field>
+        <field name="orientation">Landscape</field>
+
+        <!-- الهوامش -->
+        <field name="margin_top">30</field>
+        <field name="margin_bottom">0</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">25</field>
+        <field name="dpi">90</field>
+    </record>
+
+
+    <record id="action_report_total_payslip" model="ir.actions.report">
+        <field name="name">كشف الرواتب</field>
+        <field name="model">total.payslip</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">reports_salary_bank.total_payslip_report</field>
+        <field name="report_file">reports_salary_bank.total_payslip_report</field>
+        <field name="print_report_name">'كشف الرواتب'</field>
+        <field name="paperformat_id" ref="reports_salary_bank.paperformat_total_payslip_landscape"/>
+    </record>
+
+</odoo>
