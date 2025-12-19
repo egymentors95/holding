@@ -10,5 +10,14 @@
         <field name="binding_type">report</field>
     </record>
 
+    <record id="report_invoice_details" model="ir.actions.report">
+        <field name="name">Invoice Details Report</field>
+        <field name="model">invoice.details.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">account_statement_report.invoice_details_template</field>
+        <field name="report_file">account_statement_report.invoice_details_template</field>
+        <field name="binding_type">report</field>
+    </record>
+
 
 </odoo>

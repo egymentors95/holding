@@ -10,7 +10,9 @@
     "data": [
         "security/ir.model.access.csv",
         "wizard/account_statement_wizard_views.xml",
+        "wizard/invoice_details_wizard_views.xml",
         "reports/account_report_template.xml",
+        "reports/invoice_details_template.xml",
         "reports/action_reports.xml",
     ],
     "installable": True,

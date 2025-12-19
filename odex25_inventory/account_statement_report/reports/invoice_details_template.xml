@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <template id="invoice_details_template">
+        <t t-call="web.html_container">
+            <t t-call="web.basic_layout">
+                <t t-set="o" t-value="docs[0]"/>
+                <t t-set="report_data" t-value="report_data_list[0]"/>
+                <t t-set="company" t-value="o.env.user.company_id"/>
+
+                <div class="header">
+                    <table class="table table-borderless" style="border: none; width: 100%;" dir="ltr">
+                        <tbody>
+                            <tr>
+                                <td colspan="4" style="text-align: right;" dir="rtl">
+                                    <div>
+                                        <span>التاريخ:</span>
+                                        <t t-esc="report_data.get('date_to','')"/>
+                                    </div>
+                                    <div>
+                                        Page:
+                                        <span class="page"/>
+                                        of
+                                        <span class="topage"/>
+                                    </div>
+
+                                </td>
+
+                                <td colspan="4">
+                                    <div style="border: 1px solid black; padding: 5px; text-align: center;">
+                                        <span style="font-weight: bold; color: blue; font-size: 16px;">بيان فواتير
+                                            تفصيلي
+                                        </span>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <strong style="color: blue;">إلى:</strong>
+                                            <t t-esc="report_data.get('date_to','')"/>
+                                        </div>
+                                        <div class="col-6">
+                                            <strong style="color: blue;">من:</strong>
+                                            <t t-esc="report_data.get('date_from','')"/>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td colspan="4" style="text-align: right;">
+                                    <img t-att-src="'data:image/png;base64,%s' % (company.logo.decode('utf-8') if company.logo else '')"
+                                         width="120px"/>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
+                <div class="page" style="direction: rtl; font-size: 14px;" dir="rtl">
+                    <div style="color: black; font-size: 18px;  text-align: right;">
+                        <strong>المحصل:</strong>
+                        <t t-esc="report_data.get('sales_person','')"/>
+                    </div>
+
+
+                    <table class="table table-bordered table-sm">
+                        <thead>
+                            <tr style="color: black; text-align: center; padding: 5px; background-color: #B2BEB5;">
+                                <th>رقم العميل</th>
+                                <th>PO</th>
+
+                                <th>رقم المستند</th>
+                                <th>تاريخ الفاتورة</th>
+
+                                <th>قيمة الفاتورة</th>
+                                <th>المسدد</th>
+                                <th>المتبقي</th>
+                                <th>مدة الفاتورة بالايام</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="total_amount" t-value="0.0"/>
+                            <t t-set="total_paid" t-value="0.0"/>
+                            <t t-set="total_residual" t-value="0.0"/>
+                            <t t-set="i" t-value="1"/>
+
+                            <t t-foreach="report_data.get('lines',[])" t-as="l" t-index="i">
+                                <t t-set="total_amount" t-value="total_amount + l.get('amount_total', 0.0)"/>
+                                <t t-set="total_paid" t-value="total_paid + l.get('paid', 0.0)"/>
+                                <t t-set="total_residual" t-value="total_residual + l.get('amount_residual', 0.0)"/>
+
+
+                                <tr style="text-align: center; padding: 5px;">
+                                    <t t-if="i == 1">
+                                        <td>
+                                            <t t-esc="report_data.get('partner','')"/>
+                                        </td>
+                                    </t>
+                                    <t t-else="">
+                                        <td style="border-bottom: 1px solid white; border-right: 1px solid white;">
+                                            <span></span>
+                                        </td>
+                                    </t>
+
+                                    <t t-set="i" t-value="i + 1"/>
+
+                                    <td>
+                                        <t t-esc="l.get('po','')"/>
+                                    </td>
+
+                                    <td style="color: blue;">
+                                        <t t-esc="l.get('sequence','')"/>
+                                    </td>
+
+                                    <td>
+                                        <t t-esc="l.get('date','')"/>
+                                    </td>
+
+                                    <td class="text-right">
+                                        <t t-esc="l.get('amount_total',0.0)"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="l.get('paid',0.0)"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="l.get('amount_residual',0.0)"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-att-style="'color:red;' if l.get('days',0) &gt; 0 else 'color:green;'">
+                                            <t t-esc="l.get('days',0)"/>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                        <tfoot>
+                            <tr style="font-weight: bold; text-align: center;">
+                                <td style="border-bottom: 1px solid white; border-right: 1px solid white;">
+                                    <span></span>
+                                </td>
+                                <td style="background-color: #EEE;" colspan="3">
+                                    <span>اجمالي الفواتير</span>
+                                </td>
+                                <td style="background-color: #EEE;">
+                                    <span>
+                                        <t t-esc="total_amount"/>
+                                    </span>
+                                </td>
+                                <td style="background-color: #EEE;">
+                                    <span>
+                                        <t t-esc="total_paid"/>
+                                    </span>
+                                </td>
+                                <td style="background-color: #EEE;">
+                                    <span>
+                                        <t t-esc="total_residual"/>
+                                    </span>
+                                </td>
+                                <td style="border-bottom: 1px solid white; border-left: 1px solid white;">
+                                    <span></span>
+                                </td>
+
+                            </tr>
+                        </tfoot>
+                    </table>
+
+
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>
