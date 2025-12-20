@@ -61,7 +61,7 @@
                                         <field name="product_ids" options="{'no_create': True}"/>
                                         <field name="name" optional="show"/>
                                         <field name="account_id" optional="show"/>
-                                        <field name="attachment_ids" widget="many2many_tags" optional="show"/>
+                                        <field name="attachment_ids" widget="many2many_binary" optional="show"/>
                                         <field name="analytic_account_id" optional="show"/>
                                         <field name="quantity" optional="show"/>
                                         <field name="price_unit" optional="show"/>

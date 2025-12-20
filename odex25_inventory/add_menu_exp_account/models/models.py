@@ -81,7 +81,7 @@ class Expense(models.Model):
             analytic_var = False
             for line in rec.expenses_ids:
                 employee = line.employee_id.name
-                partner = line.partner_id.name
+                partner = line.partner_id.id
                 if line.analytic_account_id:
                     analytic_var = line.analytic_account_id.id
                 for tax in line.tax_ids.invoice_repartition_line_ids:
