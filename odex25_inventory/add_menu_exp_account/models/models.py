@@ -81,6 +81,7 @@ class Expense(models.Model):
             analytic_var = False
             for line in rec.expenses_ids:
                 employee = line.employee_id.name
+                partner = line.partner_id.name
                 if line.analytic_account_id:
                     analytic_var = line.analytic_account_id.id
                 for tax in line.tax_ids.invoice_repartition_line_ids:
@@ -91,6 +92,7 @@ class Expense(models.Model):
                     'name': employee,
                     'debit': line.price_subtotal,
                     'analytic_account_id': analytic_var,
+                    'partner_id': partner,
 
                 }])
             if taxx:
@@ -99,6 +101,7 @@ class Expense(models.Model):
                     'name': f'{employee}\n(tax)',
                     'debit': rec.tax,
                     'analytic_account_id': analytic_var,
+                    'partner_id': partner,
 
                 }])
             lines.append([0, 0, {
@@ -106,6 +109,7 @@ class Expense(models.Model):
                 'name': f'{employee}\n{rec.name}',
                 'credit': rec.total,
                 'analytic_account_id': analytic_var,
+                'partner_id': partner,
 
             }])
 
@@ -156,6 +160,7 @@ class ExpenseLine(models.Model):
     invoice_id = fields.Many2one(comodel_name="expense.expense", )
     company_id = fields.Many2one(related='invoice_id.company_id', store=True)
     employee_id = fields.Many2one(comodel_name='hr.employee')
+    partner_id = fields.Many2one(comodel_name='res.partner', string='Partner', compute='_get_partner_id', store=True)
     product_ids = fields.Many2one(comodel_name="product.product", string="Product", )
     name = fields.Char(string="Label", )
     account_id = fields.Many2one(comodel_name="account.account", string="Account", required=True,
@@ -179,9 +184,15 @@ class ExpenseLine(models.Model):
             taxes = (t / 100) * rec.price_subtotal
             rec.vat_value = taxes
 
+    @api.depends('employee_id')
+    def _get_partner_id(self):
+        for rec in self:
+            if not rec.partner_id:
+                if rec.employee_id and rec.employee_id.user_partner_id:
+                    rec.partner_id = rec.employee_id.user_partner_id.id
 
-#
-#
+
+
 # class PartnerExpenses(models.Model):
 #     _inherit = 'res.partner'
 #
