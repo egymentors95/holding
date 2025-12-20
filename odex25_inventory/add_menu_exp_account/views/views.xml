@@ -39,6 +39,7 @@
                             <group>
                                 <field name="expense_date"
                                        attrs="{'readonly': [('state','=','confirm')]}"/>
+                                <field name="user_id" invisible="1"/>
                                 <!--                                <field name="name"-->
                                 <!--                                       attrs="{'readonly': [('state','=','confirm')]}"/>-->
                             </group>

@@ -37,6 +37,7 @@ class Expense(models.Model):
     amount_taxed = fields.Float(string="Un Taxed Amount", tracking=True)
     seq = fields.Char(readonly=True, copy=False, )
     company_id = fields.Many2one(comodel_name='res.company', string='Company', default=lambda self: self.env.company)
+    user_id = fields.Many2one(comodel_name='res.users', string='User', default=lambda self: self.env.user)
 
     def unlink(self):
         error_message = _('You cannot delete a expense which is in %s state')
@@ -134,23 +135,34 @@ class Expense(models.Model):
                 rec.journal_entry_id.action_post()
             rec.state = 'confirm'
 
-    @api.depends("expenses_ids.tax_ids")
+    @api.depends(
+        'expenses_ids.quantity',
+        'expenses_ids.price_unit',
+        'expenses_ids.tax_ids'
+    )
     def _get_tax(self):
-        subtotal = 0
         for rec in self:
-            n = 0
-            taxes = 0
+            amount_untaxed = 0.0
+            amount_tax = 0.0
+
             for line in rec.expenses_ids:
-                t = 0
-                for any_line in line.tax_ids:
-                    t = t + any_line.amount
-                taxes = (t / 100) * line.quantity * line.price_unit
-                line.price_subtotal = line.quantity * line.price_unit
-                subtotal = subtotal + line.price_subtotal
-                n = n + taxes
-            rec.tax = n
-            rec.amount_taxed = subtotal
-            rec.total = rec.tax + rec.amount_taxed
+                taxes_res = line.tax_ids.compute_all(
+                    line.price_unit,
+                    quantity=line.quantity,
+                    currency=rec.company_id.currency_id,
+                    product=line.product_ids,
+                    partner=line.partner_id,
+                )
+
+                # subtotal بدون ضريبة (حتى لو السعر شامل)
+                line.price_subtotal = taxes_res['total_excluded']
+
+                amount_untaxed += taxes_res['total_excluded']
+                amount_tax += taxes_res['total_included'] - taxes_res['total_excluded']
+
+            rec.amount_taxed = amount_untaxed
+            rec.tax = amount_tax
+            rec.total = amount_untaxed + amount_tax
 
 
 class ExpenseLine(models.Model):
@@ -166,13 +178,20 @@ class ExpenseLine(models.Model):
     account_id = fields.Many2one(comodel_name="account.account", string="Account", required=True,
                                  related='product_ids.property_account_expense_id', readonly=False, store=True)
     analytic_account_id = fields.Many2one(comodel_name="account.analytic.account", string="Analytic Account ",
-                                          required=False, )
+                                          required=False,  compute='_get_analytic_account_id', store=True)
     quantity = fields.Float(string="Quantity", required=False, default="1")
     price_unit = fields.Float(string="Price", required=True, )
     tax_ids = fields.Many2many(comodel_name="account.tax", string="Taxes", )
     price_subtotal = fields.Float(string="Subtotal", required=False, )
     vat_value = fields.Float(string='Vat Value', compute='_get_total_vat', store=True)
     attachment_ids = fields.Many2many(comodel_name='ir.attachment', string='Attachments', )
+
+    @api.depends('invoice_id.user_id', 'invoice_id')
+    def _get_analytic_account_id(self):
+        for record in self:
+            if record.invoice_id.user_id:
+                record.analytic_account_id = record.invoice_id.user_id.analytic_account_id.id
+
 
 
     @api.depends('price_subtotal', 'tax_ids')

@@ -107,10 +107,10 @@
             </xpath>
 
 
-            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='analytic_account_id']"
-                   position="attributes">
-                <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>
-            </xpath>
+<!--            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='analytic_account_id']"-->
+<!--                   position="attributes">-->
+<!--                <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>-->
+<!--            </xpath>-->
             <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='analytic_tag_ids']" position="attributes">
                 <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>
             </xpath>
@@ -120,9 +120,9 @@
             <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='discount']" position="attributes">
                 <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>
             </xpath>
-            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='tax_ids']" position="attributes">
-                <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>
-            </xpath>
+<!--            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='tax_ids']" position="attributes">-->
+<!--                <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>-->
+<!--            </xpath>-->
               <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='tax_ids']" position="before">
                   <field name="lot_id"/>
             </xpath>
@@ -132,10 +132,10 @@
                    position="attributes">
                 <attribute name="attrs">{'column_invisible':1}</attribute>
             </xpath>
-            <xpath expr="//field[@name='line_ids']/tree/field[@name='analytic_account_id']"
-                   position="attributes">
-                <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>
-            </xpath>
+<!--            <xpath expr="//field[@name='line_ids']/tree/field[@name='analytic_account_id']"-->
+<!--                   position="attributes">-->
+<!--                <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>-->
+<!--            </xpath>-->
             <xpath expr="//field[@name='line_ids']/tree/field[@name='amount_currency']"
                    position="attributes">
                 <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>
@@ -144,10 +144,10 @@
                    position="attributes">
                 <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>
             </xpath>
-            <xpath expr="//field[@name='line_ids']/tree/field[@name='tax_ids']"
-                   position="attributes">
-                <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>
-            </xpath>
+<!--            <xpath expr="//field[@name='line_ids']/tree/field[@name='tax_ids']"-->
+<!--                   position="attributes">-->
+<!--                <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>-->
+<!--            </xpath>-->
 
             <xpath expr="//field[@name='line_ids']/tree/field[@name='name']"
                    position="attributes">
