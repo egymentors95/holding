@@ -6,56 +6,83 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
     def button_validate(self):
-        # أولاً نكمل الـ validation الطبيعي
+        # 1️⃣ نفذ الـ validation الطبيعي
         res = super().button_validate()
 
-        print(">>> PICKING DONE <<<", self.name)
+        for picking in self:
+            print("\n>>> PICKING DONE <<<", picking.name)
 
-        # نمر على كل move في الاستلام
-        for move in self.move_lines:
-            if move.product_id.valuation != 'real_time':
-                continue  # بس للـ real_time
+            for move in picking.move_lines:
 
-            # ناخد الـ SVL اللي اتعمل بعد action_done
-            svls = move.stock_valuation_layer_ids
-            if not svls:
-                print(f">>> NO SVL CREATED FOR MOVE {move.id}")
-                continue
+                # فقط المنتجات ذات real_time valuation
+                if move.product_id.valuation != 'real_time':
+                    continue
 
-            for svl in svls:
-                try:
-                    # نحضر الحسابات والجورنال
-                    journal_id, acc_src, acc_dest, acc_valuation = move._get_accounting_data_for_valuation()
-                    qty = svl.quantity
-                    cost = svl.value
-                    description = svl.description or move.name
+                # منع التكرار
+                if move.account_move_ids:
+                    print(">>> MOVE ALREADY POSTED:", move.id)
+                    continue
 
-                    # نختار الحسابات حسب اتجاه الحركة
-                    if move._is_in():
-                        debit_account_id = acc_dest
-                        credit_account_id = acc_valuation
-                    else:
-                        debit_account_id = acc_valuation
-                        credit_account_id = acc_src
+                # لازم يكون في SVL
+                svls = move.stock_valuation_layer_ids
+                if not svls:
+                    print(">>> NO SVL FOR MOVE:", move.id)
+                    continue
 
-                    # نعمل entry
-                    move._create_account_move_line(
-                        credit_account_id=credit_account_id,
-                        debit_account_id=debit_account_id,
-                        journal_id=journal_id,
-                        qty=qty,
-                        description=description,
-                        svl_id=svl.id,
-                        cost=cost
-                    )
-                    print(f">>> ACCOUNT ENTRY CREATED FOR MOVE {move.id}")
+                for svl in svls:
+                    try:
+                        # 2️⃣ الحسابات والجورنال
+                        journal_id, acc_src, acc_dest, acc_valuation = \
+                            move._get_accounting_data_for_valuation()
 
-                except UserError as e:
-                    print(f">>> USER ERROR FOR MOVE {move.id}: {e}")
-                except Exception as e:
-                    print(f">>> ERROR FOR MOVE {move.id}: {e}")
+                        qty = abs(svl.quantity)
+                        cost = abs(svl.value)
+                        description = svl.description or move.name
+
+                        src_usage = move.location_id.usage
+                        dest_usage = move.location_dest_id.usage
+
+                        print("\n--- MOVE DEBUG ---")
+                        print("MOVE:", move.id)
+                        print("SRC:", move.location_id.display_name, src_usage)
+                        print("DST:", move.location_dest_id.display_name, dest_usage)
+                        print("QTY:", qty, "COST:", cost)
+
+                        # 3️⃣ تحديد الاتجاه الصحيح
+                        if src_usage == 'supplier' and dest_usage == 'internal':
+                            # 📥 Receipt
+                            debit_account_id = acc_dest  # Stock Input
+                            credit_account_id = acc_valuation  # Stock Valuation
+
+                        elif src_usage == 'internal' and dest_usage in ('customer', 'supplier'):
+                            # 📤 Delivery
+                            debit_account_id = acc_valuation  # Stock Valuation
+                            credit_account_id = acc_src  # Stock Output
+
+                        else:
+                            print(">>> SKIPPED MOVE (NO VALUATION FLOW)")
+                            continue
+
+                        # 4️⃣ إنشاء القيد
+                        move._create_account_move_line(
+                            credit_account_id=credit_account_id,
+                            debit_account_id=debit_account_id,
+                            journal_id=journal_id,
+                            qty=qty,
+                            description=description,
+                            svl_id=svl.id,
+                            cost=cost
+                        )
+
+                        print(">>> ACCOUNT ENTRY CREATED FOR MOVE:", move.id)
+
+                    except UserError as e:
+                        print(">>> USER ERROR:", e)
+                    except Exception as e:
+                        print(">>> SYSTEM ERROR:", e)
 
         return res
+
 
 # class StockMoveDebug(models.Model):
 #     _inherit = 'stock.move'
