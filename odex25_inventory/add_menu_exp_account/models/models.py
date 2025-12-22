@@ -3,6 +3,7 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
 from odoo.osv import expression
+from datetime import date
 
 
 @api.depends('restrict_mode_hash_table', 'state')
@@ -19,7 +20,7 @@ class Expense(models.Model):
 
     name = fields.Text(string="Ref", required=False, )
     journal_entry_id = fields.Many2one(comodel_name="account.move", string="Journal Entry", copy=False)
-    expense_date = fields.Date(string="Expense Date", required=False, tracking=True)
+    expense_date = fields.Date(string="Expense Date", required=True, copy=False, tracking=True, default=lambda self: date.today())
     journal_id = fields.Many2one(comodel_name="account.journal", string="Journal", required=True, tracking=True,
                                  domain="[('type', 'in', ['bank','cash'])]")
     expenses_ids = fields.One2many(comodel_name="expense.line", inverse_name="invoice_id", string="Expenses",
@@ -37,7 +38,7 @@ class Expense(models.Model):
     amount_taxed = fields.Float(string="Un Taxed Amount", tracking=True)
     seq = fields.Char(readonly=True, copy=False, )
     company_id = fields.Many2one(comodel_name='res.company', string='Company', default=lambda self: self.env.company)
-    user_id = fields.Many2one(comodel_name='res.users', string='User', default=lambda self: self.env.user)
+    user_id = fields.Many2one(comodel_name='res.users', string='User', default=lambda self: self.env.user, copy=False)
 
     def unlink(self):
         error_message = _('You cannot delete a expense which is in %s state')
@@ -72,6 +73,11 @@ class Expense(models.Model):
 
     def submit_to_account(self):
         for rec in self:
+            for line in rec.expenses_ids:
+                if not line.account_id:
+                    raise UserError(
+                        _("You cannot submit to account because some expense lines have no Account. Please fill all Accounts."))
+
             rec.state = 'to_account'
 
 
@@ -173,10 +179,10 @@ class ExpenseLine(models.Model):
     company_id = fields.Many2one(related='invoice_id.company_id', store=True)
     employee_id = fields.Many2one(comodel_name='hr.employee')
     partner_id = fields.Many2one(comodel_name='res.partner', string='Partner', compute='_get_partner_id', store=True)
-    product_ids = fields.Many2one(comodel_name="product.product", string="Product", )
+    product_ids = fields.Many2one(comodel_name="product.product", string="Product", domain=[('categ_name', '=', 'Expenses')])
     name = fields.Char(string="Label", )
-    account_id = fields.Many2one(comodel_name="account.account", string="Account", required=True,
-                                 related='product_ids.property_account_expense_id', readonly=False, store=True)
+    account_id = fields.Many2one(comodel_name="account.account", string="Account", required=False,
+                                readonly=False,)
     analytic_account_id = fields.Many2one(comodel_name="account.analytic.account", string="Analytic Account ",
                                           required=False,  compute='_get_analytic_account_id', store=True)
     quantity = fields.Float(string="Quantity", required=False, default="1")
@@ -209,6 +215,17 @@ class ExpenseLine(models.Model):
             if not rec.partner_id:
                 if rec.employee_id and rec.employee_id.user_partner_id:
                     rec.partner_id = rec.employee_id.user_partner_id.id
+
+    @api.onchange('product_ids')
+    def _onchange_product_ids(self):
+        for rec in self:
+            if rec.product_ids:
+                # نسخ الضريبة من supplier_taxes_id الخاصة بالمنتج
+                rec.tax_ids = rec.product_ids.supplier_taxes_id.filtered(
+                    lambda t: t.company_id == rec.invoice_id.company_id
+                )
+            else:
+                rec.tax_ids = False
 
 
 
