@@ -323,10 +323,10 @@ class PurchaseOrderCustom(models.Model):
         self.attach_no = Attachment.search_count(domain)
         return action
 
-    def _prepare_invoice(self):
-        res = super(PurchaseOrderCustom, self)._prepare_invoice()
-        res.update({'purchase_id': self.id, 'res_id': self.id, 'res_model': 'purchase.order'})
-        return res
+    # def _prepare_invoice(self):
+    #     res = super(PurchaseOrderCustom, self)._prepare_invoice()
+    #     res.update({'purchase_id': self.id, 'res_id': self.id, 'res_model': 'purchase.order'})
+    #     return res
 
     @api.onchange('type')
     def auto_type_change(self):

@@ -9,6 +9,7 @@
     "depends": [
         "base",
         "stock",
+        "stock_account",
     ],
     "data": [
         "views/res_users.xml",

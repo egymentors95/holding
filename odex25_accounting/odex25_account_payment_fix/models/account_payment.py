@@ -2,6 +2,7 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import AccessError, ValidationError, Warning, UserError
 import json
+from odoo.tools.float_utils import float_is_zero, float_compare
 
 
 class AccountMove(models.Model):
