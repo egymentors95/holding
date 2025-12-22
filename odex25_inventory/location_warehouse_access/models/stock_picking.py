@@ -57,9 +57,8 @@ class StockPicking(models.Model):
 
         return res
 
-
-class StockMoveDebug(models.Model):
-    _inherit = 'stock.move'
+# class StockMoveDebug(models.Model):
+#     _inherit = 'stock.move'
 
     # def _create_account_move_line(self, credit_account_id, debit_account_id, journal_id, qty, description, svl_id,
     #                               cost):
