@@ -15,7 +15,7 @@
                                 class="oe_highlight"
                                 type="object"
                                 attrs="{'invisible': [('state','!=','to_manager')]}"/>
-                        <button name="get_confirm" string="Submit to Account"
+                        <button name="submit_to_account" string="Submit to Account"
                                 class="oe_highlight"
                                 type="object"
                                 attrs="{'invisible': [('state','!=','to_financial_manager')]}"/>
@@ -23,10 +23,14 @@
                                 class="oe_highlight"
                                 type="object"
                                 attrs="{'invisible': [('state','!=','to_account')]}"/>
-                        <button name="action_draft" string="Reset To Draft"
+                        <button name="refuse_to_draft" string="Refuse"
                                 type="object"
                                 class="btn btn-secondary"
-                                attrs="{'invisible': [('state','!=','confirm')]}"/>
+                                attrs="{'invisible': [('state','!=','to_manager')]}"/>
+                        <button name="refuse_to_manager" string="Refuse"
+                                type="object"
+                                class="btn btn-secondary"
+                                attrs="{'invisible': [('state','!=','to_financial_manager')]}"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>

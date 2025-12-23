@@ -20,7 +20,8 @@ class Expense(models.Model):
 
     name = fields.Text(string="Ref", required=False, )
     journal_entry_id = fields.Many2one(comodel_name="account.move", string="Journal Entry", copy=False)
-    expense_date = fields.Date(string="Expense Date", required=True, copy=False, tracking=True, default=lambda self: date.today())
+    expense_date = fields.Date(string="Expense Date", required=True, copy=False, tracking=True,
+                               default=lambda self: date.today())
     journal_id = fields.Many2one(comodel_name="account.journal", string="Journal", required=True, tracking=True,
                                  domain="[('type', 'in', ['bank','cash'])]")
     expenses_ids = fields.One2many(comodel_name="expense.line", inverse_name="invoice_id", string="Expenses",
@@ -28,13 +29,13 @@ class Expense(models.Model):
     total = fields.Float(string="Total", tracking=True)
     tax = fields.Float(string="Taxes", compute="_get_tax", tracking=True, store=True)
     state = fields.Selection(selection=
-                             [
-                                 ('draft', 'Draft'),
-                                 ('to_manager', 'To Manager'),
-                                 ('to_financial_manager', 'To Financial Manager'),
-                                 ('to_account', 'To Account'),
-                                ('confirm', 'Posted'),
-                              ], required=False, default='draft', tracking=True)
+    [
+        ('draft', 'Draft'),
+        ('to_manager', 'To Manager'),
+        ('to_financial_manager', 'To Financial Manager'),
+        ('to_account', 'To Account'),
+        ('confirm', 'Posted'),
+    ], required=False, default='draft', tracking=True)
     amount_taxed = fields.Float(string="Un Taxed Amount", tracking=True)
     seq = fields.Char(readonly=True, copy=False, )
     company_id = fields.Many2one(comodel_name='res.company', string='Company', default=lambda self: self.env.company)
@@ -49,11 +50,10 @@ class Expense(models.Model):
                 raise UserError(error_message % state_description_values.get(self[:1].state))
         return super(Expense, self).unlink()
 
-    def action_draft(self):
-        for rec in self:
-            rec.state = 'draft'
-            rec.journal_entry_id.button_draft()
-
+    # def action_draft(self):
+    #     for rec in self:
+    #         rec.state = 'draft'
+    #         rec.journal_entry_id.button_draft()
 
     @api.model
     def create(self, vals):
@@ -73,16 +73,23 @@ class Expense(models.Model):
 
     def submit_to_account(self):
         for rec in self:
+            rec.state = 'to_account'
+
+    def refuse_to_draft(self):
+        for rec in self:
+            rec.state = 'draft'
+
+    def refuse_to_manager(self):
+        for rec in self:
+            rec.state = 'to_manager'
+
+    def get_confirm(self):
+        for rec in self:
             for line in rec.expenses_ids:
                 if not line.account_id:
                     raise UserError(
                         _("You cannot submit to account because some expense lines have no Account. Please fill all Accounts."))
 
-            rec.state = 'to_account'
-
-
-    def get_confirm(self):
-        for rec in self:
             lines = []
             taxx = 0
             analytic_var = False
@@ -179,12 +186,13 @@ class ExpenseLine(models.Model):
     company_id = fields.Many2one(related='invoice_id.company_id', store=True)
     employee_id = fields.Many2one(comodel_name='hr.employee')
     partner_id = fields.Many2one(comodel_name='res.partner', string='Partner', compute='_get_partner_id', store=True)
-    product_ids = fields.Many2one(comodel_name="product.product", string="Product", domain=[('categ_name', '=', 'Expenses')])
+    product_ids = fields.Many2one(comodel_name="product.product", string="Product",
+                                  domain=[('categ_name', '=', 'Expenses')])
     name = fields.Char(string="Label", )
     account_id = fields.Many2one(comodel_name="account.account", string="Account", required=False,
-                                readonly=False,)
+                                 readonly=False, )
     analytic_account_id = fields.Many2one(comodel_name="account.analytic.account", string="Analytic Account ",
-                                          required=False,  compute='_get_analytic_account_id', store=True)
+                                          required=False, compute='_get_analytic_account_id', store=True)
     quantity = fields.Float(string="Quantity", required=False, default="1")
     price_unit = fields.Float(string="Price", required=True, )
     tax_ids = fields.Many2many(comodel_name="account.tax", string="Taxes", )
@@ -197,8 +205,6 @@ class ExpenseLine(models.Model):
         for record in self:
             if record.invoice_id.user_id:
                 record.analytic_account_id = record.invoice_id.user_id.analytic_account_id.id
-
-
 
     @api.depends('price_subtotal', 'tax_ids')
     def _get_total_vat(self):
@@ -226,7 +232,6 @@ class ExpenseLine(models.Model):
                 )
             else:
                 rec.tax_ids = False
-
 
 
 # class PartnerExpenses(models.Model):

@@ -56,10 +56,11 @@ class AccountPayment(models.Model):
         store=True,
 
     )
-    payment_type_selection = fields.Selection([
-        ('manual', 'Manual'),
-        ('automatic', 'Automatic'),
-    ],default='automatic')
+
+    # payment_type_selection = fields.Selection([
+    #     ('manual', 'Manual'),
+    #     ('automatic', 'Automatic'),
+    # ],default='automatic')
 
     @api.onchange('invoices_ids')
     def _onchange_invoices_ids(self):
@@ -85,8 +86,6 @@ class AccountPayment(models.Model):
         else:
             self.pay_invoice = False
             self.invoices_ids = False
-
-
 
     @api.model
     def create(self, vals):
@@ -138,9 +137,9 @@ class AccountPayment(models.Model):
                     ('move_type', 'in', ('out_invoice', 'in_invoice')),
                     ('state', '=', 'posted'),
                     ('payment_state', '!=', 'paid'),
-                ], order='invoice_date asc')
+                ], order='id asc')
             else:
-                invoices = payment.invoices_ids
+                invoices = payment.invoices_ids.sorted(key=lambda m: m.id)
 
             if not invoices:
                 continue
@@ -214,7 +213,6 @@ class AccountPayment(models.Model):
 
         return res
 
-
     def action_cancel(self):
         payment_state = self.state
         res = super(AccountPayment, self).action_cancel()
@@ -262,7 +260,8 @@ class AccountPayment(models.Model):
 
     def action_multi_depart_manager(self):
         if any(rec.payment_type == 'outbound' and rec.state != 'draft' for rec in self):
-            raise ValidationError(_("Action skipped: one or more selected outbound payments are not in the 'Draft' state."))
+            raise ValidationError(
+                _("Action skipped: one or more selected outbound payments are not in the 'Draft' state."))
 
         for rec in self.filtered(lambda r: r.payment_type == 'outbound' and r.state == 'draft'):
             rec.action_depart_manager()
