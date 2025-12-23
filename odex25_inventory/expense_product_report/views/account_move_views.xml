@@ -32,7 +32,7 @@
                     }
                 </attribute>
             </xpath>
-            <xpath expr="//field[@name='line_ids']/tree/field[@name='partner_id']" position="attributes">
+            <xpath expr="//field[@name='line_ids']/tree/field[@name='analytic_account_id']" position="attributes">
                 <attribute name="attrs">{
                     'readonly': [
                     ('is_analytic','=',False),
