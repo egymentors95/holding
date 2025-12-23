@@ -19,6 +19,7 @@ class AccountMove(models.Model):
     tax_value = fields.Float(string="Tax Value", compute='_compute_tax_amounts', store=True)
     amount_untaxed_entry = fields.Float(string="Untaxed Amount", compute='_compute_tax_amounts', store=True)
 
+
     @api.depends('invoice_line_ids.tax_ids', 'line_ids.tax_ids')
     def _compute_vat_info(self):
         for move in self:
@@ -81,6 +82,7 @@ class AccountMove(models.Model):
             move.tax_value = abs(tax_total)
 
 
+
     @api.depends('partner_id', 'partner_id.category_id')
     def _compute_partner_category(self):
         for move in self:
@@ -131,3 +133,24 @@ class AccountMove(models.Model):
 
 
 
+class AccountMoveLine(models.Model):
+    _inherit = "account.move.line"
+
+    is_partner = fields.Boolean(compute="get_is_partner", store=True)
+    is_analytic = fields.Boolean(compute="get_is_account", store=True)
+
+    @api.depends('account_id', 'account_id.is_partner')
+    def get_is_partner(self):
+        for rec in self:
+            if rec.account_id.is_partner:
+                rec.is_partner = True
+            else:
+                rec.is_partner = False
+
+    @api.depends('account_id', 'account_id.is_analytic')
+    def get_is_account(self):
+        for rec in self:
+            if rec.account_id.is_analytic:
+                rec.is_analytic = True
+            else:
+                rec.is_analytic = False

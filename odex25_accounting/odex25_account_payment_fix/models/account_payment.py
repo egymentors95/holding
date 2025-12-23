@@ -57,11 +57,6 @@ class AccountPayment(models.Model):
 
     )
 
-    # payment_type_selection = fields.Selection([
-    #     ('manual', 'Manual'),
-    #     ('automatic', 'Automatic'),
-    # ],default='automatic')
-
     @api.onchange('invoices_ids')
     def _onchange_invoices_ids(self):
         for rec in self:
