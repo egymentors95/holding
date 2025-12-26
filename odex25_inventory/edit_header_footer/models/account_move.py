@@ -10,6 +10,10 @@ class AccountMove(models.Model):
         compute='_compute_amount_in_words_ar',
         store=True
     )
+    team_id = fields.Many2one(
+        'crm.team',
+        string='Sales Team'
+    )
 
     @api.depends('amount_total')
     def _compute_amount_in_words_ar(self):
