@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <template id="report_delivery_document_views_inherit" inherit_id="stock.report_delivery_document">
+        <xpath expr="//div[@class='page']/div[@class='row mt32 mb32']" position="after">
+            <div class="row">
+                <div class="col-auto">
+                    <div style="font-weight: bold;">Source</div>
+                    <div t-field="o.picking_type_id"/>
+                </div>
+                <div class="col-auto">
+                    <div style="font-weight: bold;">Destination</div>
+                    <div t-field="o.location_dest_id"/>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//div[@class='page']" position="inside">
+            <br/>
+            <div style="text-align: right; font-weight: bold;">اسم المستلم</div>
+        </xpath>
+    </template>
+
+</odoo>

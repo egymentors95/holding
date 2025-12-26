@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="expense_line_view_tree" model="ir.ui.view">
+        <field name="name">expense.line.view.tree</field>
+        <field name="model">expense.line</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="invoice_id"/>
+                <field name="employee_id"/>
+                <field name="partner_id"/>
+                <field name="product_ids"/>
+                <field name="account_id"/>
+                <field name="analytic_account_id"/>
+                <field name="quantity"/>
+                <field name="price_unit"/>
+                <field name="tax_ids"/>
+                <field name="price_subtotal"/>
+                <field name="company_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="expense_line_action" model="ir.actions.act_window">
+        <field name="name">Expense Line</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">expense.line</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+            <menuitem id="Expense_line_view_menu" name="Expenses Lines" parent="add_menu_exp_account.Expense_view_menu_ID_categ"
+                  action="expense_line_action" sequence="10"/>
+
+
+</odoo>

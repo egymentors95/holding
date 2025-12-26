@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <!-- Inherit Form View to Modify it -->
+    <record id="is_expense_product_template_only_form_view" model="ir.ui.view">
+        <field name="name">is_expense.product.template.only.form.view</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='categ_id']" position="after">
+                <field name="is_expense"/>
+            </xpath>
+
+        </field>
+    </record>
+
+
+</odoo>

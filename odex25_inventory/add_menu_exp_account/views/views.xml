@@ -103,6 +103,7 @@
             <field name="arch" type="xml">
                 <tree string="">
                     <field name="seq" readonly="1"/>
+                    <field name="employee_ids" widget="many2many_tags"/>
                     <field name="name"/>
                     <field name="expense_date"/>
                     <field name="journal_id"/>
@@ -112,6 +113,17 @@
                 </tree>
             </field>
         </record>
+
+<!--        <record id="expense_expense_search_view" model="ir.ui.view">-->
+<!--            <field name="name">expense.expense.search.view</field>-->
+<!--            <field name="model">expense.expense</field>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <search>-->
+<!--                    <field name="name" string="Employee" filter_domain="[('employee_ids.name','=',self)]"/>-->
+<!--                </search>-->
+<!--            </field>-->
+<!--        </record>-->
+
         <record id="Expense_view_action" model="ir.actions.act_window">
             <field name="name">Expenses</field>
             <field name="type">ir.actions.act_window</field>
@@ -129,9 +141,6 @@
         <menuitem id="Expense_view_menu_ID_categ" name="Expenses"/>
         <menuitem id="Expense_view_menu" name="Expenses" parent="add_menu_exp_account.Expense_view_menu_ID_categ"
                   action="Expense_view_action" sequence="2"/>
-
-
-
 
 
     </data>

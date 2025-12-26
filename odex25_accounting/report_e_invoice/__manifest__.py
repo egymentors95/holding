@@ -17,7 +17,7 @@
         'report/assets.xml',
         'wizard/account_move_reversal.xml',
         'report/e_invoice.xml',
-        'report/e_invoice_without_header.xml',
+        # 'report/e_invoice_without_header.xml',
     ],
     'demo': [
     ],

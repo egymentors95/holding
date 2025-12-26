@@ -41,12 +41,8 @@
                     </style>
                     <div class="row" style="border-bottom: 1px solid #D3D3D3;margin-top:10px;margin-bottom:10px;">
                         <div class="col-4 text-left" style="font-size : 16px;">
-                            <t t-if="o.branch_id.logo">
-                                <img
-                                        t-att-src="'data:image/png;base64,%s' % to_text(o.branch_id.logo)"
-                                        style="max-height: 120px;" alt="Logo"/>
-                            </t>
-                            <t t-else="o.company.logo">
+
+                            <t>
                                 <img
                                         t-att-src="'data:image/png;base64,%s' % to_text(o.company_id.logo)"
                                         style="max-height: 120px;" alt="Logo"/>
@@ -54,10 +50,8 @@
                         </div>
                         <div class="col-8 text-right">
                             <h4 class="odex-row" style="line-height: 1.6">
-                                <t t-if="o.branch_id">
-                                    <t t-esc="o.branch_id.name"/>
-                                </t>
-                                <t t-else="">
+
+                                <t>
                                     <t t-esc="o.company_id.name"/>
                                 </t>
                             </h4>
@@ -214,10 +208,7 @@
                                         <tr>
                                             <td class="info_left">
                                                 <t t-if="o.move_type in ['out_invoice','in_refund']">
-                                                    <t t-if="o.branch_id">
-                                                        <span t-field="o.branch_id.name"/>
-                                                    </t>
-                                                    <t t-else="">
+                                                    <t>
                                                         <span t-field="o.company_id.partner_id.name"/>
                                                     </t>
                                                 </t>
@@ -242,10 +233,8 @@
                                             <td class="info_left">
                                                 <!--  -->
                                                 <t t-if="o.move_type in ['out_invoice','in_refund']">
-                                                    <t t-if="o.branch_id">
-                                                        <span t-field="o.branch_id.address"/>
-                                                    </t>
-                                                    <t t-else="">
+
+                                                    <t>
                                                         <t t-if="o.company_id.partner_id.street">
                                                             <span t-field="o.company_id.partner_id.street"/>
                                                             -
@@ -321,18 +310,6 @@
                                                 </t>
                                             </td>
                                         </tr>
-                                        <t t-if="o.branch_id.telephone">
-                                            <tr>
-                                                <td class="info_left">
-                                                    <span t-field="o.branch_id.telephone"/>
-                                                </td>
-                                                <td class="title">
-                                                    <strong>رقم التليفون-phone number</strong>
-                                                </td>
-                                                <td class="info_right">
-                                                </td>
-                                            </tr>
-                                        </t>
                                         <tr>
                                             <td class="info_left">
                                                 <t t-if="o.move_type in ['out_invoice','in_refund']">
@@ -357,10 +334,8 @@
                                         <tr>
                                             <td class="info_left">
                                                 <t t-if="o.move_type in ['out_invoice','in_refund']">
-                                                    <t t-if="o.branch_id">
-                                                        <t t-esc="o.branch_id.commercial_register"/>
-                                                    </t>
-                                                    <t t-else="">
+
+                                                    <t>
                                                         <span>السجل التجاري</span>
                                                     </t>
                                                 </t>
@@ -407,9 +382,7 @@
                                             </td>
                                         </tr>
 
-                                        <t t-if="o.branch_id"/>
-
-                                        <t t-else="">
+                                        <t>
                                             <tr>
                                                 <td class="info_left">
                                                     <t t-if="o.move_type in ['in_invoice','out_refund']">

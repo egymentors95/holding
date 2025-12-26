@@ -21,3 +21,4 @@ class ResUsers(models.Model):
         column1='user_id',
         column2='category_id',
     )
+    operation_type = fields.Many2one(comodel_name='stock.picking.type', string='Default Operation Type')

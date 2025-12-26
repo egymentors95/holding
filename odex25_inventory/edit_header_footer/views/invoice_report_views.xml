@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <template id="report_invoice_customize">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <t t-foreach="docs" t-as="o">
+
+                    <div class="page">
+
+                        <div class="row"
+                             style="border: 1px solid black; padding: 10px 4px; background-color: #DBDBDB; border-radius: 8px; font-size: 13px;">
+                            <div class="col-4">
+                                <strong>Order Date:</strong>
+                                <span t-esc="o.invoice_date"/>
+                            </div>
+                            <div class="col-4">
+                                <strong>PO.NO:</strong>
+                                <span></span>
+                            </div>
+                            <div class="col-4">
+                                <strong>Invoice NO:</strong>
+                                <span t-esc="o.name"/>
+                            </div>
+                        </div>
+                        <br/>
+
+                        <table class="table table-borderless"
+                               style="border-radius: 8px; font-size: 13px; margin:0;">
+                            <thead>
+                                <tr>
+                                    <th style="background-color:#195C19; color: white; border: 1px solid white; text-align:center;">
+                                        <span>Code</span>
+                                    </th>
+                                    <th style="background-color:#195C19; color: white; border: 1px solid white; text-align:center;">
+                                        <span>Description</span>
+                                    </th>
+                                    <th style="background-color:#195C19; color: white; border: 1px solid white; text-align:center;">
+                                        <span>Lot</span>
+                                    </th>
+                                    <th style="background-color:#195C19; color: white; border: 1px solid white; text-align:center;">
+                                        <span>Qty</span>
+                                    </th>
+                                    <th style="background-color:#195C19; color: white; border: 1px solid white; text-align:center;">
+                                        <span>Price</span>
+                                    </th>
+                                    <th style="background-color:#195C19; color: white; border: 1px solid white; text-align:center;">
+                                        <span>Foc</span>
+                                    </th>
+                                    <th style="background-color:#195C19; color: white; border: 1px solid white; text-align:center;">
+                                        <span>Vat</span>
+                                    </th>
+                                    <th style="background-color:#195C19; color: white; border: 1px solid white; text-align:center;">
+                                        <span>Total</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.invoice_line_ids" t-as="line">
+                                    <tr>
+                                        <td style="border: 1px solid black;">
+                                            <span t-esc="line.product_id.default_code"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-esc="line.name"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-esc="line.lot_id.name"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-esc="line.quantity"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-esc="line.price_unit"/>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span></span>
+                                        </td>
+                                        <td style="border: 1px solid black;">
+                                            <span t-field="line.tax_ids"/>
+                                        </td>
+                                        <td style="background-color: #DBDBDB;">
+                                            <span t-field="line.price_subtotal"/>
+                                        </td>
+
+                                    </tr>
+                                </t>
+
+                            </tbody>
+
+                        </table>
+
+                        <div style="margin: 0;" class="row">
+                            <br/>
+                            <div class="col-6">
+                                <img t-if="o.l10n_sa_qr_code_str"
+                                     style="display:block;margin:10% auto 0 auto;"
+                                     t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', o.l10n_sa_qr_code_str, 150, 150)"/>
+
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-border">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <span class="text-left">Untaxed Amount</span>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="o.amount_untaxed"/>
+                                            </td>
+                                        </tr>
+                                        <t t-foreach="o.amount_by_group" t-as="amount_by_group">
+                                            <tr style="">
+                                                <t t-if="len(o.line_ids.filtered(lambda line: line.tax_line_id)) in [0, 1] and o.amount_untaxed == amount_by_group[2]">
+                                                    <td class="text-left">
+                                                        <span class="text-nowrap" t-esc="amount_by_group[0]"/>
+                                                    </td>
+                                                    <td class="text-right o_price_total">
+                                                        <span class="text-nowrap" t-esc="amount_by_group[3]"/>
+                                                    </td>
+                                                </t>
+                                                <t t-else="">
+                                                    <td class="text-left">
+                                                        <span t-esc="amount_by_group[0]"/>
+                                                        <span class="text-nowrap">on
+                                                            <t t-esc="amount_by_group[4]"/>
+                                                        </span>
+                                                    </td>
+                                                    <td class="text-right o_price_total">
+                                                        <span class="text-nowrap" t-esc="amount_by_group[3]"/>
+                                                    </td>
+                                                </t>
+                                            </tr>
+                                        </t>
+
+                                        <tr>
+                                            <td class="text-left" style="background-color:#195C19; color: white;">
+                                                <span>Total</span>
+                                            </td>
+                                            <td class="text-right" style="background-color:#195C19; color: white;">
+                                                <span t-field="o.amount_total"/>
+                                            </td>
+                                        </tr>
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

@@ -22,7 +22,7 @@ class Expense(models.Model):
     journal_entry_id = fields.Many2one(comodel_name="account.move", string="Journal Entry", copy=False)
     expense_date = fields.Date(string="Expense Date", required=True, copy=False, tracking=True,
                                default=lambda self: date.today())
-    journal_id = fields.Many2one(comodel_name="account.journal", string="Journal", required=True, tracking=True,
+    journal_id = fields.Many2one(comodel_name="account.journal", string="Journal", required=False, tracking=True,
                                  domain="[('type', 'in', ['bank','cash'])]")
     expenses_ids = fields.One2many(comodel_name="expense.line", inverse_name="invoice_id", string="Expenses",
                                    tracking=True)
@@ -40,6 +40,18 @@ class Expense(models.Model):
     seq = fields.Char(readonly=True, copy=False, )
     company_id = fields.Many2one(comodel_name='res.company', string='Company', default=lambda self: self.env.company)
     user_id = fields.Many2one(comodel_name='res.users', string='User', default=lambda self: self.env.user, copy=False)
+    employee_ids = fields.Many2many(
+        comodel_name='hr.employee',
+        string='Employees',
+        compute='_compute_employee_ids',
+        store=True,
+        tracking=True
+    )
+
+    @api.depends('expenses_ids.employee_id')
+    def _compute_employee_ids(self):
+        for rec in self:
+            rec.employee_ids = rec.expenses_ids.mapped('employee_id')
 
     def unlink(self):
         error_message = _('You cannot delete a expense which is in %s state')
@@ -85,10 +97,14 @@ class Expense(models.Model):
 
     def get_confirm(self):
         for rec in self:
+            if not rec.journal_id:
+                raise UserError(
+                    _("You cannot Post Entry. Please fill Journal."))
+
             for line in rec.expenses_ids:
                 if not line.account_id:
                     raise UserError(
-                        _("You cannot submit to account because some expense lines have no Account. Please fill all Accounts."))
+                        _("You cannot Post Entry because some expense lines have no Account. Please fill all Accounts."))
 
             lines = []
             taxx = 0
@@ -187,7 +203,7 @@ class ExpenseLine(models.Model):
     employee_id = fields.Many2one(comodel_name='hr.employee')
     partner_id = fields.Many2one(comodel_name='res.partner', string='Partner', compute='_get_partner_id', store=True)
     product_ids = fields.Many2one(comodel_name="product.product", string="Product",
-                                  domain=[('categ_name', '=', 'Expenses')])
+                                  domain=[('is_expense', '=', True)])
     name = fields.Char(string="Label", )
     account_id = fields.Many2one(comodel_name="account.account", string="Account", required=False,
                                  readonly=False, )

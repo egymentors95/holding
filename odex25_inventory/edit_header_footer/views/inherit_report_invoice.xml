@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+
+    <record id="report_invoice_customize_action" model="ir.actions.report">
+        <field name="name">Invoice Report</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">edit_header_footer.report_invoice_customize</field>
+        <field name="report_file">edit_header_footer.report_invoice_customize</field>
+        <field name="binding_model_id" ref="account.model_account_move"/>
+        <field name="binding_type">report</field>
+    </record>
+
+
+</odoo>
