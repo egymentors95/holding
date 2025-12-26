@@ -25,8 +25,8 @@
         <field name="name">Inventory Overview</field>
         <field name="res_model">stock.picking.type</field>
         <field name="type">ir.actions.act_window</field>
-        <field name="domain">[]</field>
-<!--        <field name="domain">[('warehouse_id.user_ids','in',[uid])]</field>-->
+<!--        <field name="domain">[]</field>-->
+        <field name="domain">[('warehouse_id.user_ids','in',[uid])]</field>
         <field name="view_mode">kanban,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
