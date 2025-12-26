@@ -9,6 +9,7 @@
     "depends": ['base','stock','account', 'product', 'purchase'],
     "data": [
         "views/stock_locations_views.xml",
+        "views/stock_picking_views.xml",
         "report/report_delivery_document_views.xml",
     ],
     "installable": True,
