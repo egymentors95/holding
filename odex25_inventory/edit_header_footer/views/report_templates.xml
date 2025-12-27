@@ -32,10 +32,11 @@
 
                 <!-- Logo Center -->
                 <div class="col-2 header-logo" style="text-align: center;">
-                    <br/>
                     <div>
-                        <img t-if="company.logo" t-att-src="image_data_uri(company.logo)"
-                             style="width:'100%';"/>
+                        <!--                        <img t-if="company.logo" t-att-src="image_data_uri(company.logo)"-->
+                        <!--                             style="width:'20%';"/>-->
+                        <img src='/edit_header_footer/static/img/logo.png' width="100px"/>
+
                     </div>
                 </div>
 
