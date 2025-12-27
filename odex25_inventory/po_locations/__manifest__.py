@@ -10,6 +10,7 @@
     "data": [
         "views/stock_locations_views.xml",
         "views/stock_picking_views.xml",
+        "views/purchase_order_views.xml",
         "views/stock_landed_cost_views.xml",
         "report/report_delivery_document_views.xml",
     ],

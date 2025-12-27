@@ -16,4 +16,17 @@
         </field>
     </record>
 
+    <record id="purchase_view_stock_landed_cost_tree" model="ir.ui.view">
+        <field name="name">purchase.view.stock.landed.cost.tree</field>
+        <field name="model">stock.landed.cost</field>
+        <field name="inherit_id" ref="stock_landed_costs.view_stock_landed_cost_tree"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//tree/field[@name='name']" position="after">
+                <field name="purchase_order_id"/>
+            </xpath>
+
+        </field>
+    </record>
+
 </odoo>

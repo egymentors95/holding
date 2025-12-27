@@ -200,7 +200,13 @@ class ExpenseLine(models.Model):
 
     invoice_id = fields.Many2one(comodel_name="expense.expense", )
     company_id = fields.Many2one(related='invoice_id.company_id', store=True)
-    employee_id = fields.Many2one(comodel_name='hr.employee')
+    employee_id = fields.Many2one(
+        comodel_name='hr.employee',
+        domain="[('user_id', '=', uid)]",
+        default=lambda self: self.env['hr.employee'].search(
+            [('user_id', '=', self.env.uid)], limit=1
+        )
+    )
     partner_id = fields.Many2one(comodel_name='res.partner', string='Partner', compute='_get_partner_id', store=True)
     product_ids = fields.Many2one(comodel_name="product.product", string="Product",
                                   domain=[('is_expense', '=', True)])

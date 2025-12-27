@@ -7,7 +7,7 @@ class StockPicking(models.Model):
 
     purchase_order_id = fields.Many2one(comodel_name='purchase.order', string='Purchase Order')
     po_entry_count = fields.Integer(
-        string='PO Entries',
+        string='Journal Entries',
         compute='_compute_journal_entry_count'
     )
 
