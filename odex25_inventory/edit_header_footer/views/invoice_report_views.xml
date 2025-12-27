@@ -134,15 +134,23 @@
                                         <span>Lot</span>
                                     </th>
                                     <th style="background-color:#195C19; color: white; border: 1px solid white; text-align:center;">
-                                        <span>سعر الوحدة</span><br/>
+                                        <span>سعر الوحدة</span>
+                                        <br/>
                                         <span>Unit Price</span>
                                     </th>
                                     <th style="background-color:#195C19; color: white; border: 1px solid white; text-align:center;">
-                                        <span>الضريبة</span><br/>
+                                        <span>إجمالي بدون ضريبة</span>
+                                        <br/>
+                                        <span>Amount</span>
+                                    </th>
+                                    <th style="background-color:#195C19; color: white; border: 1px solid white; text-align:center;">
+                                        <span>الضريبة</span>
+                                        <br/>
                                         <span>Vat</span>
                                     </th>
                                     <th style="background-color:#195C19; color: white; border: 1px solid white; text-align:center;">
-                                        <span>إجمالي بالضريبة</span><br/>
+                                        <span>إجمالي بالضريبة</span>
+                                        <br/>
                                         <span>Total Amount</span>
                                     </th>
                                 </tr>
@@ -174,11 +182,14 @@
                                         <td style="border: 1px solid white; text-align: center;">
                                             <span t-esc="line.price_unit"/>
                                         </td>
+                                        <td style="background-color: #DBDBDB; text-align: center;">
+                                            <span t-field="line.price_subtotal"/>
+                                        </td>
                                         <td style="border: 1px solid white; text-align: center;">
                                             <span t-field="line.tax_ids"/>
                                         </td>
                                         <td style="background-color: #DBDBDB; text-align: center;">
-                                            <span t-field="line.price_subtotal"/>
+                                            <span t-field="line.price_total"/>
                                         </td>
 
                                     </tr>
@@ -196,6 +207,8 @@
                                         <tr>
                                             <td>
                                                 <span class="text-left">Untaxed Amount</span>
+                                                <br/>
+                                                <span class="text-left">الاجمالي بدون ضريبة</span>
                                             </td>
                                             <td class="text-right">
                                                 <span t-field="o.amount_untaxed"/>
@@ -227,7 +240,9 @@
 
                                         <tr>
                                             <td class="text-left" style="background-color:#195C19; color: white;">
-                                                <span>Total</span>
+                                                <span>Total with VAT</span>
+                                                <br/>
+                                                <span>الاجمالي بضريبة القيمة المضافة</span>
                                             </td>
                                             <td class="text-right" style="background-color:#195C19; color: white;">
                                                 <span t-field="o.amount_total"/>
@@ -249,6 +264,7 @@
                                  t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', o.l10n_sa_qr_code_str, 150, 150)"/>
 
                         </div>
+
 
                     </div>
                 </t>
