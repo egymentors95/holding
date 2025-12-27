@@ -6,26 +6,26 @@
         <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
             <div class="row">
                 <div class="col-5 header-left" style="text-align: left;">
-                    <div style="font-weight: bold; color: blue;">
+                    <div style="font-weight: bold; ">
                         <span>Zaghwan Co for Trading and Industry</span>
                     </div>
                     <div>
                         <span>Headoffice -Dobbat -Malaz Area -Riyadh</span>
                     </div>
                     <div>
-                        <span style="font-weight: bold; color: blue;">Tel:</span>
+                        <span style="font-weight: bold; ">Tel:</span>
                         <span>0114770000 Fax 0114771308</span>
                     </div>
                     <div>
-                        <span style="font-weight: bold; color: blue;">P.O.Box:</span>
+                        <span style="font-weight: bold; ">P.O.Box:</span>
                         <span>43192 -Riyadh 12623</span>
                     </div>
                     <div>
-                        <span style="font-weight: bold; color: blue;">C.R:</span>
+                        <span style="font-weight: bold; ">C.R:</span>
                         <span>1010132043 C.C. 3436</span>
                     </div>
                     <div>
-                        <span style="font-weight: bold; color: blue;">VAT No.:</span>
+                        <span style="font-weight: bold; ">VAT No.:</span>
                         <span>300207667710003</span>
                     </div>
                 </div>
@@ -42,28 +42,28 @@
 
                 <!-- Header Right -->
                 <div class="col-5 header-right" style="text-align: right;" dir="rtl">
-                    <div style="font-weight: bold; color: blue;">
+                    <div style="font-weight: bold; ">
                         <span>شركة زغوان للتجارة والصناعة</span>
                     </div>
                     <div>
                         <span>المكتب الرئيسي - حي الضباط الملز - الرياض</span>
                     </div>
                     <div>
-                        <span style="font-weight: bold; color: blue;">هاتف:</span>
+                        <span style="font-weight: bold; ">هاتف:</span>
                         <span>0114770000</span>
-                        <span style="font-weight: bold; color: blue;">فاكس:</span>
+                        <span style="font-weight: bold; ">فاكس:</span>
                         <span>0114771308</span>
                     </div>
                     <div>
-                        <span style="font-weight: bold; color: blue;">ص ب:</span>
+                        <span style="font-weight: bold; ">ص ب:</span>
                         <span>43192 الرياض 12623</span>
                     </div>
                     <div>
-                        <span style="font-weight: bold; color: blue;">سجل تجاري:</span>
+                        <span style="font-weight: bold; ">سجل تجاري:</span>
                         <span>1010132043 غرفة تجارية3436</span>
                     </div>
                     <div>
-                        <span style="font-weight: bold; color: blue;">رقم ضريبي:</span>
+                        <span style="font-weight: bold; ">رقم ضريبي:</span>
                         <span>300207667710003</span>
                     </div>
                 </div>
