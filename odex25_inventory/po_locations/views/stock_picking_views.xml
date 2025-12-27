@@ -8,6 +8,16 @@
         <field name="inherit_id" ref="stock.view_picking_form"/>
         <field name="arch" type="xml">
 
+             <xpath expr="//div[@name='button_box']" position="inside">
+            <button
+                name="action_view_journal_entries"
+                type="object"
+                class="oe_stat_button"
+                icon="fa-shopping-cart"
+                attrs="{'invisible': [('po_entry_count', '=', 0)]}">
+                <field name="po_entry_count" widget="statinfo"/>
+            </button>
+        </xpath>
             <xpath expr="//group[1]/group[2]" position="inside">
                 <field name="purchase_order_id" readonly="1"/>
             </xpath>

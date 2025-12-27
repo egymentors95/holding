@@ -3,14 +3,9 @@
 
     <template id="header">
         <t t-set="company" t-value="docs.company_id"/>
-
-
         <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
-            <table class="o_background_header"
-                   style="width: 100%; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
-                <!-- Header Left -->
-                <tbody>
-                    <td class="header-left" style="width: 43%; text-align: center;">
+                <div class="row">
+                    <div class="col-5 header-left" style="width: 43%; text-align: center;">
                         <div style="font-weight: bold; color: blue;">
                             <span>Zaghwan Co for Trading and Industry</span>
                         </div>
@@ -33,19 +28,19 @@
                             <span style="font-weight: bold; color: blue;">VAT No.:</span>
                             <span>300207667710003</span>
                         </div>
-                    </td>
+                    </div>
 
                     <!-- Logo Center -->
-                    <td class="header-logo" style="width: 14%; text-align: center;">
+                    <div class="col-2 header-logo" style="width: 14%; text-align: center;">
                         <br/>
                         <div>
                             <img t-if="company.logo" t-att-src="image_data_uri(company.logo)"
                                  style="width:'100%';"/>
                         </div>
-                    </td>
+                    </div>
 
                     <!-- Header Right -->
-                    <td class="header-right" style="width: 43%; text-align: right;" dir="rtl">
+                    <div class="col-5 header-right" style="width: 43%; text-align: right;" dir="rtl">
                         <div style="font-weight: bold; color: blue;">
                             <span>شركة زغوان للتجارة والصناعة</span>
                         </div>
@@ -70,9 +65,8 @@
                             <span style="font-weight: bold; color: blue;">رقم ضريبي:</span>
                             <span>300207667710003</span>
                         </div>
-                    </td>
-                </tbody>
-            </table>
+                    </div>
+                </div>
         </div>
 
         <div t-attf-class="article o_report_layout_standard o_company_#{company.id}_layout"

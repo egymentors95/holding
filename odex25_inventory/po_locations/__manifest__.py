@@ -6,10 +6,11 @@
     "author": "IBS",
     "website": "https://www.ibs-na.com",
     "license": "AGPL-3",
-    "depends": ['base','stock','account', 'product', 'purchase'],
+    "depends": ['base','stock','account', 'product', 'purchase', 'partner_category', 'stock_landed_costs'],
     "data": [
         "views/stock_locations_views.xml",
         "views/stock_picking_views.xml",
+        "views/stock_landed_cost_views.xml",
         "report/report_delivery_document_views.xml",
     ],
     "installable": True,
