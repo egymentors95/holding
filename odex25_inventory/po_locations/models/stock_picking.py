@@ -43,14 +43,15 @@ class StockPicking(models.Model):
 
     def button_validate(self):
         for rec in self:
-            if rec.location_dest_id:
-                if not rec.location_dest_id.user_id:
-                    raise UserError('Please Add User in Destination Location')
-                if rec.location_dest_id.user_id != self.env.user:
-                    raise UserError(_(
-                        "You are not allowed to validate this picking.\n"
-                        "Only %s can validate it."
-                    ) % rec.location_dest_id.user_id.name)
+            if rec.picking_type_code in ['incoming', 'internal']:
+                if rec.location_dest_id:
+                    if not rec.location_dest_id.user_id:
+                        raise UserError('Please Add User in Destination Location')
+                    if rec.location_dest_id.user_id != self.env.user:
+                        raise UserError(_(
+                            "You are not allowed to validate this picking.\n"
+                            "Only %s can validate it."
+                        ) % rec.location_dest_id.user_id.name)
 
         return super(StockPicking, self).button_validate()
 
