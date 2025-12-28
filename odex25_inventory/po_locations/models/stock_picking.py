@@ -6,6 +6,15 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
     purchase_order_id = fields.Many2one(comodel_name='purchase.order', string='Purchase Order')
+    types_out = fields.Selection([
+        ('driver', 'سواق'),
+        ('customer', 'العميل'),
+        ('charge', 'الشحن'),
+    ])
+    attachment_ids = fields.Many2many(comodel_name='ir.attachment', string='Attachments', )
+    driver_id = fields.Many2one(comodel_name='driver.driver', string='Driver')
+
+
     po_entry_count = fields.Integer(
         string='Journal Entries',
         compute='_compute_journal_entry_count'
@@ -52,6 +61,14 @@ class StockPicking(models.Model):
                             "You are not allowed to validate this picking.\n"
                             "Only %s can validate it."
                         ) % rec.location_dest_id.user_id.name)
+
+            if rec.picking_type_code == 'outgoing':
+                if rec.types_out:
+                    if not rec.attachment_ids:
+                        raise UserError(_("Attachments is Mandatory"))
+                    if rec.types_out == 'driver' and not rec.driver_id:
+                        raise UserError(_("Driver is Mandatory"))
+
 
         return super(StockPicking, self).button_validate()
 

@@ -8,6 +8,7 @@
     "license": "AGPL-3",
     "depends": ['base','stock','account', 'product', 'purchase', 'partner_category', 'stock_landed_costs'],
     "data": [
+        "security/ir.model.access.csv",
         "views/stock_locations_views.xml",
         "views/stock_picking_views.xml",
         "views/purchase_order_views.xml",

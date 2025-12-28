@@ -10,6 +10,7 @@
     "data": [
         "security/ir.model.access.csv",
         "wizard/inventory_wizard_views.xml",
+        "wizard/inventory_card_views.xml",
         "views/stock_views.xml",
         "views/product_template_views.xml",
 

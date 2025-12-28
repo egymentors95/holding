@@ -8,21 +8,37 @@
         <field name="inherit_id" ref="stock.view_picking_form"/>
         <field name="arch" type="xml">
 
-             <xpath expr="//div[@name='button_box']" position="inside">
-            <button
-                name="action_view_journal_entries"
-                type="object"
-                class="oe_stat_button"
-                icon="fa-shopping-cart"
-                attrs="{'invisible': [('po_entry_count', '=', 0)]}">
-                <field name="po_entry_count" widget="statinfo"/>
-            </button>
-        </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button
+                        name="action_view_journal_entries"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-shopping-cart"
+                        attrs="{'invisible': [('po_entry_count', '=', 0)]}">
+                    <field name="po_entry_count" widget="statinfo"/>
+                </button>
+            </xpath>
             <xpath expr="//group[1]/group[2]" position="inside">
                 <field name="purchase_order_id" readonly="1"/>
+                <field name="types_out" attrs="{'invisible': [('picking_type_code', '!=', 'outgoing')]}"/>
+                <field name="driver_id" attrs="{'invisible': [('types_out', '!=', 'driver')]}"/>
+                <field name="attachment_ids" widget="many2many_binary"
+                       attrs="{'invisible': [('picking_type_code', '!=', 'outgoing')]}"/>
             </xpath>
+            <xpath expr="//field[@name='location_id']" position="attributes">
+                <attribute name="domain">[('usage', 'in', ['supplier', 'internal', 'customer', 'inventory',
+                    'production', 'transit'])]
+                </attribute>
+            </xpath>
+            <xpath expr="//field[@name='location_dest_id']" position="attributes">
+                <attribute name="domain">[('usage', 'in', ['supplier', 'internal', 'customer', 'inventory',
+                    'production', 'transit'])]
+                </attribute>
+            </xpath>
+
 
         </field>
     </record>
 
 </odoo>
+

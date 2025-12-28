@@ -19,5 +19,14 @@
         <field name="binding_type">report</field>
     </record>
 
+    <record id="report_action_inventory_card" model="ir.actions.report">
+        <field name="name">Inventory Card</field>
+        <field name="model">inventory.card</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">inventory_report.inventory_card_xlsx</field>
+        <field name="report_file">inventory_report.inventory_card_xlsx</field>
+        <field name="binding_type">report</field>
+    </record>
+
 
 </odoo>
