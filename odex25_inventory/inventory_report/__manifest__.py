@@ -15,6 +15,7 @@
         "views/product_template_views.xml",
 
         "reports/inventory_report_template_views.xml",
+        "reports/inventory_card_pdf.xml",
         "reports/action_reports.xml",
     ],
     "installable": True,

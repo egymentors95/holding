@@ -30,6 +30,18 @@ class StockPicking(models.Model):
             ])
             picking.po_entry_count = len(moves)
 
+    def action_assign(self):
+        for rec in self:
+            if rec.picking_type_code == 'internal':
+                if rec.loaction_id:
+                    if not rec.loaction_id.user_id:
+                        raise UserError('Please Add User in Source Location')
+                    if rec.loaction_id.user_id != self.env.user:
+                        raise UserError(_(
+                            "You are not allowed to Check Availability this picking.\n"
+                            "Only %s can Check Availability it."
+                        ) % rec.loaction_id.user_id.name)
+
     def action_view_journal_entries(self):
         self.ensure_one()
 
@@ -52,7 +64,7 @@ class StockPicking(models.Model):
 
     def button_validate(self):
         for rec in self:
-            if rec.picking_type_code in ['incoming', 'internal']:
+            if rec.picking_type_code == 'internal':
                 if rec.location_dest_id:
                     if not rec.location_dest_id.user_id:
                         raise UserError('Please Add User in Destination Location')

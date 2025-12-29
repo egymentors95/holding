@@ -63,6 +63,7 @@
                                     <tree editable="1">
                                         <field name="employee_id" options="{'no_create': True}"/>
                                         <field name="partner_id" options="{'no_create': True}"/>
+                                        <field name="vendor_id" options="{'no_create': True}"/>
                                         <field name="product_ids" options="{'no_create': True}"/>
                                         <field name="name" optional="show"/>
                                         <field name="account_id" optional="show"/>

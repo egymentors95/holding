@@ -122,3 +122,14 @@ class InventoryCard(models.TransientModel):
         return self.env.ref(
             'inventory_report.report_action_inventory_card'
         ).report_action(self, data=data)
+
+    def action_print_report_pdf(self):
+        self.ensure_one()
+        data = {
+            'date_from': self.date_from,
+            'date_to': self.date_to,
+            'lines': self.get_report_data()['combined_data'],
+        }
+        return self.env.ref(
+            'inventory_report.report_action_inventory_card_pdf'
+        ).report_action(self, data=data)
