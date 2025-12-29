@@ -95,14 +95,14 @@ class StockPicking(models.Model):
     def action_assign(self):
         for rec in self:
             if rec.picking_type_code == 'internal':
-                if rec.loaction_id:
-                    if not rec.loaction_id.user_id:
+                if rec.location_id:
+                    if not rec.location_id.user_id:
                         raise UserError('Please Add User in Source Location')
-                    if rec.loaction_id.user_id != self.env.user:
+                    if rec.location_id.user_id != self.env.user:
                         raise UserError(_(
                             "You are not allowed to Check Availability this picking.\n"
                             "Only %s can Check Availability it."
-                        ) % rec.loaction_id.user_id.name)
+                        ) % rec.location_id.user_id.name)
         return super(StockPicking, self).action_assign()
 
 
