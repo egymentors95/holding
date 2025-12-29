@@ -3,76 +3,76 @@
 
     <template id="inventory_card_pdf">
         <t t-call="web.html_container">
-        <t t-call="web.external_layout">
-            <div class="page">
+            <t t-call="web.external_layout">
+                <div class="page">
 
-                <h3 class="text-center">
-                    Inventory Card
-                </h3>
+                    <h3 class="text-center">
+                        Inventory Card
+                    </h3>
 
-                <p>
-                    <strong>From:</strong>
-                    <span t-esc="data['date_from']"/>
-                    <br/>
-                    <strong>To:</strong>
-                    <span t-esc="data['date_to']"/>
-                </p>
+                    <p>
+                        <strong>From:</strong>
+                        <span t-esc="date_from"/>
+                        <br/>
+                        <strong>To:</strong>
+                        <span t-esc="date_to"/>
+                    </p>
 
-                <table class="table table-sm table-bordered" style="font-size:12px;">
-                    <thead>
-                        <tr class="text-center">
-                            <th>Date</th>
-                            <th>المنتج</th>
-                            <th>فئة المنتج</th>
-                            <th>نوع الحركة</th>
-                            <th>الوارد</th>
-                            <th>المنصرف</th>
-                            <th>الرصيد قبل</th>
-                            <th>الرصيد بعد</th>
-                            <th>متوسط التكلفة</th>
-                            <th>إجمالي التكلفة</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <t t-foreach="data['lines']" t-as="l">
-                            <tr>
-                                <td class="text-center">
-                                    <t t-esc="l['date']"/>
-                                </td>
-                                <td>
-                                    <t t-esc="l['product']"/>
-                                </td>
-                                <td>
-                                    <t t-esc="l['category']"/>
-                                </td>
-                                <td>
-                                    <t t-esc="l['picking_type']"/>
-                                </td>
-                                <td class="text-right">
-                                    <t t-esc="l['qty_in']"/>
-                                </td>
-                                <td class="text-right">
-                                    <t t-esc="l['qty_out']"/>
-                                </td>
-                                <td class="text-right">
-                                    <t t-esc="l['qty_before']"/>
-                                </td>
-                                <td class="text-right">
-                                    <t t-esc="l['qty_after']"/>
-                                </td>
-                                <td class="text-right">
-                                    <t t-esc="l['avg_cost']"/>
-                                </td>
-                                <td class="text-right">
-                                    <t t-esc="l['total_cost']"/>
-                                </td>
+                    <table class="table table-sm table-bordered" style="font-size:12px;">
+                        <thead>
+                            <tr class="text-center">
+                                <th>Date</th>
+                                <th>المنتج</th>
+                                <th>فئة المنتج</th>
+                                <th>نوع الحركة</th>
+                                <th>الوارد</th>
+                                <th>المنصرف</th>
+                                <th>الرصيد قبل</th>
+                                <th>الرصيد بعد</th>
+                                <th>متوسط التكلفة</th>
+                                <th>إجمالي التكلفة</th>
                             </tr>
-                        </t>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+<t t-foreach="lines" t-as="l">
+                                <tr>
+                                    <td class="text-center">
+                                        <t t-esc="l['date']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="l['product']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="l['category']"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="l['picking_type']"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="l['qty_in']"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="l['qty_out']"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="l['qty_before']"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="l['qty_after']"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="l['avg_cost']"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <t t-esc="l['total_cost']"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
 
-            </div>
-        </t>
+                </div>
+            </t>
         </t>
     </template>
 

@@ -20,6 +20,68 @@ class StockPicking(models.Model):
         compute='_compute_journal_entry_count'
     )
 
+    @api.model
+    def default_get(self, fields_list):
+        res = super().default_get(fields_list)
+
+        picking_type_id = res.get('picking_type_id')
+        if picking_type_id:
+            picking_type = self.env['stock.picking.type'].browse(picking_type_id)
+            if picking_type.code == 'internal':
+                # لو internal خلي الدومين Internal فقط
+                res['location_id'] = False
+                res['location_dest_id'] = False
+
+        return res
+
+    @api.onchange('picking_type_code')
+    def _onchange_picking_type_location_dest(self):
+        if self.picking_type_code == 'internal':
+            return {
+                'domain': {
+                    'location_dest_id': [('usage', '=', 'internal')]
+                }
+            }
+        else:
+            return {
+                'domain': {
+                    'location_dest_id': [
+                        ('usage', 'in', [
+                            'supplier',
+                            'internal',
+                            'customer',
+                            'inventory',
+                            'production',
+                            'transit'
+                        ])
+                    ]
+                }
+            }
+
+    @api.onchange('picking_type_code')
+    def _onchange_picking_type_location(self):
+        if self.picking_type_code == 'internal':
+            return {
+                'domain': {
+                    'location_id': [('usage', '=', 'internal')]
+                }
+            }
+        else:
+            return {
+                'domain': {
+                    'location_id': [
+                        ('usage', 'in', [
+                            'supplier',
+                            'internal',
+                            'customer',
+                            'inventory',
+                            'production',
+                            'transit'
+                        ])
+                    ]
+                }
+            }
+
     def _compute_journal_entry_count(self):
         for picking in self:
             # جميع القيود المرتبطة بالحركات المخزنية للـ Picking
@@ -41,6 +103,9 @@ class StockPicking(models.Model):
                             "You are not allowed to Check Availability this picking.\n"
                             "Only %s can Check Availability it."
                         ) % rec.loaction_id.user_id.name)
+        return super(StockPicking, self).action_assign()
+
+
 
     def action_view_journal_entries(self):
         self.ensure_one()

@@ -208,6 +208,7 @@ class ExpenseLine(models.Model):
         )
     )
     vendor_id = fields.Many2one(comodel_name='res.partner', string='Vendors', domain=[('supplier_rank', '>', 0)])
+    vat = fields.Char(related='vendor_id.vat', string='VAT', store=True)
     partner_id = fields.Many2one(comodel_name='res.partner', string='Partner', compute='_get_partner_id', store=True)
     product_ids = fields.Many2one(comodel_name="product.product", string="Product",
                                   domain=[('is_expense', '=', True)])
