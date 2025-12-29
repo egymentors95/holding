@@ -13,7 +13,7 @@
                 <p>
                     <strong>From:</strong>
                     <span t-esc="data['date_from']"/>
-                    &nbsp;&nbsp;
+                    <br/>
                     <strong>To:</strong>
                     <span t-esc="data['date_to']"/>
                 </p>
