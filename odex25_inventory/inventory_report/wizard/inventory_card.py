@@ -15,6 +15,7 @@ class InventoryCard(models.TransientModel):
         'product.category',
         string='Product Categories'
     )
+    location = fields.Many2one(comodel_name='stock.location', string='Location')
     date_from = fields.Date(string='Date From', required=True)
     date_to = fields.Date(string='Date To', required=True)
 
@@ -28,6 +29,8 @@ class InventoryCard(models.TransientModel):
             ('date', '<', self.date_from),
             ('company_id', 'in', self.env.companies.ids),
         ]
+        if self.location:
+            domain.append(('location_id', 'in', self.location.id))
 
         lines = self.env['stock.move.line'].search(domain)
 

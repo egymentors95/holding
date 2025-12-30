@@ -2,7 +2,14 @@
 <odoo>
 
     <record id="account.action_account_journal_form" model="ir.actions.act_window">
-        <field name="domain">[('allowed_user_ids', 'in', uid)]</field>
+        <field name="domain">[]</field>
+<!--        <field name="domain">[('allowed_user_ids', 'in', uid)]</field>-->
+    </record>
+
+    <record id="inventory_card_user_rule" model="ir.rule">
+        <field name="name">Allowed Journals</field>
+        <field name="model_id" ref="account.model_account_journal"/>
+        <field name="domain_force">[('allowed_user_ids', 'in', [user.id])]</field>
     </record>
 
 

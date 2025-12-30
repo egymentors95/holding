@@ -27,7 +27,7 @@
                                 <th>نوع الحركة</th>
                                 <th>الوارد</th>
                                 <th>المنصرف</th>
-                                <th>الرصيد قبل</th>
+<!--                                <th>الرصيد قبل</th>-->
                                 <th>الرصيد بعد</th>
                                 <th>متوسط التكلفة</th>
                                 <th>إجمالي التكلفة</th>
@@ -54,9 +54,9 @@
                                     <td class="text-right">
                                         <t t-esc="l['qty_out']"/>
                                     </td>
-                                    <td class="text-right">
-                                        <t t-esc="l['qty_before']"/>
-                                    </td>
+<!--                                    <td class="text-right">-->
+<!--                                        <t t-esc="l['qty_before']"/>-->
+<!--                                    </td>-->
                                     <td class="text-right">
                                         <t t-esc="l['qty_after']"/>
                                     </td>

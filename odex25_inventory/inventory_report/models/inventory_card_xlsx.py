@@ -30,7 +30,7 @@ class InventoryCardXlsx(models.AbstractModel):
             'نوع الحركة',
             'الكمية الواردة',
             'الكمية المنصرفة',
-            'رصيد المخزن قبل الحركة',
+            # 'رصيد المخزن قبل الحركة',
             'رصيد المخزن بعد الحركة',
             'متوسط التكلفة',
             'اجمالي تكلفة الرصيد',
@@ -54,9 +54,9 @@ class InventoryCardXlsx(models.AbstractModel):
 
             sheet.write(row, 4, line['qty_in'], number)
             sheet.write(row, 5, line['qty_out'], number)
-            sheet.write(row, 6, line['qty_before'], number)
-            sheet.write(row, 7, line['qty_after'], number)
-            sheet.write(row, 8, line['avg_cost'], number)
-            sheet.write(row, 9, line['total_cost'], number)
+            # sheet.write(row, 6, line['qty_before'], number)
+            sheet.write(row, 6, line['qty_after'], number)
+            sheet.write(row, 7, line['avg_cost'], number)
+            sheet.write(row, 8, line['total_cost'], number)
 
             row += 1

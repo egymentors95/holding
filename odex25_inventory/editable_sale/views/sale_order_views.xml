@@ -67,12 +67,12 @@
                         class="btn-primary"
                         groups="editable_sale.group_editable_sale_order_user"
                         attrs="{'invisible': [('invoice_status', '!=', 'to invoice')]}"/>
-                <button name="action_create_invoice_direct"
-                        string="Create Invoice"
-                        type="object"
-                        class="btn-primary"
-                        groups="editable_sale.group_editable_sale_order"
-                        attrs="{'invisible': [('invoice_status', '!=', 'to invoice')]}"/>
+<!--                <button name="action_create_invoice_direct"-->
+<!--                        string="Create Invoice"-->
+<!--                        type="object"-->
+<!--                        class="btn-primary"-->
+<!--                        groups="editable_sale.group_editable_sale_order"-->
+<!--                        attrs="{'invisible': [('invoice_status', '!=', 'to invoice')]}"/>-->
             </xpath>
 
             <!-- تعديل الجروب في العنصر div -->

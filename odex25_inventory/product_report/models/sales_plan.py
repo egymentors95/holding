@@ -20,6 +20,7 @@ class SalesPlan(models.Model):
     company_id = fields.Many2one(comodel_name='res.company', string='Company', default=lambda self: self.env.company)
     total_value = fields.Float(string='Total Value', compute='_compute_total', store=True)
     average = fields.Float(string='Average', compute='_compute_average', store=True)
+    invoice_total = fields.Float(string='Total Invoice')
 
     @api.depends('total_value', 'number_of_months')
     def _compute_average(self):
@@ -62,3 +63,39 @@ class SalesPlan(models.Model):
     def action_set_to_draft(self):
         for record in self:
             record.state = 'draft'
+
+    def action_view_invoices(self):
+        self.ensure_one()
+        return {
+            'name': 'Customer Invoices',
+            'type': 'ir.actions.act_window',
+            'res_model': 'account.move',
+            'view_mode': 'tree,form',
+            'domain': [
+                ('move_type', 'in', ('out_invoice', 'out_refund')),
+                ('state', '=', 'posted'),
+                ('invoice_user_id', '=', self.sales_person_id.id),
+                ('invoice_date', '>=', self.date_from),
+                ('invoice_date', '<=', self.date_to),
+            ],
+            'context': {
+                'default_move_type': 'out_invoice',
+            }
+        }
+
+    def update_invoice_total(self):
+        Move = self.env['account.move']
+        for rec in self:
+            total = 0.0
+            if rec.sales_person_id and rec.date_from and rec.date_to:
+                invoices = Move.search([
+                    ('move_type', 'in', ('out_invoice', 'out_refund')),
+                    ('state', '=', 'posted'),
+                    ('invoice_user_id', '=', rec.sales_person_id.id),
+                    ('invoice_date', '>=', rec.date_from),
+                    ('invoice_date', '<=', rec.date_to),
+                ])
+                total = sum(invoices.mapped('amount_total'))
+            rec.invoice_total = total
+
+
