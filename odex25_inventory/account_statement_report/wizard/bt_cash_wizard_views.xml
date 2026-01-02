@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="bt_cash_wizard_view_form" model="ir.ui.view">
+            <field name="name">bt.cash.wizard.view.form</field>
+            <field name="model">bt.cash.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="date_from"/>
+                            </group>
+                            <group>
+                                <field name="date_to"/>
+                            </group>
+                            <group>
+                                <field name="partner_id" />
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Print (PDF)" name="action_print_report_pdf" type="object" class="btn-primary"/>
+                        <button string="Print (Xlsx)" name="action_print_report_xlsx" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="bt_cash_wizard_view_action" model="ir.actions.act_window">
+            <field name="name">Bt Cash Report</field>
+            <field name="res_model">bt.cash.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="bt_cash_wizard_view_menu" name="Bt Cash Report"
+                  parent="account.menu_finance_reports"
+                  sequence="800"/>
+         <menuitem id="bt_cash_wizard_menu_one" name="Bt Cash Report"
+                  parent="bt_cash_wizard_view_menu"
+                   action="bt_cash_wizard_view_action"
+                  sequence="100"/>
+
+
+    </data>
+</odoo>

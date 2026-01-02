@@ -9,6 +9,7 @@ class AccountAccount(models.Model):
             ('view', 'View'),
             ('else', 'Else'),
             ],compute='_compute_selection_type', store=True)
+    is_bt_cash = fields.Boolean(string='is Bt Cash')
 
     @api.depends('user_type_id')
     def _compute_selection_type(self):

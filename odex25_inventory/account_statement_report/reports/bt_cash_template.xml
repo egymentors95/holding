@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <template id="report_bt_cash_document">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <t t-foreach="report_data_list" t-as="doc">
+
+                    <div class="page">
+
+                        <h3 style="text-align:center;">
+                            كشف حساب BT Cash
+                        </h3>
+
+                        <p>
+                            <strong>العميل:</strong>
+                            <span t-esc="doc['partner_name']"/>
+                        </p>
+
+                        <p>
+                            <strong>الفترة من:</strong>
+                            <span t-esc="doc['date_from']"/>
+                            <br/>
+                            <strong>إلى:</strong>
+                            <span t-esc="doc['date_to']"/>
+                        </p>
+
+                        <table class="table table-sm table-bordered" style="width:100%; margin-top:15px;">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ</th>
+                                    <th>نوع الحركة</th>
+                                    <th style="text-align:right;">مدين (وارد)</th>
+                                    <th style="text-align:right;">دائن (منصرف)</th>
+                                    <th style="text-align:right;">الرصيد</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc['lines']" t-as="l">
+                                    <tr>
+                                        <td>
+                                            <span t-esc="l['date']"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="l['move_type']"/>
+                                        </td>
+                                        <td style="text-align:right;">
+                                            <span t-esc="l['debit']"/>
+                                        </td>
+                                        <td style="text-align:right;">
+                                            <span t-esc="l['credit']"/>
+                                        </td>
+                                        <td style="text-align:right;">
+                                            <span t-esc="l['balance']"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                </t>
+            </t>
+        </t>
+    </template>
+
+
+</odoo>

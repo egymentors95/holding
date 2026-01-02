@@ -15,6 +15,7 @@
                                 <field name="date_to"/>
                             </group>
                             <group>
+                                <field name="location"/>
                                 <field name="product_ids" widget="many2many_tags"/>
                                 <field name="product_category_ids" widget="many2many_tags"/>
                             </group>

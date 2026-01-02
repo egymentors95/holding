@@ -19,5 +19,23 @@
         <field name="binding_type">report</field>
     </record>
 
+     <record id="report_bt_cash_action" model="ir.actions.report">
+        <field name="name">Bt Cash Report</field>
+        <field name="model">bt.cash.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">account_statement_report.report_bt_cash_pdf</field>
+        <field name="report_file">account_statement_report.report_bt_cash_pdf</field>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="report_bt_cash_xlsx_action" model="ir.actions.report">
+        <field name="name">Bt Cash Report</field>
+        <field name="model">bt.cash.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">account_statement_report.bt_cash_xlsx</field>
+        <field name="report_file">account_statement_report.bt_cash_xlsx</field>
+        <field name="binding_type">report</field>
+    </record>
+
 
 </odoo>

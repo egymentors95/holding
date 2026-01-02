@@ -20,10 +20,10 @@
             </xpath>
             <xpath expr="//group[1]/group[2]" position="inside">
                 <field name="purchase_order_id" readonly="1"/>
-                <field name="types_out" attrs="{'invisible': [('picking_type_code', '!=', 'outgoing')]}"/>
+                <field name="types_out" attrs="{'invisible': [('picking_type_code', 'not in', ['outgoing', 'internal'])]}"/>
                 <field name="driver_id" attrs="{'invisible': [('types_out', '!=', 'driver')]}"/>
                 <field name="attachment_ids" widget="many2many_binary"
-                       attrs="{'invisible': [('picking_type_code', '!=', 'outgoing')]}"/>
+                       attrs="{'invisible': [('picking_type_code', 'not in', ['outgoing', 'internal'])]}"/>
             </xpath>
 <!--            <xpath expr="//field[@name='location_id']" position="attributes">-->
 <!--                <attribute name="domain">[('usage', 'in', ['supplier', 'internal', 'customer', 'inventory',-->
