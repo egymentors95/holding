@@ -6,3 +6,4 @@ class ResUsers(models.Model):
 
     analytic_account_id = fields.Many2one(
         comodel_name='account.analytic.account', string='Analytic Account')
+    is_driver = fields.Boolean()

@@ -255,12 +255,14 @@
 
                                     </tbody>
                                 </table>
+                                <div style="text-align: center;">
+                                    <span t-field="o.amount_total_in_words_ar"/>
+                                </div>
                             </div>
                         </div>
                         <br/>
                         <br/>
-                        <br/>
-                        <div class="row">
+                        <div class="row" style="page-break-inside: avoid;">
                             <div class="col-6" style="text-align:right; vertical-align: middle;">
 
                                 <img t-if="o.l10n_sa_qr_code_str"

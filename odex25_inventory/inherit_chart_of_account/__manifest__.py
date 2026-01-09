@@ -10,7 +10,7 @@
     "author": "AitecSoft",
     "website": "",
     "category": "Accounting",
-    "depends": ['account'],
+    "depends": ['account', 'partner_category'],
     "data": [
         "views/account_account_views.xml",
     ],

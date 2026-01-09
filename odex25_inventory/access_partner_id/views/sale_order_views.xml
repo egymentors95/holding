@@ -9,6 +9,7 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
 
+
             <xpath expr="//field[@name='partner_id']" position="attributes">
                 <attribute name="options">{'no_create': True}</attribute>
                 <!--                <attribute name="groups">!access_partner_id.res_group_admin_partner_id</attribute>-->
@@ -26,8 +27,6 @@
     <record id="sale.menu_product_pricelist_main" model="ir.ui.menu">
         <field name="groups_id" eval="[(6, 0, [ref('access_partner_id.menu_item_price_lists')])]"/>
     </record>
-
-
 
 
 </odoo>

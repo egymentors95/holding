@@ -6,7 +6,7 @@
     "author": "Elaraby",
     "website": "https://www.ibs-na.com",
     "license": "AGPL-3",
-    "depends": ['base','stock', 'report_xlsx','account', 'partner_category', 'allowed_journals', 'access_partner_id'],
+    "depends": ['base','stock', 'report_xlsx','account', 'partner_category', 'allowed_journals', 'access_partner_id', 'sale'],
     "data": [
         "security/ir.model.access.csv",
         "wizard/account_statement_wizard_views.xml",

@@ -24,3 +24,5 @@ class SaleOrder(models.Model):
             wizard.with_context(ctx).create_invoices()
 
         return True
+
+

@@ -7,6 +7,10 @@ class ProductTemplate(models.Model):
 
     product_category = fields.Integer(string='Product Category ID')
     utm_line_ids = fields.One2many(comodel_name='utm.lines', inverse_name='product_template_id', string='UTM Lines')
+    categ_id = fields.Many2one(
+        'product.category', 'Product Category', default=False,
+        change_default=True, group_expand='_read_group_categ_id',
+        required=True, help="Select category for the current product")
 
 
 

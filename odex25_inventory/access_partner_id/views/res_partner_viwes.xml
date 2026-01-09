@@ -13,7 +13,11 @@
             </xpath>
             <xpath expr="//field[@name='vat']" position="after">
                 <field name="company_registration" attrs="{'required' : [('company_type', '=', 'company')]}"/>
+                <field name="sales_person_ids" widget="many2many_tags"/>
+                <field name="partner_type"/>
+
             </xpath>
+
 
         </field>
     </record>

@@ -15,7 +15,7 @@
                                 <field name="date_to"/>
                             </group>
                             <group>
-                                <field name="partner_id" />
+                                <field name="partner_id"  options="{'no_create': True}"/>
                             </group>
                         </group>
                     </sheet>
@@ -39,7 +39,7 @@
         </record>
 
         <menuitem id="account_statement_wizard_view_menu" name="Account Statement Report"
-                  parent="account.menu_finance_reports"
+                  parent="sale.menu_sale_invoicing"
                   sequence="500"/>
          <menuitem id="account_statement_wizard_view_menu_one" name="Account Statement Report"
                   parent="account_statement_wizard_view_menu"

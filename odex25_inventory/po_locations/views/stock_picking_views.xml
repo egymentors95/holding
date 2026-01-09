@@ -8,6 +8,61 @@
         <field name="inherit_id" ref="stock.view_picking_form"/>
         <field name="arch" type="xml">
 
+            <xpath expr="//header" position="inside">
+                <button name="button_stock_keeper"
+                        type="object"
+                        string="Stock Keeper"
+                        class="oe_highlight"
+                        attrs="{'invisible': [('state', '!=', 'assigned')]}"/>
+                <button name="button_validate"
+                        string="Validate"
+                        type="object"
+                        class="oe_highlight"
+                        attrs="{
+                            'invisible': [
+                                '|',
+                                ('picking_type_code', '!=', 'outgoing'),
+                                ('state', '!=', 'stock_keeper')
+                            ]
+                        }"/>
+            </xpath>
+
+            <xpath expr="//header" position="after">
+                <header>
+                    <button name="button_send_to_driver"
+                            type="object"
+                            string="Send to Driver"
+                            class="oe_highlight"
+                            attrs="{'invisible': ['|', ('types_out', 'not in', ['driver', 'charge']), ('state2', '=', 'out_for_delivery')]}"/>
+                    <field name="state2" widget="statusbar"/>
+                </header>
+            </xpath>
+            <xpath expr="//header/button[@name='button_validate'][1]" position="attributes">
+                <attribute name="attrs">{
+                    'invisible': [
+                    '|',
+                    ('picking_type_code', '=', 'outgoing'),
+                    '|',
+                    ('state', 'in', ('waiting','confirmed')),
+                    ('show_validate', '=', False)
+                    ]
+                    }
+                </attribute>
+            </xpath>
+            <xpath expr="//header/button[@name='button_validate'][2]" position="attributes">
+                <attribute name="attrs">{
+                    'invisible': [
+                    '|',
+                    ('picking_type_code', '=', 'outgoing'),
+                    '|',
+                    ('state', 'not in', ('waiting', 'confirmed')),
+                    ('show_validate', '=', False)
+                    ]
+                    }
+                </attribute>
+            </xpath>
+
+
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button
                         name="action_view_journal_entries"
@@ -20,21 +75,23 @@
             </xpath>
             <xpath expr="//group[1]/group[2]" position="inside">
                 <field name="purchase_order_id" readonly="1"/>
-                <field name="types_out" attrs="{'invisible': [('picking_type_code', 'not in', ['outgoing', 'internal'])]}"/>
-                <field name="driver_id" attrs="{'invisible': [('types_out', '!=', 'driver')]}"/>
+                <field name="types_out"
+                       attrs="{'invisible': [('picking_type_code', 'not in', ['outgoing', 'internal'])]}"/>
+                <field name="driver_id" attrs="{'invisible': [('types_out', 'not in', ['driver', 'charge'])]}"
+                       domain="[('is_driver', '=', True)]" options="{'no_create': True}"/>
                 <field name="attachment_ids" widget="many2many_binary"
                        attrs="{'invisible': [('picking_type_code', 'not in', ['outgoing', 'internal'])]}"/>
             </xpath>
-<!--            <xpath expr="//field[@name='location_id']" position="attributes">-->
-<!--                <attribute name="domain">[('usage', 'in', ['supplier', 'internal', 'customer', 'inventory',-->
-<!--                    'production', 'transit'])]-->
-<!--                </attribute>-->
-<!--            </xpath>-->
-<!--            <xpath expr="//field[@name='location_dest_id']" position="attributes">-->
-<!--                <attribute name="domain">[('usage', 'in', ['supplier', 'internal', 'customer', 'inventory',-->
-<!--                    'production', 'transit'])]-->
-<!--                </attribute>-->
-<!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='location_id']" position="attributes">-->
+            <!--                <attribute name="domain">[('usage', 'in', ['supplier', 'internal', 'customer', 'inventory',-->
+            <!--                    'production', 'transit'])]-->
+            <!--                </attribute>-->
+            <!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='location_dest_id']" position="attributes">-->
+            <!--                <attribute name="domain">[('usage', 'in', ['supplier', 'internal', 'customer', 'inventory',-->
+            <!--                    'production', 'transit'])]-->
+            <!--                </attribute>-->
+            <!--            </xpath>-->
 
 
         </field>

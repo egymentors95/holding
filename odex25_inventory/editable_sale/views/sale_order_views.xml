@@ -8,6 +8,11 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
 
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="widget">False</attribute>
+                <attribute name="domain">[('partner_type', '=', 'partner')]</attribute>
+            </xpath>
+
             <xpath expr="//field[@name='order_line']" position="attributes">
                 <attribute name="attrs">{'readonly': [('state', 'in', ('done','cancel', 'sale'))]}</attribute>
             </xpath>

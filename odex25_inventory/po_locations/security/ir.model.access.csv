@@ -1,3 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_driver_driver,access.driver.driver,model_driver_driver,,1,1,1,1
+access_driver_driver,access.driver.driver,model_driver_driver,po_locations.group_driver_user,1,1,1,0
+access_driver_line,access.driver.line,model_driver_line,po_locations.group_driver_user,1,1,1,0
+access_sale_order,access.sale.order,sale.model_sale_order,po_locations.group_driver_user,1,0,0,0
+access_stock_picking,access.stock.picking,stock.model_stock_picking,po_locations.group_driver_user,1,0,0,0
 

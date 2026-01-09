@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
 
-    <template id="report_bt_cash_document">
+    <template id="report_bt_cash_pdf">
         <t t-call="web.html_container">
             <t t-call="web.external_layout">
                 <t t-foreach="report_data_list" t-as="doc">
@@ -30,6 +30,7 @@
                                 <tr>
                                     <th>التاريخ</th>
                                     <th>نوع الحركة</th>
+                                    <th>البيان</th>
                                     <th style="text-align:right;">مدين (وارد)</th>
                                     <th style="text-align:right;">دائن (منصرف)</th>
                                     <th style="text-align:right;">الرصيد</th>
@@ -43,6 +44,9 @@
                                         </td>
                                         <td>
                                             <span t-esc="l['move_type']"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="l.get('name', '')"/>
                                         </td>
                                         <td style="text-align:right;">
                                             <span t-esc="l['debit']"/>

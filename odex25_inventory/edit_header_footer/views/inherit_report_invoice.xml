@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
 
+    <record id="paperformat_invoice_report" model="report.paperformat">
+        <field name="name">Invoice Report A4</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">35</field>
+        <field name="margin_bottom">18</field>
+        <field name="margin_left">3</field>
+        <field name="margin_right">3</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">33</field>
+        <field name="dpi">90</field>
+    </record>
+
 
     <record id="report_invoice_customize_action" model="ir.actions.report">
         <field name="name">Invoice Report</field>
@@ -10,6 +26,8 @@
         <field name="report_file">edit_header_footer.report_invoice_customize</field>
         <field name="binding_model_id" ref="account.model_account_move"/>
         <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="edit_header_footer.paperformat_invoice_report"/>
+
     </record>
 
 

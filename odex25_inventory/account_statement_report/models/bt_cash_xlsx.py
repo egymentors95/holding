@@ -11,6 +11,7 @@ class BtCashXlsxReport(models.AbstractModel):
         wizard = records[0]
         report_data = wizard.get_report_data()
         lines = report_data['lines']
+        print('linessss', lines)
 
         worksheet = workbook.add_worksheet('BT Cash Statement')
 
@@ -37,9 +38,10 @@ class BtCashXlsxReport(models.AbstractModel):
         # =====================
         worksheet.set_column('A:A', 15)
         worksheet.set_column('B:B', 15)
-        worksheet.set_column('C:C', 18)
+        worksheet.set_column('C:C', 20)
         worksheet.set_column('D:D', 18)
         worksheet.set_column('E:E', 18)
+        worksheet.set_column('F:F', 18)
 
         row = 0
         col = 0
@@ -66,6 +68,7 @@ class BtCashXlsxReport(models.AbstractModel):
         worksheet.write_row(row, col, [
             'التاريخ',
             'نوع الحركة',
+            'البيان',
             'مدين (وارد)',
             'دائن (منصرف)',
             'الرصيد'
@@ -78,7 +81,8 @@ class BtCashXlsxReport(models.AbstractModel):
         for line in lines:
             worksheet.write(row, col, str(line['date']), cell)
             worksheet.write(row, col + 1, line['move_type'], cell)
-            worksheet.write_number(row, col + 2, line['debit'], cell_number)
-            worksheet.write_number(row, col + 3, line['credit'], cell_number)
-            worksheet.write_number(row, col + 4, line['balance'], cell_number)
+            worksheet.write(row, col + 2, line.get('name', ''), cell)
+            worksheet.write_number(row, col + 3, line['debit'], cell_number)
+            worksheet.write_number(row, col + 4, line['credit'], cell_number)
+            worksheet.write_number(row, col + 5, line['balance'], cell_number)
             row += 1

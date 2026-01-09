@@ -1766,6 +1766,7 @@ class AccountMove(models.Model):
 
     # def action_post(self):
     #     res = super().action_post()
+    #     self.send_for_clearance()
     #     return res
 
     @api.depends('country_code', 'move_type')

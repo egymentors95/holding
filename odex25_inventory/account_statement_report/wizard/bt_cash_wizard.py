@@ -80,6 +80,7 @@ class BtCashWizard(models.TransientModel):
             combined_data.append({
                 'date': line.date,
                 'move_type': move_type,
+                'name': line.name,
                 'debit': debit,
                 'credit': credit,
                 'balance': running_balance,

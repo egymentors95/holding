@@ -110,10 +110,10 @@ class AccountMove(models.Model):
 
                 # تحقق من التحليلات
                 analytic_lines = move.line_ids.filtered(
-                    lambda l: l.account_id.is_analytic and not l.analytic_tag_ids
+                    lambda l: l.account_id.is_analytic and not l.analytic_account_id
                 )
                 for line in analytic_lines:
-                    errors.append(f"Please insert Analytic tag for account '{line.account_id.name}'")
+                    errors.append(f"Please insert Analytic account for account '{line.account_id.name}'")
 
                 if errors:
                     raise UserError("\n".join(errors))

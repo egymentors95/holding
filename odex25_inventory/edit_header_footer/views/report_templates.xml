@@ -4,7 +4,7 @@
     <template id="header">
         <t t-set="company" t-value="docs.company_id"/>
         <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
-            <div class="row">
+            <div class="row" style="font-size: 14px;">
                 <div class="col-5 header-left" style="text-align: left;">
                     <div style="font-weight: bold; ">
                         <span>Zaghwan Co for Trading and Industry</span>

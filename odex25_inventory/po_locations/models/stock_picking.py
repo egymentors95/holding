@@ -12,13 +12,67 @@ class StockPicking(models.Model):
         ('charge', 'الشحن'),
     ])
     attachment_ids = fields.Many2many(comodel_name='ir.attachment', string='Attachments', )
-    driver_id = fields.Many2one(comodel_name='driver.driver', string='Driver')
-
-
     po_entry_count = fields.Integer(
         string='Journal Entries',
         compute='_compute_journal_entry_count'
     )
+    state = fields.Selection(
+        selection_add=[('stock_keeper', 'Stock Keeper')],
+    )
+    driver_id = fields.Many2one(comodel_name='res.users', string='Driver')
+    driver_model_id = fields.Many2one(comodel_name='driver.driver', string='Driver Model')
+    sale_id = fields.Many2one(comodel_name='sale.order', string='Sale Order')
+    state2 = fields.Selection([
+        ('draft', 'Draft'),
+        ('out_for_delivery', 'Out for Delivery'),
+        ('delivered', 'Delivered'),
+    ], default='draft', string='Driver Status')
+
+
+
+    def button_stock_keeper(self):
+        for rec in self:
+            rec.state = 'stock_keeper'
+
+    def button_send_to_driver(self):
+        driver = self.env['driver.driver']
+
+        for picking in self:
+            if not picking.driver_id:
+                raise UserError(_("Please assign a driver first."))
+
+            driver_lines_vals = []
+            for move in picking.move_line_ids_without_package:
+                driver_lines_vals.append((0, 0, {
+                    'product_id': move.product_id.id,
+                    'quantity': move.qty_done,
+                    'price': move.price_unit,
+                    'location_id': move.location_id.id,
+                    'uom_id': move.product_uom_id.id,
+                }))
+
+            driver_record = driver.create({
+                'date': fields.Datetime.now(),
+                'driver_id': picking.driver_id.id,
+                'stock_id': picking.id,
+                'source': picking.name,
+                'sale_id': picking.sale_id.id if picking.sale_id else False,
+                'driver_line_ids': driver_lines_vals,
+            })
+
+            self.env['mail.activity'].create({
+                'res_id': driver_record.id,
+                'res_model_id': self.env['ir.model']._get('driver.driver').id,
+                'activity_type_id': self.env.ref('mail.mail_activity_data_todo').id,
+                'user_id': picking.driver_id.id,
+                'summary': _('New Delivery Assigned'),
+                'note': _('You have a new delivery to handle.'),
+                'date_deadline': fields.Date.today(),
+            })
+            self.driver_model_id = driver_record.id
+            self.state2 = 'out_for_delivery'
+
+            picking.message_post(body=_("Driver record %s created and activity sent to driver.") % driver_record.name)
 
     @api.model
     def default_get(self, fields_list):
@@ -141,8 +195,8 @@ class StockPicking(models.Model):
 
             if rec.picking_type_code == 'outgoing':
                 if rec.types_out:
-                    if not rec.attachment_ids:
-                        raise UserError(_("Attachments is Mandatory"))
+                    # if not rec.attachment_ids:
+                    #     raise UserError(_("Attachments is Mandatory"))
                     if rec.types_out == 'driver' and not rec.driver_id:
                         raise UserError(_("Driver is Mandatory"))
 

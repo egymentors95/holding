@@ -32,6 +32,8 @@ class SaleOrderLine(models.Model):
     @api.constrains('product_id.lst_price', 'price_unit')
     def _check_price_unit(self):
         for line in self:
+            if self.env.user.has_group('editable_sale.group_editable_sale_order'):
+                continue
             if line.price_unit < line.product_id.lst_price:
                 raise models.ValidationError(
                     "The unit price cannot be lower than the product's list price."

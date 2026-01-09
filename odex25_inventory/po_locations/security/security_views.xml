@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Driver Security Category -->
+    <record id="module_category_driver" model="ir.module.category">
+        <field name="name">Driver</field>
+        <field name="description">Driver Management</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <!-- Driver User Group -->
+    <record id="group_driver_user" model="res.groups">
+        <field name="name">Driver</field>
+        <field name="category_id" ref="module_category_driver"/>
+    </record>
+
+<!--    &lt;!&ndash; Driver Manager Group &ndash;&gt;-->
+<!--    <record id="group_driver_manager" model="res.groups">-->
+<!--        <field name="name">Manager</field>-->
+<!--        <field name="category_id" ref="module_category_driver"/>-->
+<!--        <field name="implied_ids" eval="[(4, ref('group_driver_user'))]"/>-->
+<!--    </record>-->
+
+</odoo>

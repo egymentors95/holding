@@ -36,6 +36,7 @@
         'sale_management',
         'stock',
         'purchase',
+        'partner_category',
     ],
     'data': [
         'views/wizard_view.xml',

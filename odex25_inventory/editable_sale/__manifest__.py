@@ -17,6 +17,7 @@
         "account",
         "odex25_account_asset",
         "mrp",
+        "access_partner_id",
         "ksa_zatca_integration",
     ],
     "data": [
@@ -25,6 +26,7 @@
         "views/stock_picking_views.xml",
         "views/account_move_views.xml",
         "views/mrp_production_views.xml",
+        "views/sale_margin_views.xml",
     ],
     "installable": True,
     "application": False,

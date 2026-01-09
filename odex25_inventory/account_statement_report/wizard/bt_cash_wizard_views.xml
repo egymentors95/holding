@@ -15,7 +15,7 @@
                                 <field name="date_to"/>
                             </group>
                             <group>
-                                <field name="partner_id" />
+                                <field name="partner_id" options="{'no_create': True}"/>
                             </group>
                         </group>
                     </sheet>

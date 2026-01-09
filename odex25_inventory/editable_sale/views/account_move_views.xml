@@ -8,93 +8,7 @@
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
 
-<!--            <xpath expr="//header" position="replace">-->
-<!--                <header>-->
-<!--                    &lt;!&ndash; Post &ndash;&gt;-->
-<!--&lt;!&ndash;                    <button name="action_post" string="Post" class="oe_highlight" type="object"&ndash;&gt;-->
-<!--&lt;!&ndash;                            groups="editable_sale.group_confirm_account_move"&ndash;&gt;-->
-<!--&lt;!&ndash;                            attrs="{'invisible': ['|', '|', ('state', '!=', 'draft'), ('auto_post', '=', True), ('move_type', '!=', 'entry')]}"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                    <button name="action_post" string="Confirm" class="oe_highlight" type="object"&ndash;&gt;-->
-<!--&lt;!&ndash;                            groups="editable_sale.group_confirm_account_move"&ndash;&gt;-->
-<!--&lt;!&ndash;                            attrs="{'invisible': ['|', '|', ('state', '!=', 'draft'), ('auto_post', '=', True), ('move_type', '=', 'entry')]}"/>&ndash;&gt;-->
-<!--                    &lt;!&ndash; Send (only invoices) &ndash;&gt;-->
-<!--                    <button name="action_invoice_sent" type="object" string="Send &amp; Print" groups="editable_sale.group_confirm_account_move"-->
-<!--                            attrs="{'invisible':['|', '|', ('state', '!=', 'posted'), ('is_move_sent', '=', True), ('move_type', 'not in', ('out_invoice', 'out_refund'))]}"-->
-<!--                            class="oe_highlight"/>-->
-<!--                    <button name="action_invoice_sent" type="object" string="Send &amp; Print" groups="editable_sale.group_confirm_account_move"-->
-<!--                            attrs="{'invisible':['|', '|', ('state', '!=', 'posted'), ('is_move_sent', '=', False), ('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))]}"/>-->
-<!--                    &lt;!&ndash; Register Payment (only invoices / receipts) &ndash;&gt;-->
-<!--                    <button name="action_register_payment" id="account_invoice_payment_btn" type="object"-->
-<!--                            class="oe_highlight"-->
-<!--                            attrs="{'invisible': ['|', '|', ('state', '!=', 'posted'), ('payment_state', 'not in', ('not_paid', 'partial')), ('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'out_receipt', 'in_receipt'))]}"-->
-<!--                            context="{'dont_redirect_to_payments': True}" string="Register Payment"-->
-<!--                            groups="editable_sale.group_confirm_account_move"-->
-<!--                    />-->
-<!--                    &lt;!&ndash; Preview (only customer invoices) &ndash;&gt;-->
-<!--                    <button name="preview_invoice" type="object" string="Preview"-->
-<!--                            attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund'))]}"/>-->
-<!--                    &lt;!&ndash; Reverse &ndash;&gt;-->
-<!--                    <button name="192" string="Reverse Entry" type="action" groups="editable_sale.group_confirm_account_move"-->
-<!--                            attrs="{'invisible': ['|', ('move_type', '!=', 'entry'), '|', ('state', '!=', 'posted'), ('payment_state', '=', 'reversed')]}"/>-->
-<!--                    <button name="action_reverse" string="Add Credit Note" type="object"-->
-<!--                            groups="editable_sale.group_confirm_account_move"-->
-<!--                            attrs="{'invisible': ['|', ('move_type', 'not in', ('out_invoice', 'in_invoice')), ('state', '!=', 'posted')]}"/>-->
-<!--                    &lt;!&ndash; Cancel &ndash;&gt;-->
-<!--                    <button name="button_cancel" string="Cancel Entry" type="object"-->
-<!--                            groups="editable_sale.group_confirm_account_move"-->
-<!--                            attrs="{'invisible' : ['|', ('id', '=', False), ('state', '!=', 'draft')]}"/>-->
-<!--                    <button name="button_draft" string="Reset to Draft" type="object"-->
-<!--                            groups="editable_sale.group_confirm_account_move"-->
-<!--                            attrs="{'invisible' : [('show_reset_to_draft_button', '=', False)]}"/>-->
-<!--                    <field name="state" widget="statusbar" statusbar_visible="draft,posted"/>-->
-<!--                                        <field name="l10n_sa_invoice_type_is_readonly" invisible="1"/>-->
-<!--                    <field name="zatca_compliance_invoices_api" invisible="1"/>-->
-<!--                    <field name="l10n_is_self_billed_invoice" invisible="1"/>-->
-<!--                    <field name="l10n_sa_phase1_end_date" invisible="1"/>-->
-<!--                    <field name="disable_odoo_invoices" invisible="1"/>-->
-<!--                    <field name="l10n_sa_invoice_type" invisible="1"/>-->
-<!--                    <field name="zatca_status_code" invisible="1"/>-->
-<!--                    <field name="is_self_billed" invisible="1"/>-->
-<!--                    <field name="zatca_invoice" invisible="1"/>-->
-<!--                    <field name="is_zatca" invisible="1"/>-->
 
-<!--                    <button name="send_for_clearance" type="object" string="Send to Zatca for Clearance"-->
-<!--                            class="oe_highlight"-->
-<!--                            attrs="{'invisible':['|', '|', '|', '|', '|', '|', ('is_zatca', '=', False), ('state','!=','posted'), ('l10n_sa_invoice_type','!=', 'Standard'),-->
-<!--                                                 ('zatca_compliance_invoices_api','not in', [0, None, '', False]),-->
-<!--                                                '&amp;', ('is_self_billed', '=', False), ('move_type', 'not in', ['out_invoice', 'out_refund']),-->
-<!--                                                '&amp;',('is_self_billed', '=', True), ('move_type', 'not in', ['out_invoice', 'out_refund', 'in_invoice', 'in_refund']),-->
-<!--                                                '&amp;',('l10n_is_self_billed_invoice', '=', False), ('move_type', 'in', ['in_invoice', 'in_refund'])]}"-->
-<!--                            groups="ksa_zatca_integration.l10n_sa_group_zatca_user"/>-->
-<!--                    <button name="send_for_reporting" type="object" string="Send to Zatca for Reporting"-->
-<!--                            class="oe_highlight"-->
-<!--                            attrs="{'invisible':['|', '|', '|', '|', '|', '|', ('is_zatca', '=', False), ('state','!=','posted'), ('l10n_sa_invoice_type','!=', 'Simplified'),-->
-<!--                                                ('zatca_compliance_invoices_api','not in', [0, None, '', False]),-->
-<!--                                                '&amp;', ('is_self_billed', '=', False), ('move_type', 'not in', ['out_invoice', 'out_refund']),-->
-<!--                                                '&amp;',('is_self_billed', '=', True), ('move_type', 'not in', ['out_invoice', 'out_refund', 'in_invoice', 'in_refund']),-->
-<!--                                                '&amp;',('l10n_is_self_billed_invoice', '=', False), ('move_type', 'in', ['in_invoice', 'in_refund'])]}"-->
-<!--                            groups="ksa_zatca_integration.l10n_sa_group_zatca_user"/>-->
-<!--                    &lt;!&ndash;                    Resend in case of 400&ndash;&gt;-->
-<!--                    <button name="send_for_clearance" type="object" string="ReSend to Zatca for Clearance"-->
-<!--                            class="oe_highlight"-->
-<!--                            attrs="{'invisible':['|', '|', '|', '|', '|', '|', ('is_zatca', '=', False), ('state','!=','posted'),-->
-<!--                                                ('l10n_sa_invoice_type','!=', 'Standard'), ('zatca_status_code','!=','400'),-->
-<!--                                                '&amp;', ('is_self_billed', '=', False), ('move_type', 'not in', ['out_invoice', 'out_refund']),-->
-<!--                                                '&amp;',('is_self_billed', '=', True), ('move_type', 'not in', ['out_invoice', 'out_refund', 'in_invoice', 'in_refund']),-->
-<!--                                                '&amp;',('l10n_is_self_billed_invoice', '=', False), ('move_type', 'in', ['in_invoice', 'in_refund'])]}"-->
-<!--                            context="{'xml_generate': 1}" groups="ksa_zatca_integration.l10n_sa_group_zatca_user"/>-->
-<!--                    <button name="send_for_reporting" type="object" string="ReSend to Zatca for Reporting"-->
-<!--                            class="oe_highlight"-->
-<!--                            attrs="{'invisible':['|', '|', '|', '|', '|', '|', ('is_zatca', '=', False), ('state','!=','posted'),-->
-<!--                                                ('l10n_sa_invoice_type','!=', 'Simplified'), ('zatca_status_code','!=','400'),-->
-<!--                                                '&amp;', ('is_self_billed', '=', False), ('move_type', 'not in', ['out_invoice', 'out_refund']),-->
-<!--                                                '&amp;',('is_self_billed', '=', True), ('move_type', 'not in', ['out_invoice', 'out_refund', 'in_invoice', 'in_refund']),-->
-<!--                                                '&amp;',('l10n_is_self_billed_invoice', '=', False), ('move_type', 'in', ['in_invoice', 'in_refund'])]}"-->
-<!--                            context="{'xml_generate': 1}" groups="ksa_zatca_integration.l10n_sa_group_zatca_user"/>-->
-
-<!--                </header>-->
-
-<!--            </xpath>-->
 
             <xpath expr="//div[@name='journal_div']/field[@name='currency_id']" position="attributes">
                 <attribute name="attrs">{'readonly':1}</attribute>
@@ -105,12 +19,14 @@
             <xpath expr="//field[@name='name']" position="attributes">
                 <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>
             </xpath>
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="attrs">{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'out_receipt', 'in_receipt'))], 'required': [('move_type', 'in', ['out_invoice', 'out_refund', 'in_invoice', 'in_refund'])]}</attribute>
+            </xpath>
 
-
-<!--            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='analytic_account_id']"-->
-<!--                   position="attributes">-->
-<!--                <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>-->
-<!--            </xpath>-->
+            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='analytic_account_id']"
+                   position="attributes">
+                <attribute name="options">{'no_create': True}</attribute>
+            </xpath>
             <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='analytic_tag_ids']" position="attributes">
                 <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>
             </xpath>
@@ -132,10 +48,10 @@
                    position="attributes">
                 <attribute name="attrs">{'column_invisible':1}</attribute>
             </xpath>
-<!--            <xpath expr="//field[@name='line_ids']/tree/field[@name='analytic_account_id']"-->
-<!--                   position="attributes">-->
-<!--                <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>-->
-<!--            </xpath>-->
+            <xpath expr="//field[@name='line_ids']/tree/field[@name='analytic_account_id']"
+                   position="attributes">
+                <attribute name="options">{'no_create': True}</attribute>
+            </xpath>
             <xpath expr="//field[@name='line_ids']/tree/field[@name='amount_currency']"
                    position="attributes">
                 <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>
