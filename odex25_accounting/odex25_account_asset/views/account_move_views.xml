@@ -46,7 +46,7 @@
             <xpath expr="//field[@name='line_ids']/tree/field[@name='partner_id']" position="replace">
                 <field name="journal_type"/>
                 <field name="partner_id" domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]"
-                       attrs="{'column_invisible': [('parent.move_type', '!=', 'entry')] ,'required':[('journal_type','=','صرف عهدة')]}"/>
+                       attrs="{'column_invisible': [('move_id.move_type', '!=', 'entry')] ,'required':[('journal_type','=','صرف عهدة')]}"/>
 
             </xpath>
         </field>
