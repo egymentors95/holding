@@ -1,7 +1,7 @@
 {
     'name': 'Custom Report Header',
     'version': '14.0.1.0',
-    'depends': ['base', 'web', 'l10n_gcc_invoice', 'account'],
+    'depends': ['base', 'web', 'l10n_gcc_invoice', 'account', 'partner_category'],
     'author': 'IBS',
     'website': 'http://www.ibs.com',
     'license': 'AGPL-3',

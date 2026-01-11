@@ -24,7 +24,7 @@
                                                 height: 40px;
                                                 vertical-align: middle;
                                             ">
-<!--                                            <span t-field="o.invoice_user_id"/>-->
+                                            <!--                                            <span t-field="o.invoice_user_id"/>-->
                                             <span>Tax Invoice</span>
                                             <span>فاتورة ضريبية</span>
                                         </div>
@@ -54,11 +54,16 @@
                                             <span t-field="o.partner_id.name"/>
                                         </div>
                                         <br/>
-                                        <div style="text-align: right;">
-                                            <span>الرقم الضريبي:</span>
-                                            <span t-field="o.partner_id.vat"/>
-                                            <span style="margin-right: 100px;">P.O.NO.</span>
-                                            <span></span>
+                                        <div class="row">
+                                            <div class="col-6" style="text-align: right;">
+                                                <span>الرقم الضريبي:</span>
+                                                <span t-field="o.partner_id.vat"/>
+                                            </div>
+                                            <div class="col-6" style="text-align: left;">
+                                                <span style="margin-right: 150px;">P.O.NO.</span>
+                                                <span t-field="o.description_note"/>
+                                            </div>
+
                                         </div>
                                         <br/>
                                         <div style="text-align: right;">
@@ -70,6 +75,7 @@
                                         <br/>
                                         <div style="text-align: right;">
                                             <span>ملاحظات:</span>
+                                            <span t-field="o.description_a"/>
                                         </div>
 
                                     </td>
@@ -165,7 +171,7 @@
                                             <span t-esc="line.product_uom_id.name"/>
                                         </td>
                                         <td style="border: 1px solid white; text-align: center;">
-                                            <span t-esc="line.quantity"/>
+                                            <span t-esc="int(round(line.quantity))"/>
                                         </td>
 
                                         <td style="border: 1px solid white; text-align: center;">
@@ -173,13 +179,14 @@
                                         </td>
 
                                         <td style="border: 1px solid white; text-align: center;">
-                                            <span t-esc="line.price_unit"/>
+                                            <span t-esc="'%.2f' % line.price_unit"/>
+
                                         </td>
                                         <td style="background-color: #DBDBDB; text-align: center;">
                                             <span t-field="line.price_subtotal"/>
                                         </td>
                                         <td style="border: 1px solid white; text-align: center;">
-                                            <span t-field="line.tax_ids"/>
+                                            <span t-field="line.tax_ids.description"/>
                                         </td>
                                         <td style="background-color: #DBDBDB; text-align: center;">
                                             <span t-field="line.price_total"/>
@@ -192,15 +199,22 @@
 
                         </table>
 
-                        <div class="row">
-                            <div class="col-6"/>
+                        <div class="row" style="font-size: 13px;">
+                            <div class="col-6" style="text-align:right; vertical-align: middle;">
+
+                                <img t-if="o.l10n_sa_qr_code_str"
+                                     style="display:block;margin:10% auto 0 auto;"
+                                     t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', o.l10n_sa_qr_code_str, 150, 150)"/>
+
+
+                            </div>
                             <div class="col-6">
                                 <table class="table table-border">
                                     <tbody>
                                         <tr>
                                             <td>
                                                 <span class="text-left">Untaxed Amount</span>
-                                                <br/>
+                                                /
                                                 <span class="text-left">الاجمالي بدون ضريبة</span>
                                             </td>
                                             <td class="text-right">
@@ -210,7 +224,7 @@
                                         <tr>
                                             <td>
                                                 <span class="text-left">Discount</span>
-                                                <br/>
+                                                /
                                                 <span class="text-left">الخصم</span>
                                             </td>
                                             <td class="text-right">
@@ -244,7 +258,7 @@
                                         <tr>
                                             <td class="text-left" style="background-color:#195C19; color: white;">
                                                 <span>Total with VAT</span>
-                                                <br/>
+                                                /
                                                 <span>الاجمالي بضريبة القيمة المضافة</span>
                                             </td>
                                             <td class="text-right" style="background-color:#195C19; color: white;">
@@ -262,22 +276,33 @@
                         </div>
                         <br/>
                         <br/>
-                        <div class="row" style="page-break-inside: avoid;">
-                            <div class="col-6" style="text-align:right; vertical-align: middle;">
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
 
-                                <img t-if="o.l10n_sa_qr_code_str"
-                                     style="display:block;margin:10% auto 0 auto;"
-                                     t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', o.l10n_sa_qr_code_str, 150, 150)"/>
 
-                            </div>
-
-                            <div class="col-6" style="font-size: 14px; font-weight: bold; text-align: right">
-                                   <br/>
+                        <div style="font-size: 14px; font-weight: bold; text-align: right">
                             <br/>
-                                <span>اسم المستلم</span>
+                            <br/>
+                            <span>اسم المستلم</span>
 
-                            </div>
                         </div>
+                        <div>
+                            <t t-if="o.authorized_signature">
+                                <img t-att-src="'data:image/png;base64,%s' % o.authorized_signature"
+                                     style="height:150px; width:80px;"/>
+                            </t>
+                            <t t-elif="o.partner_id and o.partner_id.signature">
+                                <img t-att-src="'data:image/png;base64,%s' % o.partner_id.signature"
+                                     style="height:150px; width:80px;"/>
+                            </t>
+                            <t t-else="">
+                                <span style="color:gray;">No signature available</span>
+                            </t>
+                        </div>
+
 
 
                     </div>

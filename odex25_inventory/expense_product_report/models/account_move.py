@@ -15,7 +15,6 @@ class AccountMove(models.Model):
         ('purchase', 'Purchases'),
         ('none', 'None'),
     ], compute='_compute_vat_info', store=True)
-    description_note = fields.Char(string='Description_A')
     tax_value = fields.Float(string="Tax Value", compute='_compute_tax_amounts', store=True)
     amount_untaxed_entry = fields.Float(string="Untaxed Amount", compute='_compute_tax_amounts', store=True)
 

@@ -27,6 +27,23 @@ class StockPicking(models.Model):
         ('out_for_delivery', 'Out for Delivery'),
         ('delivered', 'Delivered'),
     ], default='draft', string='Driver Status')
+    user_ids = fields.Many2many(
+        comodel_name='res.users',
+        string='Users',
+        help='Users allowed to validate this picking.',
+        compute='_compute_user_ids',
+        store=True,
+    )
+
+    @api.depends('location_id', 'location_dest_id')
+    def _compute_user_ids(self):
+        for picking in self:
+            users = set()
+            if picking.location_id and picking.location_id.user_id:
+                users.add(picking.location_id.user_id.id)
+            if picking.location_dest_id and picking.location_dest_id.user_id:
+                users.add(picking.location_dest_id.user_id.id)
+            picking.user_ids = [(6, 0, list(users))]
 
 
 
@@ -200,6 +217,41 @@ class StockPicking(models.Model):
                     if rec.types_out == 'driver' and not rec.driver_id:
                         raise UserError(_("Driver is Mandatory"))
 
+        res = super(StockPicking, self).button_validate()
+        for picking in self:
+            sale_order = picking.sale_id
+            if not sale_order:
+                continue
 
-        return super(StockPicking, self).button_validate()
+            product_lot_qty = {}
+            for ml in picking.move_line_ids:
+                if not ml.lot_id or ml.qty_done <= 0:
+                    continue
+
+                key = (ml.product_id.id, ml.lot_id.id)
+                product_lot_qty.setdefault(key, 0)
+                product_lot_qty[key] += ml.qty_done
+
+            for (product_id, lot_id), qty in product_lot_qty.items():
+                so_lines = sale_order.order_line.filtered(
+                    lambda l: l.product_id.id == product_id
+                )
+
+                if not so_lines:
+                    continue
+
+                line = so_lines[0]
+
+                if not line.lot_id:
+                    line.write({
+                        'lot_id': lot_id,
+                        'product_uom_qty': qty,
+                    })
+                else:
+                    line.copy({
+                        'lot_id': lot_id,
+                        'product_uom_qty': qty,
+                    })
+
+        return res
 

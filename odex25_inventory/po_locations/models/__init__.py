@@ -6,3 +6,4 @@ from . import stock_landed_cost
 from . import driver_driver
 from . import sale_order
 from . import stock_move_line
+from . import sale_order_line
