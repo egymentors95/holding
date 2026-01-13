@@ -9,7 +9,6 @@
         <field name="arch" type="xml">
 
 
-
             <xpath expr="//div[@name='journal_div']/field[@name='currency_id']" position="attributes">
                 <attribute name="attrs">{'readonly':1}</attribute>
             </xpath>
@@ -20,7 +19,10 @@
                 <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>
             </xpath>
             <xpath expr="//field[@name='partner_id']" position="attributes">
-                <attribute name="attrs">{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'out_receipt', 'in_receipt'))], 'required': [('move_type', 'in', ['out_invoice', 'out_refund', 'in_invoice', 'in_refund'])]}</attribute>
+                <attribute name="attrs">{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund',
+                    'in_invoice', 'in_refund', 'out_receipt', 'in_receipt'))], 'required': [('move_type', 'in',
+                    ['out_invoice', 'out_refund', 'in_invoice', 'in_refund'])]}
+                </attribute>
             </xpath>
 
             <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='analytic_account_id']"
@@ -36,11 +38,14 @@
             <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='discount']" position="attributes">
                 <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>
             </xpath>
-<!--            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='tax_ids']" position="attributes">-->
-<!--                <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>-->
-<!--            </xpath>-->
-              <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='tax_ids']" position="before">
-                  <field name="lot_id"/>
+            <!--            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='tax_ids']" position="attributes">-->
+            <!--                <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>-->
+            <!--            </xpath>-->
+            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='tax_ids']" position="before">
+                <field name="lot_id"/>
+            </xpath>
+            <xpath expr="//field[@name='line_ids']/tree" position="inside">
+                <field name="lot_id"/>
             </xpath>
 
 
@@ -60,16 +65,16 @@
                    position="attributes">
                 <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>
             </xpath>
-<!--            <xpath expr="//field[@name='line_ids']/tree/field[@name='tax_ids']"-->
-<!--                   position="attributes">-->
-<!--                <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>-->
-<!--            </xpath>-->
+            <!--            <xpath expr="//field[@name='line_ids']/tree/field[@name='tax_ids']"-->
+            <!--                   position="attributes">-->
+            <!--                <attribute name="groups">editable_sale.group_editable_account_move_manager</attribute>-->
+            <!--            </xpath>-->
 
             <xpath expr="//field[@name='line_ids']/tree/field[@name='name']"
                    position="attributes">
                 <attribute name="string">الشرح</attribute>
             </xpath>
-             <xpath expr="//field[@name='line_ids']/tree/field[@name='currency_id']"
+            <xpath expr="//field[@name='line_ids']/tree/field[@name='currency_id']"
                    position="attributes">
                 <attribute name="attrs">{'readonly':1}</attribute>
             </xpath>

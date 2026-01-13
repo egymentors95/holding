@@ -7,4 +7,6 @@ class AccountMoveLine(models.Model):
     lot_id = fields.Many2one(
         'stock.production.lot',
         string='Lot/Serial Number',
+        domain="[('product_id', '=', product_id)]"
+
     )

@@ -35,19 +35,24 @@
             </xpath>
             <xpath expr="//group[@id='header_left_group']" position="inside">
                 <group>
-                    <field name="authorized_person_id" attrs="{'invisible':[('move_type','=','entry')]}"
-                           domain="[('partner_id','=',partner_id)]"
-                           options="{'no_create': True}"/>
-                    <field name="authorized_signature" widget="signature"
-                           attrs="{'invisible':[('move_type','=','entry')]}"/>
                     <field name="journal_type_id" attrs="{'invisible':[('move_type','!=','entry')]}"/>
                 </group>
             </xpath>
             <xpath expr="//field[@name='line_ids']/tree/field[@name='partner_id']" position="replace">
                 <field name="journal_type"/>
                 <field name="partner_id" domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]"
-                       attrs="{'column_invisible': [('move_id.move_type', '!=', 'entry')] ,'required':[('journal_type','=','صرف عهدة')]}"/>
+                       attrs="{'column_invisible': [('parent.move_type', '!=', 'entry')] ,'required':[('journal_type','=','صرف عهدة')]}"/>
 
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Signature" attrs="{'invisible':[('move_type','=','entry')]}">
+                    <field name="authorized_person_id" attrs="{'invisible':[('move_type','=','entry')]}"
+                           domain="[('partner_id','=',partner_id)]"
+                           options="{'no_create': True}"/>
+
+                    <field name="authorized_signature" widget="signature"
+                           attrs="{'invisible':[('move_type','=','entry')]}"/>
+                </page>
             </xpath>
         </field>
     </record>

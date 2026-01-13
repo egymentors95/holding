@@ -249,6 +249,7 @@ class StockPicking(models.Model):
                     })
                 else:
                     line.copy({
+                        'order_id': sale_order.id,
                         'lot_id': lot_id,
                         'product_uom_qty': qty,
                     })

@@ -1137,7 +1137,7 @@ class AccountMove(models.Model):
                 raise exceptions.AccessError(_('Unauthorized Request, \nUpdate configuration for sandbox'))
             elif req.status_code == 503:
                 raise exceptions.AccessError(_('Zatca Api Service Down, \nkindly report to zatca.'))
-            elif req.status_code in [200, 202, 400]:
+            elif req.status_code in [200, 202, 400, 208, 409]:
                 if not auto_compliance:
                     self.zatca_status_code = req.status_code
                 response = json.loads(req.text)
@@ -1179,8 +1179,9 @@ class AccountMove(models.Model):
                 string += "<tr><td colspan='2'><b>qrBuyertStatus </b></td><td colspan='4'>" + str(response['qrBuyertStatus']) + "</td></tr>"
                 string += "<tr><td colspan='6'></td></tr>"
 
-                if response['validationResults']['errorMessages'] == [] and response['validationResults']['status'] == 'PASS' and \
-                        (response['reportingStatus'] == "REPORTED" or response['clearanceStatus'] == "CLEARED"):
+                if response.get('validationResults', {}).get('errorMessages', []) == [] and \
+                        response.get('validationResults', {}).get('status') in ('PASS', 'WARNING') and \
+                        (response.get('reportingStatus') == "REPORTED" or response.get('clearanceStatus') == "CLEARED"):
                     zatca_on_board_status_details[is_tax_invoice][bt_3] = 1
                     conf.zatca_on_board_status_details = json.dumps(zatca_on_board_status_details)
                     total_required = []
@@ -1291,7 +1292,7 @@ class AccountMove(models.Model):
                 raise exceptions.AccessError(_('Unauthorized Request, \nUpdate configuration for production'))
             elif req.status_code == 503:
                 raise exceptions.AccessError(_('Zatca Api Service Down, \nkindly report to zatca.'))
-            elif req.status_code in [200, 202, 400]:
+            elif req.status_code in [200, 202, 400, 208, 409]:
                 self.zatca_status_code = req.status_code
                 response = json.loads(req.text)
                 string = "<table style='width:100%'>"
@@ -1410,7 +1411,7 @@ class AccountMove(models.Model):
                 raise exceptions.AccessError(_('Unauthorized Request, \nUpdate configuration for production'))
             elif req.status_code == 503:
                 raise exceptions.AccessError(_('Zatca Api Service Down, \nkindly report to zatca.'))
-            elif req.status_code in [200, 202, 400]:
+            elif req.status_code in [200, 202, 400, 208, 409]:
                 if self.is_enterprise and self.disable_odoo_invoices:
                     # for enterprise report preview
                     self.print_einv_auto(is_pdf=1)
@@ -1455,7 +1456,7 @@ class AccountMove(models.Model):
                 self.zatca_compliance_invoices_api = json_iterated
                 self._l10n_sa_onchnage_l10n_sa_zatca_status()
             else:
-                raise exceptions.AccessError(_("Zatca status") + ' ' + str(req.status_code) + "\n" + req.text)
+                raise exceptions.AccessDenied(_("Zatca status") + ' ' + str(req.status_code) + "\n" + req.text)
             if no_xml_generate:
                 return self.zatca_compliance_invoices_api
             return {
@@ -1584,7 +1585,7 @@ class AccountMove(models.Model):
         try:
             if not self.is_zatca or (self.l10n_sa_phase1_end_date and self.invoice_date <= self.l10n_sa_phase1_end_date):
                 return super()._compute_qr_code_str()
-            is_tax_invoice = 1 if self.l10n_sa_invoice_type == 'Standard' else 0
+            is_tax_invoice = 1 if self.mapped('l10n_sa_invoice_type') == ['Standard'] else 0
             if not self.get_zatca_onboarding_status():
                 self.l10n_sa_qr_code_str = ""
                 self.sa_qr_code_str = ""
@@ -1740,17 +1741,6 @@ class AccountMove(models.Model):
 
     def send_multiple_to_zatca(self):
         self = self.filtered(lambda x: x.zatca_icv_counter).sorted(key='zatca_icv_counter')
-
-        # if int(self[0].zatca_icv_counter) > 1:
-        #     def get_last_zatca_invoice(self, icv):
-        #         record = self.search([('zatca_icv_counter', '=', icv -1)], limit=1)
-        #         if not record.id:
-        #             icv = icv - 1
-        #             record = get_last_zatca_invoice(self, icv)
-        #         return record
-        #     seq_id = get_last_zatca_invoice(self, int(self[0].zatca_icv_counter))
-        #     if seq_id.l10n_sa_zatca_status == 'Not Sended to Zatca':
-        #         raise exceptions.MissingError("Invoice " + str(seq_id.name) + " must be submitted first.")
         for record in self:
             try:
                 if record.state == 'posted':
@@ -1764,10 +1754,7 @@ class AccountMove(models.Model):
                 # Bypass errors.
                 _logger.info("Multi Send To Zatca Errors :: " + str(e))
 
-    # def action_post(self):
-    #     res = super().action_post()
-    #     self.send_for_clearance()
-    #     return res
+
 
     @api.depends('country_code', 'move_type')
     def _compute_show_delivery_date(self):
@@ -1784,17 +1771,12 @@ class AccountMove(models.Model):
         for record in self:
             conf = record.company_id.sudo()
             record.write({'l10n_sa_confirmation_datetime': fields.Datetime.now()})
-            if (conf.is_zatca
-                    and ((not conf.is_self_billed and record.move_type in ['out_invoice', 'out_refund']) or
-                         (conf.is_self_billed and record.move_type in ['out_invoice', 'out_refund', 'in_invoice', 'in_refund']))
-                    and record.l10n_sa_invoice_type and record.l10n_sa_phase1_end_date and record.invoice_date > record.l10n_sa_phase1_end_date):
-                if (record.move_type in ['in_invoice', 'in_refund'] and record.l10n_is_self_billed_invoice) or record.move_type in ['out_invoice', 'out_refund']:
-                    record.create_xml_file()
-                    if conf.zatca_send_from_pos:
-                        if record.l10n_sa_invoice_type == 'Standard':
-                            record.send_for_clearance()
-                        elif record.l10n_sa_invoice_type == 'Simplified':
-                            record.send_for_reporting()
+            if conf.is_zatca:
+                if record.move_type in ['out_invoice', 'out_refund']:
+                    if record.l10n_sa_invoice_type == 'Standard':
+                        record.send_for_clearance()
+                    elif record.l10n_sa_invoice_type == 'Simplified':
+                        record.send_for_reporting()
             record._l10n_sa_onchnage_l10n_sa_zatca_status()
         return res
 

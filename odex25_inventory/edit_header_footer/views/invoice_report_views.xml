@@ -105,8 +105,6 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <br/>
-
                         <table class="table table-borderless"
                                style="border-radius: 8px; font-size: 12px;">
                             <thead>
@@ -274,19 +272,12 @@
                                 </div>
                             </div>
                         </div>
-                        <br/>
-                        <br/>
-                        <br/>
-                        <br/>
-                        <br/>
-                        <br/>
-                        <br/>
-
 
                         <div style="font-size: 14px; font-weight: bold; text-align: right">
                             <br/>
-                            <br/>
                             <span>اسم المستلم</span>
+                            <br/>
+                            <span>التوقيع</span>
 
                         </div>
                         <div>
@@ -302,7 +293,6 @@
                                 <span style="color:gray;">No signature available</span>
                             </t>
                         </div>
-
 
 
                     </div>

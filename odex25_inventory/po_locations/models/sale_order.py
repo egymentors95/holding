@@ -17,7 +17,8 @@ class SaleOrder(models.Model):
             if stock_picking:
                 stock_picking.sale_id = order.id
                 for move in stock_picking.move_line_ids_without_package:
+                    # جلب أول line يطابق المنتج
                     line = order.order_line.filtered(lambda l: l.product_id == move.product_id)
                     if line:
-                        move.price_unit = line.price_unit
+                        move.price_unit = line[0].price_unit
         return res

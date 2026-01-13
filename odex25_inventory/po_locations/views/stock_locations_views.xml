@@ -7,12 +7,54 @@
         <field name="model">stock.location</field>
         <field name="inherit_id" ref="stock.view_location_form"/>
         <field name="arch" type="xml">
-
             <xpath expr="//group[@name='additional_info']" position="inside">
                 <field name="user_id"/>
             </xpath>
 
         </field>
     </record>
+
+    <record id="inventory_user_stock_location" model="ir.rule">
+        <field name="name">inventory : users</field>
+        <field name="model_id" ref="stock.model_stock_location"/>
+        <field name="domain_force">[('user_id', 'in', [user.id])]</field>
+        <field name="groups" eval="[(4, ref('stock.group_stock_user'))]"/>
+    </record>
+
+      <record id="inventory_admin_stock_location" model="ir.rule">
+        <field name="name">inventory : admin</field>
+        <field name="model_id" ref="stock.model_stock_location"/>
+        <field name="domain_force">[(1,'=',1)]</field>
+        <field name="groups" eval="[(4, ref('stock.group_stock_manager'))]"/>
+    </record>
+
+        <record id="inventory_user_stock_quant" model="ir.rule">
+        <field name="name">inventory : users</field>
+        <field name="model_id" ref="stock.model_stock_quant"/>
+        <field name="domain_force">[('location_id.user_id', 'in', [user.id])]</field>
+        <field name="groups" eval="[(4, ref('stock.group_stock_user'))]"/>
+    </record>
+
+      <record id="inventory_admin_stock_quant" model="ir.rule">
+        <field name="name">inventory : admin</field>
+        <field name="model_id" ref="stock.model_stock_quant"/>
+        <field name="domain_force">[(1,'=',1)]</field>
+        <field name="groups" eval="[(4, ref('stock.group_stock_manager'))]"/>
+    </record>
+
+    <!-- Inherit Form View to Modify it -->
+    <record id="value_view_stock_quant_tree_editable" model="ir.ui.view">
+        <field name="name">value.view.stock.quant.tree.editable</field>
+        <field name="model">stock.quant</field>
+        <field name="inherit_id" ref="stock.view_stock_quant_tree_editable"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='value']" position="attributes">
+                <attribute name="groups">stock.group_stock_manager</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
 
 </odoo>
