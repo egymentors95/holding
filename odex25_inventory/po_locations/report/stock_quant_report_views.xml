@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+
+    <template id="report_stock_quant_pdf">
+        <t t-call="web.basic_layout">
+            <div class="page">
+                <h2>تقرير الكميات في المخزون</h2>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>المنتج</th>
+                            <th>الموقع</th>
+                            <th>رقم الدفعة/السيريال</th>
+                            <th>الكمية في المخزون</th>
+                            <th>الكمية المتاحة</th>
+                            <th>وحدة القياس</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="docs" t-as="record">
+                            <tr>
+                                <td>
+                                    <t t-esc="record.product_id.display_name"/>
+                                </td>
+                                <td>
+                                    <t t-esc="record.location_id.display_name"/>
+                                </td>
+                                <td>
+                                    <t t-esc="record.lot_id.name"/>
+                                </td>
+                                <td>
+                                    <t t-esc="record.inventory_quantity"/>
+                                </td>
+                                <td>
+                                    <t t-esc="record.available_quantity"/>
+                                </td>
+                                <td>
+                                    <t t-esc="record.product_uom_id.name"/>
+                                </td>
+
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+
+    <report
+    id="action_report_stock_quant_pdf"
+    model="stock.quant"
+    string="تقرير الكميات في المخزون"
+    report_type="qweb-pdf"
+    name="po_locations.report_stock_quant_pdf"
+    file="po_locations.report_stock_quant_pdf"
+    attachment_use="False"/>
+
+
+
+</odoo>
