@@ -13,7 +13,9 @@
                     <field name="state2" widget="statusbar"/>
                 </header>
             </xpath>
-
+            <xpath expr="//field[@name='order_line']/tree" position="inside">
+                <field name="lot_id"/>
+            </xpath>
         </field>
     </record>
 

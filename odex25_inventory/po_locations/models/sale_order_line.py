@@ -7,3 +7,4 @@ class SaleOrderLine(models.Model):
         'stock.production.lot',
         string='Lot / Serial',
     )
+

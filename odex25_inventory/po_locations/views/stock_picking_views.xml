@@ -110,6 +110,48 @@
         <field name="groups" eval="[(4, ref('stock.group_stock_manager'))]"/>
     </record>
 
+     <menuitem id="stock.menu_valuation" name="Inventory Report"
+              parent="stock.menu_stock_root" sequence="100"
+              action="stock.action_view_quants"/>
+
+    <record id="stock_picking_user_rule" model="ir.rule">
+        <field name="name">Stock Picking: User</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="domain_force">[('user_ids', 'in', user.id)]</field>
+        <field name="groups" eval="[(4, ref('stock.group_stock_user'))]"/>
+    </record>
+    <record id="stock_picking_manager_rule" model="ir.rule">
+        <field name="name">Stock Picking: Manager</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('stock.group_stock_manager'))]"/>
+    </record>
+
+    <record id="stock_move_line_user_rule" model="ir.rule">
+        <field name="name">Stock Move Line: User</field>
+        <field name="model_id" ref="stock.model_stock_move_line"/>
+        <field name="domain_force">[('user_ids', 'in', user.id)]</field>
+        <field name="groups" eval="[(4, ref('stock.group_stock_user'))]"/>
+    </record>
+    <record id="stock_move_line_manager_rule" model="ir.rule">
+        <field name="name">Stock Move Line: Manager</field>
+        <field name="model_id" ref="stock.model_stock_move_line"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('stock.group_stock_manager'))]"/>
+    </record>
+
+        <record id="stock_move_user_rule" model="ir.rule">
+        <field name="name">Stock Move: User</field>
+        <field name="model_id" ref="stock.model_stock_move"/>
+        <field name="domain_force">[('user_ids', 'in', user.id)]</field>
+        <field name="groups" eval="[(4, ref('stock.group_stock_user'))]"/>
+    </record>
+    <record id="stock_move_manager_rule" model="ir.rule">
+        <field name="name">Stock Move: Manager</field>
+        <field name="model_id" ref="stock.model_stock_move"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('stock.group_stock_manager'))]"/>
+    </record>
 
 
 </odoo>

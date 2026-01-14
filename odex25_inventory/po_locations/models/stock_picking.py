@@ -45,8 +45,6 @@ class StockPicking(models.Model):
                 users.add(picking.location_dest_id.user_id.id)
             picking.user_ids = [(6, 0, list(users))]
 
-
-
     def button_stock_keeper(self):
         for rec in self:
             rec.state = 'stock_keeper'
@@ -176,8 +174,6 @@ class StockPicking(models.Model):
                         ) % rec.location_id.user_id.name)
         return super(StockPicking, self).action_assign()
 
-
-
     def action_view_journal_entries(self):
         self.ensure_one()
 
@@ -196,7 +192,6 @@ class StockPicking(models.Model):
             'domain': [('id', 'in', moves.ids)],
             'context': {'create': False},
         }
-
 
     def button_validate(self):
         for rec in self:
@@ -217,42 +212,56 @@ class StockPicking(models.Model):
                     if rec.types_out == 'driver' and not rec.driver_id:
                         raise UserError(_("Driver is Mandatory"))
 
-        res = super(StockPicking, self).button_validate()
-        for picking in self:
-            sale_order = picking.sale_id
-            if not sale_order:
-                continue
+        # res = super(StockPicking, self).button_validate()
+        # for picking in self:
+        #     sale_order = picking.sale_id
+        #     if not sale_order or sale_order.state != 'sale':
+        #         continue
+        #
+        #     product_lot_qty = {}
+        #
+        #     for ml in picking.move_line_ids:
+        #         if not ml.lot_id or ml.qty_done <= 0:
+        #             continue
+        #
+        #         key = (ml.product_id.id, ml.lot_id.id)
+        #         product_lot_qty.setdefault(key, 0)
+        #         product_lot_qty[key] += ml.qty_done
+        #
+        #     for product_id in set(k[0] for k in product_lot_qty.keys()):
+        #         lot_items = [
+        #             (lot_id, qty)
+        #             for (pid, lot_id), qty in product_lot_qty.items()
+        #             if pid == product_id
+        #         ]
+        #
+        #         so_lines = sale_order.order_line.filtered(
+        #             lambda l: l.product_id.id == product_id and not l.display_type
+        #         )
+        #         if not so_lines:
+        #             continue
+        #
+        #         base_line = so_lines[0]
+        #
+        #         # أول Lot → update
+        #         first_lot_id, first_qty = lot_items[0]
+        #         base_line.write({
+        #             'lot_id': first_lot_id,
+        #             'product_uom_qty': first_qty,
+        #
+        #         })
+        #
+        #         # باقي الـ Lots → create new lines
+        #         for lot_id, qty in lot_items[1:]:
+        #             base_line.copy({
+        #                 'order_id': sale_order.id,
+        #                 'product_id': base_line.product_id.id,
+        #                 'price_unit': base_line.price_unit,
+        #                 'tax_id': [(6, 0, base_line.tax_id.ids)],
+        #                 'lot_id': lot_id,
+        #                 'product_uom_qty': qty,
+        #
+        #             })
 
-            product_lot_qty = {}
-            for ml in picking.move_line_ids:
-                if not ml.lot_id or ml.qty_done <= 0:
-                    continue
-
-                key = (ml.product_id.id, ml.lot_id.id)
-                product_lot_qty.setdefault(key, 0)
-                product_lot_qty[key] += ml.qty_done
-
-            for (product_id, lot_id), qty in product_lot_qty.items():
-                so_lines = sale_order.order_line.filtered(
-                    lambda l: l.product_id.id == product_id
-                )
-
-                if not so_lines:
-                    continue
-
-                line = so_lines[0]
-
-                if not line.lot_id:
-                    line.write({
-                        'lot_id': lot_id,
-                        'product_uom_qty': qty,
-                    })
-                else:
-                    line.copy({
-                        'order_id': sale_order.id,
-                        'lot_id': lot_id,
-                        'product_uom_qty': qty,
-                    })
-
-        return res
-
+            # بعد ما اللاينات اتحدثت
+        return super(StockPicking, self).button_validate()
